@@ -1,4 +1,4 @@
-ZeusET is the backend for an internet connected, intelligent irrigation controller for residential lawns.
+ZeusET is the backend for an internet connected, intelligent irrigation controller.
 
 It downloads hourly weather reports from NOAA weather stations across the USA.  It computes the daily ETo (reference evapotranspiration) for the geographic area near that weather station.  It then uses location specific parameters provided by the user to compute the ETL (lawn evapotranspiration).
 
