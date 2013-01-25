@@ -4,7 +4,7 @@ import MySQLdb
 class DBConfig:
 
 	def connectToLocalConfigDatabase(self):
-		config = open("~/Mist/local.config")
+		config = open("/Users/makilian/Mist/local.config")
 		host = config.readline().rstrip()
 		user = config.readline().rstrip()
 		password = config.readline().rstrip()

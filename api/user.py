@@ -22,6 +22,14 @@ def insertUserInDatabase(username, salt, password):
 	db.commit()
 	return results
 
+def getUserWithEmail(userEmail):
+	conf = DBConfig.DBConfig()
+	db = conf.connectToLocalConfigDatabase()
+	cursor = db.cursor()
+	cursor.execute("SELECT * FROM users WHERE users.email= (%s)", userEmail)
+	results = cursor.fetchone()
+	return results
+
 def getUser(userid):
 	conf = DBConfig.DBConfig()
 	db = conf.connectToLocalConfigDatabase()	
@@ -42,7 +50,7 @@ class user:
 		userid = user_data.userid
 		suppliedPass = user_data.password
 
-		user = getUser(userid) # SQL
+		user = getUserWithEmail(userid) # SQL
 		print user
 		salt = user[3] #salt is the 4th column of users table
 
