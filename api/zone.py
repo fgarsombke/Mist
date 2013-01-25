@@ -4,7 +4,7 @@ import hashlib
 import uuid
 import base64
 import MySQLdb
-sys.path.append('/Users/makilian/Workspace/ZeusET/db')
+sys.path.append('~/Mist/db')
 import DBConfig
 
 def insertZoneInDatabase(productId, zoneNumber, description, plantSpecies, microClimateConstant, speciesConstant, densityConstant):

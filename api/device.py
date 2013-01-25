@@ -4,7 +4,7 @@ import hashlib
 import uuid
 import base64
 import MySQLdb
-sys.path.append('/Users/makilian/Workspace/ZeusET/db')
+sys.path.append('~/Mist/db')
 import DBConfig
 
 def insertDeviceInDatabase(productId, userId, latitude, longitude, stationID):
