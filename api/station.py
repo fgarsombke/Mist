@@ -38,7 +38,7 @@ class station:
 	#return all stations: expected parameter: null
 	def GET(self):
 		station_data = web.input()
-		render = web.template.render('templates/')
+		render = web.template.render('templates/', base = 'layout')
 	
 		#parameters
 		if station_data:	

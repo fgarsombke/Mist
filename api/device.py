@@ -16,6 +16,14 @@ def insertDeviceInDatabase(productId, userId, latitude, longitude, stationID):
 	db.commit()
 	return results
 
+def getAllDevices():
+	conf = DBConfig.DBConfig()
+	db = conf.connectToLocalConfigDatabase()	
+	cursor = db.cursor()
+	cursor.execute("SELECT * FROM devices")
+	results = cursor.fetchall()
+	return results	
+
 def getDevice(deviceid):
 	conf = DBConfig.DBConfig()
 	db = conf.connectToLocalConfigDatabase()	
@@ -34,18 +42,19 @@ def findNearestClimateStation(latitude, longitude):
 
 class device:
 	#GET API FOR DEVICE
-	#expected parameter: deviceid (long)
-	#RETURN: ??? TODO
+	#Return one device: expected parameter: deviceid (long)
+	#RETURN: all devices: expetected parameter: null
 	def GET(self):
 		device_data = web.input()
-		render = web.template.render('templates/')
-	
-		#parameters	
-		deviceid = device_data.deviceid
+		render = web.template.render('templates/', base='layout')
 
-		device = getDevice(deviceid) # SQL
-		print device
-		return render.device("DEVICE " + str(device[0]) + " " + str(device[1]) + " " + str(device[2]) + " " + str(device[3]))
+		if device_data:	
+			deviceid = device_data.deviceid
+			device = getDevice(deviceid) # SQL
+			return render.device("DEVICE " + str(device[0]) + " " + str(device[1]) + " " + str(device[2]) + " " + str(device[3]))
+		else:
+			devices = getAllDevices()
+			return render.device(devices)
 
 	#POST API FOR DEVICE CREATION
 	#expeceted parameters: userid, latitude, longitude, wifi network, wifi password, stationID 

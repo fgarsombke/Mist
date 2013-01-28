@@ -1,6 +1,13 @@
-$def with (name)
-
-$if name:
-    <em>DEVICE:</em> $name
-$else:
-    <em>No device found</em>
+$def with (devices)
+        <div class="span9">
+          <div class="hero-unit">
+            <div>
+              <h3>
+              	$for i in devices:
+					$i <br> <br>
+              </h3>
+              
+          </div>
+        </div>
+      </div>
+   
