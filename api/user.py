@@ -40,7 +40,7 @@ def getUser(userid):
 
 class user:
 	#GET API FOR USER
-	#expected parameter: userid (long), password
+	#expected parameter: useremail, password
 	#RETURN: user data TODO
 	def GET(self):
 		user_data = web.input()
@@ -59,12 +59,15 @@ class user:
 		print user[2]
 
 		if encodedPass == user[2]: #password is the 2nd column of users table
-			return render.user("PASSWORD VERIFIED.  RETURN USER.")
+			#correct password was entered.  get user data and return to pretty HTML user page.
+			return render.user("PASSWORD VERIFIED for", user[1])
 		else:
-			return render.user("INCORRECT PASSWORD.")
+			#TODO: incorrect password, send back to home page.
+			return render.user("INCORRECT PASSWORD for", user[1])
 
 	#POST API FOR USER CREATION
 	#expeceted parameters: email (string) and password (string)
+	#TODO:add e-mail confirmation and token generation.
 	#return USER ID
 	def POST(self):
 		user_data = web.input()	
@@ -83,8 +86,6 @@ class user:
 
 		if validate:
 			salt = uuid.uuid4().hex 
-			print salt
-			print len(salt)
 			encodedPass = hashlib.sha512(user_data.password + salt).hexdigest()
 			#TODO -  ORM (sqlalchemy?)
 			userID = insertUserInDatabase(user_data.email, salt, encodedPass) #SQL

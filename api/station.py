@@ -16,6 +16,14 @@ def insertStationInDatabase(stationID, desc, latitude, longitude):
 	db.commit()
 	return results
 
+def getAllStations():
+	conf = DBConfig.DBConfig()
+	db = conf.connectToLocalConfigDatabase()
+	cursor = db.cursor()
+	cursor.execute("SELECT * FROM climateStations")
+	results = cursor.fetchall()
+	return results
+
 def getStation(stationID):
 	conf = DBConfig.DBConfig()
 	db = conf.connectToLocalConfigDatabase()
@@ -26,18 +34,23 @@ def getStation(stationID):
 
 class station:
 	#GET API FOR STATION
-	#expected parameter: stationid (long)
-	#RETURN: ??? TODO
+	#reutrn one station: expected parameter: stationid (long)
+	#return all stations: expected parameter: null
 	def GET(self):
 		station_data = web.input()
 		render = web.template.render('templates/')
 	
-		#parameters	
-		stationid = station_data.stationid
-
-		station = getStation(stationid) # SQL
-		print station
-		return render.station("STATION " + str(station[0]) + " " + str(station[1]) + " " + str(station[7]) + " " + str(station[8]))
+		#parameters
+		if station_data:	
+			station = getStation(station_data.staionid) # SQL
+			return render.station("STATION " + str(station[0]) + " " + str(station[1]) + " " + str(station[7]) + " " + str(station[8]))
+		else:
+			stations = getAllStations()
+			returnString = ""
+			#for station in stations:
+			#	returnString += ("STATION " + str(station[0]) + " " + str(station[1]) + " " + str(station[7]) + " " + str(station[8]) + "")	
+			#return render.station(returnString)
+			return render.station(stations)
 
 	#POST API FOR STATION CREATION
 	#expeceted parameters: stationid, description, latitude, longitude
