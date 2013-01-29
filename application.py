@@ -1,11 +1,12 @@
 #!/usr/bin/env python
 import web
 from api.user import user
+from api.user import list
 from api.device import device
 from api.station import station
 from api.zone import zone
 from api.index import index
-from api.user import list
+from api.schedule import schedule
 
 #web.config.debug = False
 
@@ -17,7 +18,8 @@ urls = (
 	'/user/list', 'list',
 	'/station', 'station',
 	'/device', 'device',
-	'/zone', 'zone'
+	'/zone', 'zone',
+	'/schedule', 'schedule'
 )
 
 app = web.application(urls, globals())

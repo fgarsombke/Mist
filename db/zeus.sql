@@ -68,3 +68,19 @@ CREATE TABLE IF NOT EXISTS dailyETLperZone (
 						dayOfYear INTEGER,
 						date DATETIME NOT NULL
 						);
+
+CREATE TABLE IF NOT EXISTS queuedIrrigations (
+						    productID INTEGER NOT NULL,
+						    zoneNumber INTEGER NOT NULL,
+						    startTime DATETIME NOT NULL,  
+						    duration INTEGER NOT NULL,
+						    created DATETIME NOT NULL
+						);
+
+CREATE TABLE IF NOT EXISTS executedIrrigations (
+						    productID INTEGER NOT NULL,
+						    zoneNumber INTEGER NOT NULL,
+						    startTime DATETIME NOT NULL,
+						    duration INTEGER NOT NULL,
+						    created DATETIME NOT NULL
+						);

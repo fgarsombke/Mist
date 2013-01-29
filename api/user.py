@@ -72,7 +72,8 @@ class user:
 			if encodedPass == user[2]: #password is the 2nd column of users table
 				return render.user("PASSWORD VERIFIED for", user[1])
 			else:
-				return render.user("INCORRECT PASSWORD for", user[1])
+				#back to home page
+				return render.index2()
 
 
 	#POST API FOR USER CREATION
