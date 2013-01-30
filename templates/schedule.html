@@ -6,10 +6,10 @@ $def with ()
           <legend>Enter the irrigation event to queue:</legend>
         
 	  <div class="clearfix">
-            <label>Date and Time</label>
+            <label>Date and Military Time</label>
             <div class="input">
-                <input data-datepicker="datepicker" class="small" type="text" value="01/05/2011" name="date"/>
-                <input class="mini" type="text" value="12:00am" name = "startTime"/>
+                <input data-datepicker="datepicker" class="small" type="text" value="2013-01-27" name="date"/>
+                <input class="mini" type="text" value="14:37" name = "startTime"/>
             </div>
           </div><!-- /clearfix -->
 	
@@ -46,6 +46,34 @@ $def with ()
       </form>
     </div>
 
+
+      <form method="get" action="/schedule">
+        <fieldset>
+          <legend>Enter productID and Zone to get schedule list for</legend>
+        
+	  <div class="clearfix">
+            <label>ProductID</label>
+            <div class="input">
+                <input class="mini" type="text" value="3460" name = "productID"/>
+            </div>
+          </div><!-- /clearfix -->
+	
+	<div class="clearfix">
+	  <label> ZoneNumber </label>
+	    <div class="input">
+                <input class="mini" type="text" value="7" name = "zoneNumber"/>
+            </div>
+	</div>
+
+	  <div class="actions">
+            <input type="submit" class="btn primary" value="Get List">&nbsp;</button>
+          </div>
+        
+	</fieldset>
+      </form>
+    </div>
+
+
 <script src="http://code.jquery.com/jquery-1.7.min.js"></script>
     <script src="static/js/bootstrap-datepicker.js"></script>
     <script>
@@ -70,7 +98,7 @@ $def with ()
           if (dom.length === 1) {
             dom = "0" + dom;
           }
-          return month + "/" + dom + "/" + date.getFullYear();
+          return date.getFullYear() + "-" + month + "-" +  dom;
         }
       });  
     </script>
