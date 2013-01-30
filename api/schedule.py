@@ -24,7 +24,7 @@ def getScheduleForDeviceAndZone(productID, zoneNumber):
 	conf = DBConfig.DBConfig()
 	db = conf.connectToLocalConfigDatabase()	
 	cursor = db.cursor()
-	cursor.execute("SELECT * FROM queuedIrrigations WHERE (queuedIrrigations.productID = (%s)AND queuedIrrigations.zoneNumber = (%s))", productID, zoneNumber)
+	cursor.execute("SELECT * FROM queuedIrrigations WHERE (queuedIrrigations.productID = (%s) AND queuedIrrigations.zoneNumber = (%s))", (productID, zoneNumber))
 	results = cursor.fetchall()
 	return results	
 
@@ -39,7 +39,7 @@ class schedule:
 			productID = schedule_data.productID
 			zoneNumber = schedule_data.zoneNumber
 			schedule = getScheduleForDeviceAndZone(productID, zoneNumber) # SQL
-			return render.schedule(schedule)
+			return render.schedulelist(schedule)
 		else:
 			return render.schedule()
 
