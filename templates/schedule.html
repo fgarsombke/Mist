@@ -3,15 +3,18 @@ $def with ()
 <div class="span12">
       <form>
         <fieldset>
-          <legend>Example form legend</legend>
+          <legend>Enter the irrigation event to queue:</legend>
           <div class="clearfix">
-            <label for="xlInput">X-Large input</label>
+            <label>Date and Time</label>
             <div class="input">
-              <input class="xlarge" id="xlInput" name="xlInput" size="30" type="text" />
+              <div class="inline-inputs">
+                <input data-datepicker="datepicker" class="small" type="text" value="01/05/2011" />
+                <input class="mini" type="text" value="12:00am" />
+              </div>
             </div>
-       	</div><!-- /clearfix -->
-          <div class="clearfix">
-            <label for="normalSelect">Select</label>
+          </div><!-- /clearfix -->
+	<div class="clearfix">
+            <label for="normalSelect">Duration (minutes)</label>
             <div class="input">
               <select name="normalSelect" id="normalSelect">
                 <option>1</option>
@@ -19,33 +22,16 @@ $def with ()
                 <option>3</option>
                 <option>4</option>
                 <option>5</option>
+                <option>6</option>
+                <option>7</option>
+                <option>8</option>
+                <option>9</option>
+                <option>10</option>
               </select>
             </div>
           </div><!-- /clearfix -->
-          <div class="clearfix">
-            <label>Date range</label>
-            <div class="input">
-              <div class="inline-inputs">
-                <input data-datepicker="datepicker" class="small" type="text" value="01/05/2011" />
-                <input class="mini" type="text" value="12:00am" />
-                to
-                <input data-datepicker="datepicker" class="small" type="text" value="05/08/2011" />
-                <input class="mini" type="text" value="11:59pm" />
-                <span class="help-block">All times are shown as Pacific Standard Time (GMT -08:00).</span>
-              </div>
-            </div>
-          </div><!-- /clearfix -->
-          <div class="clearfix">
-            <label for="textarea">Textarea</label>
-            <div class="input">
-              <textarea class="xxlarge" id="textarea2" name="textarea2" rows="3"></textarea>
-              <span class="help-block">
-                Block of help text to describe the field above if need be.
-              </span>
-            </div>
-          </div><!-- /clearfix -->
           <div class="actions">
-            <input type="submit" class="btn primary" value="Save changes">&nbsp;<button type="reset" class="btn">Cancel</button>
+            <input type="submit" class="btn primary" value="Enqueue">&nbsp;</button>
           </div>
         </fieldset>
       </form>
