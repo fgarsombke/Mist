@@ -1,7 +1,8 @@
 #This script reads in the SQL from the ./zeus.sql file and creates the tables described in the file in the zeus database.
 import re
+import sys
 import MySQLdb
-sys.path.append('/Users/makilian/Workspace/ZeusET/db')
+sys.path.append('/Users/makilian/Mist/db')
 import DBConfig
 
 def main():

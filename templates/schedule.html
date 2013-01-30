@@ -1,22 +1,22 @@
 $def with ()
 <link href="static/css/datepicker.css" rel="stylesheet">
-<div class="span12">
-      <form>
+   <div class="span12">
+      <form method="post" action="/schedule">
         <fieldset>
           <legend>Enter the irrigation event to queue:</legend>
-          <div class="clearfix">
+        
+	  <div class="clearfix">
             <label>Date and Time</label>
             <div class="input">
-              <div class="inline-inputs">
-                <input data-datepicker="datepicker" class="small" type="text" value="01/05/2011" />
-                <input class="mini" type="text" value="12:00am" />
-              </div>
+                <input data-datepicker="datepicker" class="small" type="text" value="01/05/2011" name="date"/>
+                <input class="mini" type="text" value="12:00am" name = "startTime"/>
             </div>
           </div><!-- /clearfix -->
+	
 	<div class="clearfix">
-            <label for="normalSelect">Duration (minutes)</label>
+            <label for="zoneNumber">Zone Number</label>
             <div class="input">
-              <select name="normalSelect" id="normalSelect">
+              <select name="zoneNumber" id="zoneNumber">
                 <option>1</option>
                 <option>2</option>
                 <option>3</option>
@@ -30,10 +30,19 @@ $def with ()
               </select>
             </div>
           </div><!-- /clearfix -->
-          <div class="actions">
+
+	<div class="clearfix">
+	  <label> Duration (minutes)</label>
+	    <div class="input">
+                <input class="mini" type="text" value="12" name = "duration"/>
+            </div>
+	</div>
+
+	  <div class="actions">
             <input type="submit" class="btn primary" value="Enqueue">&nbsp;</button>
           </div>
-        </fieldset>
+        
+	</fieldset>
       </form>
     </div>
 
