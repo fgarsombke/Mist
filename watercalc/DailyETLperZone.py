@@ -4,7 +4,7 @@ import datetime
 import time
 import math
 import MySQLdb
-sys.path.append('/Users/makilian/Dropbox/Mist/Mist/Software/Backend/ZeusET/db')
+sys.path.append('../db')
 import DBConfig
 
 def main():	
