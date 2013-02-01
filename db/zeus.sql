@@ -84,3 +84,13 @@ CREATE TABLE IF NOT EXISTS executedIrrigations (
 						    duration INTEGER NOT NULL,
 						    created DATETIME NOT NULL
 						);
+
+CREATE TABLE IF NOT EXISTS sessions (
+					session_id VARCHAR(128) UNIQUE NOT NULL,
+    					atime TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    					data text
+					);
+
+
+
+
