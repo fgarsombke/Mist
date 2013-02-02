@@ -70,7 +70,8 @@ class user:
 			encodedPass = hashlib.sha512(suppliedPass + salt).hexdigest()
 	
 			if encodedPass == user[2]: #password is the 2nd column of users table
-				return render.user("PASSWORD VERIFIED for", user[1])
+				session.count += 1
+				return render.user("PASSWORD VERIFIED" + str(session.count), user[1])
 			else:
 				#back to home page
 				return render.index2()
