@@ -8,7 +8,8 @@ from api.station import station
 from api.zone import zone
 from api.index import index
 from api.schedule import schedule
-sys.path.append('/Users/makilian/Mist/db')
+sys.path.append('~/Mist/db/')
+import DBConfig
 
 #web.config.debug = False
 
@@ -24,14 +25,14 @@ urls = (
 	'/schedule', 'schedule'
 )
 
+
+app = web.application(urls, globals())
+
 config = open("/Users/makilian/Mist/local.config")
 host = config.readline().rstrip()
 user = config.readline().rstrip()
 password = config.readline().rstrip()
 database = config.readline().rstrip()
-
-
-app = web.application(urls, globals())
 
 db = web.database(dbn='mysql', db=database, user=user, pw=password)
 store = web.session.DBStore(db, 'sessions')
