@@ -1,6 +1,6 @@
 import sys
 import MySQLdb
-
+sys.path.append('/Users/makilian/Mist/')
 class DBConfig:
 
 	def connectToLocalConfigDatabase(self):
