@@ -4,8 +4,8 @@ import hashlib
 import uuid
 import base64
 import MySQLdb
-sys.path.append('/Users/makilian/Mist/db')
-import DBConfig
+sys.path.append('../db/')
+from db import DBConfig
 
 def validateEmail(email):
 	return True
@@ -68,10 +68,13 @@ class user:
 			user = getUserWithEmail(userid) # SQL
 			salt = user[3] #salt is the 4th column of users table
 			encodedPass = hashlib.sha512(suppliedPass + salt).hexdigest()
-	
+			session = web.config._session
+			print session.count
+			session.count = session.count - 1
+			print session.count
+			
 			if encodedPass == user[2]: #password is the 2nd column of users table
-				session.count += 1
-				return render.user("PASSWORD VERIFIED" + str(session.count), user[1])
+				return render.user("Verified", user[1])
 			else:
 				#back to home page
 				return render.index2()
@@ -102,3 +105,13 @@ class user:
 			#TODO -  ORM (sqlalchemy?)
 			userID = insertUserInDatabase(user_data.email, salt, encodedPass) #SQL
 			return render.user(userID)
+
+class logout:
+	def GET(self):
+		render = web.template.render('templates/', base='layout')
+		session = web.config._session
+		session.kill()
+		return render.index2()
+
+	def POST(self):
+		print "POST"

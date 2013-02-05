@@ -6,8 +6,8 @@ import base64
 import MySQLdb
 from datetime import datetime
 import time
-sys.path.append('~/Mist/db')
-import DBConfig
+sys.path.append('../db')
+from db import DBConfig
 
 def queueIrrigation(productID, zoneNumber, startTime, duration, date):
 	conf = DBConfig.DBConfig()

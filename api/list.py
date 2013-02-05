@@ -4,8 +4,8 @@ import hashlib
 import uuid
 import base64
 import MySQLdb
-sys.path.append('/Users/makilian/Mist/db')
-import DBConfig
+sys.path.append('../db')
+from db import DBConfig
 
 def getAllUsers():
 	conf = DBConfig.DBConfig()
