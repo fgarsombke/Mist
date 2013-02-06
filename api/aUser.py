@@ -44,49 +44,37 @@ def getUser(userid):
 	cursor = db.cursor()
 	cursor.execute("SELECT * FROM users WHERE users.userID = (%s)", userid)
 	results = cursor.fetchone()
-	return results	
+	return results
+	
+def getDeviceIDForUser(userid):
+	conf = DBConfig.DBConfig()
+	db = conf.connectToLocalConfigDatabase()	
+	cursor = db.cursor()
+	cursor.execute("SELECT * FROM devices WHERE devices.userID = (%s)", userid)
+	results = cursor.fetchone()
+	return results[0]	
 
-class list:
-	def GET(self):
-		user_data = web.input()
-		render = web.template.render('templates/', base='layout')
-		users = getAllUsers()
-		return render.userlist(users)
-	def POST(self):
-		print "hi"
 
-class user:
+class aUser:
 	#GET API FOR USER
-	#return one user: expected parameter: useremail, password
+	#return one user: expected parameter: userId
+	#return all users: expected parameter: null
 	def GET(self):
 		user_data = web.input()
-		render = web.template.render('templates/', base='layout')
 
 		if user_data:
 			userid = user_data.userid
-			suppliedPass = user_data.password
-			user = getUserWithEmail(userid) # SQL
-			salt = user[3] #salt is the 4th column of users table
-			encodedPass = hashlib.sha512(suppliedPass + salt).hexdigest()
-			session = web.config._session
-			print session.count
-			session.count = session.count - 1
-			print session.count
-			
-			if encodedPass == user[2]: #password is the 2nd column of users table
-				return render.user("Verified", user[1])
-			else:
-				#back to home page
-				return render.index2()
-
+			user = getUser(userid)	
+			return user
+		else:
+			users = getAllUsers()
+			return users
 
 	#POST API FOR USER CREATION
 	#expeceted parameters: email (string) and password (string)
-	#TODO:add e-mail confirmation and token generation.
 	#return USER ID
 	def POST(self):
 		user_data = web.input()	
-		render = web.template.render('templates/')
 		validate = True
 
 		if user_data.email:
@@ -102,16 +90,5 @@ class user:
 		if validate:
 			salt = uuid.uuid4().hex 
 			encodedPass = hashlib.sha512(user_data.password + salt).hexdigest()
-			#TODO -  ORM (sqlalchemy?)
 			userID = insertUserInDatabase(user_data.email, salt, encodedPass) #SQL
-			return render.user(userID)
-
-class logout:
-	def GET(self):
-		render = web.template.render('templates/', base='layout')
-		session = web.config._session
-		session.kill()
-		return render.index2()
-
-	def POST(self):
-		print "POST"
+			return userID
