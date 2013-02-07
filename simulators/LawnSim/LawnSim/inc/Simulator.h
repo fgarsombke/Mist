@@ -14,15 +14,13 @@ private:
    ptime sim_end_time_;                // Simulated end time in POSIX time
 
    unsigned int real_start_time_;      // Real world (simulator) start time 
-   unsigned int next_tick_time_;
-
 
    unsigned int tick_period_ms_;       // Real tick period.  
    unsigned int sim_time_multiplier_;  // (simulated time)/(real time) 
 
 
-   inline void doTickWork(ptime tick_time, 
-                          time_duration tick_duration);
+   inline void doTickWork(ptime tickStartTime, 
+                          time_duration tickDuration);
 
 public:
    Simulator(const Yard &yard) {}

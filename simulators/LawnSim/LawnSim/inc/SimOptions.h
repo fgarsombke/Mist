@@ -17,7 +17,7 @@ private:
 
    GeoLocale geo_locale_;
 
-   unsigned int sim_tick_period_;           // Length of tick in simulated time in milliseconds
+   unsigned int sim_tick_period_;       // Length of tick in simulated time in milliseconds
    unsigned int sim_speed_ratio_;       // (simulator speed)/(real time)   
 
    bool generate_random_;
@@ -37,6 +37,7 @@ public:
    // Get functions
    unsigned int sim_tick_period() const { return sim_tick_period_; }
    unsigned int sim_speed_ratio() const { return sim_speed_ratio_; }
+   const GeoLocale geo_locale() const {  return geo_locale_; }
 
 };
 
