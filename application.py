@@ -1,14 +1,20 @@
 #!/usr/bin/env python
 import web
 import sys
-from api.user import user
-from api.user import list
-from api.user import logout
-from api.device import device
-from api.station import station
-from api.zone import zone
-from api.index import index
-from api.schedule import schedule
+from webm.user import user
+from webm.user import list
+from webm.user import logout
+from webm.device import device
+from webm.device import dlist
+from webm.station import station
+from webm.zone import zone
+from webm.index import index
+from webm.schedule import schedule
+from api.aUser import aUser
+from api.aStation import aStation
+from api.aDevice import aDevice
+from api.aSchedule import aSchedule
+
 sys.path.append('./db')
 from db import DBConfig
 
@@ -21,10 +27,15 @@ urls = (
 	'/user', 'user',
 	'/user/list', 'list',
 	'/user/logout', 'logout',
-	'/station', 'station',
+	'/station/list', 'station',
 	'/device', 'device',
+	'/device/list', 'dlist',
 	'/zone', 'zone',
-	'/schedule', 'schedule'
+	'/schedule', 'schedule',
+	'/api/user', 'aUser', 
+	'/api/station', 'aStation',
+	'/api/device', 'aDevice',
+	'/api/schedule', 'aSchedule'
 )
 
 app = web.application(urls, globals())
@@ -38,8 +49,9 @@ database = config.readline().rstrip()
 db = web.database(dbn='mysql', db=database, user=username, pw=password)
 store = web.session.DBStore(db, 'sessions')
 
+#IS THIS THE RIGHT PLACE TO CREATE THE SESSION? OR SHOULD IT BE IN USER?
 if web.config.get('_session') is None:
-	session = web.session.Session(app, store, initializer={'count': 3})
+	session = web.session.Session(app, store, initializer={'count': 0, 'userID':0, 'deviceID':0})
 	session.count = 4
 	web.config._session = session
 	print session
