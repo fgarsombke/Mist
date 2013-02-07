@@ -20,41 +20,36 @@ def queueIrrigation(productID, zoneNumber, startTime, duration, date):
 	db.commit()
 	return results
 
-def getScheduleForDeviceAndZone(productID, zoneNumber):
+def getScheduleForDevice(productID):
 	conf = DBConfig.DBConfig()
 	db = conf.connectToLocalConfigDatabase()	
 	cursor = db.cursor()
-	cursor.execute("SELECT * FROM queuedIrrigations WHERE (queuedIrrigations.productID = (%s) AND queuedIrrigations.zoneNumber = (%s))", (productID, zoneNumber))
+	cursor.execute("SELECT * FROM queuedIrrigations WHERE (queuedIrrigations.productID = (%s))", (productID))
 	results = cursor.fetchall()
 	return results	
 
-class schedule:
+class aSchedule:
 	#GET API FOR SCHEDULE
-	#Return all queued irrigations for given device: expected parameter: productID (integer), zoneNumber (integer)
+	#Return all queued irrigations for given device: expected parameter: productID (integer)
 	def GET(self):
 		schedule_data = web.input()
-		render = web.template.render('templates/', base='layout')
-
-		if schedule_data:	
-			productID = schedule_data.productID
-			zoneNumber = schedule_data.zoneNumber
-			schedule = getScheduleForDeviceAndZone(productID, zoneNumber) # SQL
-			return render.schedulelist(schedule)
+		
+		if schedule_data.deviceID:
+			schedule = getScheduleForDevice(schedule_data.deviceID) # SQL
+			return schedule
 		else:
-			return render.schedule()
+			return 0
 
 	#POST API - queue an irrigation event
 	#parameters productID, zoneNumber, startTime, duration
 	def POST(self):
 		schedule_data = web.input()	
-		render = web.template.render('templates/', base='layout')
 	
 		if schedule_data:	
-			#productID = schedule_data.productID
-			productID = 3460
+			productID = schedule_data.productID
 			zoneNumber = schedule_data.zoneNumber
 			startTime = schedule_data.startTime
 			date = schedule_data.date
 			duration = schedule_data.duration
-			queueIrrigation(productID, zoneNumber, startTime, duration, date) 
-			return render.schedule()
+			success = queueIrrigation(productID, zoneNumber, startTime, duration, date) 
+			return success

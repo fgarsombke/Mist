@@ -48,8 +48,6 @@ class station:
 			stations = getAllStations()
 			returnString = ""
 			#for station in stations:
-			#	returnString += ("STATION " + str(station[0]) + " " + str(station[1]) + " " + str(station[7]) + " " + str(station[8]) + "")	
-			#return render.station(returnString)
 			return render.station(stations)
 
 	#POST API FOR STATION CREATION
