@@ -21,15 +21,13 @@ public:
 
    }
 
+   double rel_height() const { return rel_height_; }
 
    
 // ------------------------------------------------------------------------------
 private:
    const double initial_health_;
    const double rel_height_;
-
-  YardCell & operator=(YardCell other);
-  YardCell(const YardCell &other);
 
 };
 
