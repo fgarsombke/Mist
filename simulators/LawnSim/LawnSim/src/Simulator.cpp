@@ -40,7 +40,7 @@ void Simulator::Initialize(ptime simStartTime,
                            unsigned int simSpeedMultiplier
 ) {
    // TODO: Reset the running simulation
-
+   
    sim_start_time_ = simStartTime;
    sim_end_time_ = simEndTime;
 
@@ -59,7 +59,7 @@ void Simulator::Run() {
    //    -Sleep until it's time to tick again
 
    real_start_time_ = GetSystemTimeMS();
-   next_tick_time_ = real_start_time_;       //Set so that computation below will work
+   unsigned int nextTickTime = real_start_time_;       //Set so that computation below will work
 
    pt::ptime this_tick_sim_time = sim_start_time_;
    
@@ -70,14 +70,13 @@ void Simulator::Run() {
       // Do the tick work
       doTickWork(this_tick_sim_time, tick_duration);
       
-
       // Compute next tick time
-      next_tick_time_ += tick_period_ms_;
+      nextTickTime += tick_period_ms_;
 
       // Compute the simulated time
       this_tick_sim_time += tick_duration;
 
-      long long sleepTime = next_tick_time_ - GetSystemTimeMS();
+      long long sleepTime = nextTickTime - GetSystemTimeMS();
 
       // Don't sleep if we're already behind
       // TODO: Figure out a better way to handle slowdown
@@ -92,8 +91,11 @@ void Simulator::Run() {
 }
 
 
-void Simulator::doTickWork(pt::ptime tick_sim_time,  pt::time_duration tick_duration) {
-   printf("Tick: %s\n\tSys: %d\n\n", pt::to_simple_string(tick_sim_time).c_str() , next_tick_time_);
+void Simulator::doTickWork(pt::ptime tickStartTime,  pt::time_duration tickDuration) {
+   pt::ptime tickEndTime = tickStartTime + tickDuration;
+
+
+   printf("Tick: %s\n", pt::to_simple_string(tickStartTime).c_str());
 }
 
 }

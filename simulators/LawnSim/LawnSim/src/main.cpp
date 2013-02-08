@@ -4,19 +4,38 @@
 
 #include "LawnSimStd.h"
 
+#include <fstream>
+
+#include <boost/program_options/errors.hpp>
+#include <boost/date_time.hpp>
+
 #include "GeoLocale.h"
 #include "Yard.h"
 #include "SimOptions.h"
 #include "Simulator.h"
-
-#include <boost/program_options/errors.hpp>
-#include <boost/date_time.hpp>
+#include "LawnGenerator.h"
 
 using namespace LawnSim;
 using namespace std;
 namespace dt = boost::date_time;
 namespace pt = boost::posix_time;
 namespace gt = boost::gregorian;
+
+
+void DebugPrintYard(const Yard& y) {
+   ofstream dbgFile;
+   dbgFile.open("yardEx.csv");
+
+   for(unsigned int i = 0; i < y.yard_length(); ++i) {
+      for(unsigned int j = 0; j < y.yard_width(); ++j) {
+         dbgFile << y.GetCellAt(i,j).rel_height() << ', ';
+      }
+      dbgFile << endl;
+   }
+
+   dbgFile.close();
+}
+
 
 int main(int argc, char * argv[]) {
    try {
@@ -28,10 +47,15 @@ int main(int argc, char * argv[]) {
          return 1;
       }
    
-      const GeoLocale g;
-      Yard y(g);
 
-      Simulator sim(y);
+      LawnGenerator generator;
+
+      unique_ptr<Yard> yard = generator.Generate(options->geo_locale(), 1024, 1024);
+
+
+
+
+      Simulator sim(*yard);
 
       pt::ptime start(gt::date(2013, gt::Jan, 1));
       pt::ptime end(gt::date(2013, gt::Jan, 2));
