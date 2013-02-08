@@ -57,8 +57,9 @@ class aDevice:
 		device_data = web.input()	
 		devices = 0		
 	
-		if device_data.deviceID:
-			devices = getDevice(device_data.deviceID)
+		if device_data:
+			if device_data.deviceID:
+				devices = getDevice(device_data.deviceID)
 		else:
 			devices = getAllDevices()
 	

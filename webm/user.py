@@ -6,6 +6,8 @@ import base64
 import MySQLdb
 sys.path.append('../db/')
 from db import DBConfig
+import urllib
+import urllib2
 
 def validateEmail(email):
 	return True
@@ -20,30 +22,6 @@ def insertUserInDatabase(username, salt, password):
 	cursor.execute("INSERT INTO users (email, password, salt) VALUES (%s, %s, %s)", (username, password, salt))
 	results = cursor.lastrowid
 	db.commit()
-	return results
-
-def getUserWithEmail(userEmail):
-	conf = DBConfig.DBConfig()
-	db = conf.connectToLocalConfigDatabase()
-	cursor = db.cursor()
-	cursor.execute("SELECT * FROM users WHERE users.email= (%s)", userEmail)
-	results = cursor.fetchone()
-	return results
-
-def getAllUsers():
-	conf = DBConfig.DBConfig()
-	db = conf.connectToLocalConfigDatabase()
-	cursor = db.cursor()
-	cursor.execute("SELECT * FROM users")
-	results = cursor.fetchall()
-	return results
-
-def getUser(userid):
-	conf = DBConfig.DBConfig()
-	db = conf.connectToLocalConfigDatabase()	
-	cursor = db.cursor()
-	cursor.execute("SELECT * FROM users WHERE users.userID = (%s)", userid)
-	results = cursor.fetchone()
 	return results
 	
 def getDeviceIDForUser(userid):
@@ -86,23 +64,23 @@ class user:
                         user = ""
                         try:
                         	user = urllib2.urlopen(url)
-                        except urllib2.URLError, e:
+		        	user = user.read() #JSONize/PARSE
+			except urllib2.URLError, e:
                         	print e
 
 			if user:
 				#API says it is valid, so set up session and show user page
 				session = web.config._session
 				session.count = session.count + 1 
-				session.userID = user[0]
+				session.userID = user[1] #SHIT HAVE TO PARSE!!!!!!
 				#TODO: switch this to an API request
-				session.deviceID = getDeviceIDForUser(user[0]) 
+				session.deviceID = getDeviceIDForUser(user[1]) 
 				return render.user("Verified", user[1])
 			else:
 				#back to home page.
 				return render.index2()
 		else:
 			return render.index2()
-
 
 	#POST API FOR USER CREATION
 	#expeceted parameters: email (string) and password (string)

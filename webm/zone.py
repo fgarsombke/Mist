@@ -32,7 +32,7 @@ def getAllZones(productId):
 
 class zone:
 	#GET API FOR ALL ZONES
-	#expected parameter: zoneid (long), zoneNumber (optional)
+	#expected parameter: productID (long), zoneNumber (optional)
 	#RETURN: one zone or all zones based on input
 	def GET(self):
 		zone_data = web.input()
