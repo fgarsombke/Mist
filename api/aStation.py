@@ -40,8 +40,8 @@ class aStation:
 		station_data = web.input()
 	
 		#parameters
-		if station_data.stationid:	
-			station = getStation(station_data.staionid) # SQL
+		if station_data.stationID:	
+			station = getStation(station_data.stationID) # SQL
 			return station 
 		else:
 			stations = getAllStations()
