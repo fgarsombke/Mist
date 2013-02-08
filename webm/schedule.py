@@ -8,6 +8,8 @@ from datetime import datetime
 import time
 sys.path.append('../db')
 from db import DBConfig
+import urllib2
+import urllib
 
 def queueIrrigation(productID, zoneNumber, startTime, duration, date):
 	conf = DBConfig.DBConfig()
@@ -29,23 +31,26 @@ def getScheduleForDevice(productID):
 	return results	
 
 class schedule:
-	#GET API FOR SCHEDULE
-	#Return all queued irrigations for given device: expected parameter: productID (integer), zoneNumber (integer)
 	def GET(self):
 		schedule_data = web.input()
 		render = web.template.render('templates/', base='layout')
 		#get user session
-		session = web.config._session
+		session = web.config._session	
 		#if we've got the deviceID for the user...
 		if session.deviceID:
-			#grab the session....
-			schedule = getScheduleForDevice(session.deviceID) # SQL
+			#use deviceID to get schedule from api/aSchedule.
+			query_args = {'deviceID':session.deviceID}
+			encoded_args = urllib.urlencode(query_args)
+			url = "http://0.0.0.0:8080/api/schedule?" + encoded_args
+			schedule = ""
+			try:
+			  	schedule = urllib2.urlopen(url)
+			except urllib2.URLError, e:
+				print e
 			return render.schedulelist(schedule)
 		else:
 			return render.schedule()
 
-	#POST API - queue an irrigation event
-	#parameters productID, zoneNumber, startTime, duration
 	def POST(self):
 		schedule_data = web.input()	
 		render = web.template.render('templates/', base='layout')

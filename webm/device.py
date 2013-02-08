@@ -16,30 +16,6 @@ def insertDeviceInDatabase(productId, userId, latitude, longitude, stationID):
 	db.commit()
 	return results
 
-def getAllDevices():
-	conf = DBConfig.DBConfig()
-	db = conf.connectToLocalConfigDatabase()	
-	cursor = db.cursor()
-	cursor.execute("SELECT * FROM devices")
-	results = cursor.fetchall()
-	return results	
-
-def getDevicesForUser(userid):
-	conf = DBConfig.DBConfig()
-	db = conf.connectToLocalConfigDatabase()	
-	cursor = db.cursor()
-	cursor.execute("SELECT * FROM devices WHERE devices.userID = (%s)", userid)
-	results = cursor.fetchall()
-	return results	
-
-def getDevice(deviceid):
-	conf = DBConfig.DBConfig()
-	db = conf.connectToLocalConfigDatabase()	
-	cursor = db.cursor()
-	cursor.execute("SELECT * FROM devices WHERE devices.productID = (%s)", deviceid)
-	results = cursor.fetchone()
-	return results	
-
 def findNearestClimateStation(latitude, longitude):
 	conf = DBConfig.DBConfig()
 	db = conf.connectToLocalConfigDatabase()
@@ -48,23 +24,31 @@ def findNearestClimateStation(latitude, longitude):
 	nearestStation = cursor.fetchone()
 	return nearestStation[0]
 
-class dlist:
-	def GET(self):
-		render = web.template.render('templates/', base='layout')
-		devices = getAllDevices()
-		return render.device(devices)
-
 class device:
-	#GET API FOR DEVICE
-	#Return one device: expected parameter: deviceid (long)
-	#RETURN: all devices: expetected parameter: null
+	#GET the device page.  
+	#check for sessionID (if logged in return users device, otherwise return all devices)
 	def GET(self):
 		device_data = web.input()
-		render = web.template.render('templates/', base='layout')
-		
+		render = web.template.render('templates/', base='layout')	
 		session = web.config._session
-		devices = getDevicesForUser(session.userID)
 
+		#Construct API request
+		if session.deviceID:
+                        query_args = {'deviceID':session.deviceID}
+                else:
+			query_args = {}
+
+		encoded_args = urllib.urlencode(query_args)
+                url = "http://0.0.0.0:8080/api/device?" + encoded_args
+                devices = ""
+
+                #Execute API request
+		try:
+                        devices = urllib2.urlopen(url)
+                except urllib2.URLError, e:
+                        print e
+
+		#Render results
 		return render.device(devices)
 
 	#POST API FOR DEVICE CREATION

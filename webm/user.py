@@ -58,39 +58,54 @@ class list:
 	def GET(self):
 		user_data = web.input()
 		render = web.template.render('templates/', base='layout')
-		users = getAllUsers()
+                url = "http://0.0.0.0:8080/api/user?" #+ encoded_args
+                users = ""
+                try:
+                	users = urllib2.urlopen(url)
+                except urllib2.URLError, e:
+                	print e	
 		return render.userlist(users)
+	
 	def POST(self):
 		print "hi"
 
 class user:
-	#GET API FOR USER
-	#return one user: expected parameter: useremail, password
+	#USER login, expecting email & password.
 	def GET(self):
 		user_data = web.input()
 		render = web.template.render('templates/', base='layout')
 
+		#user clicked login form... check for data
 		if user_data:
-			userid = user_data.userid
+			userID = user_data.userID
 			suppliedPass = user_data.password
-			user = getUserWithEmail(userid) # SQL
-			salt = user[3] #salt is the 4th column of users table
-			encodedPass = hashlib.sha512(suppliedPass + salt).hexdigest()
-			
-			if encodedPass == user[2]: #password is the 2nd column of users table
+			#TODO: switch to POST	
+                        query_args = {'userID':userID, 'password':suppliedPass}
+                        encoded_args = urllib.urlencode(query_args)
+                        url = "http://0.0.0.0:8080/api/user?" + encoded_args
+                        user = ""
+                        try:
+                        	user = urllib2.urlopen(url)
+                        except urllib2.URLError, e:
+                        	print e
+
+			if user:
+				#API says it is valid, so set up session and show user page
 				session = web.config._session
 				session.count = session.count + 1 
 				session.userID = user[0]
-				session.deviceID = getDeviceIDForUser(user[0])
+				#TODO: switch this to an API request
+				session.deviceID = getDeviceIDForUser(user[0]) 
 				return render.user("Verified", user[1])
 			else:
-				#back to home page
+				#back to home page.
 				return render.index2()
+		else:
+			return render.index2()
 
 
 	#POST API FOR USER CREATION
 	#expeceted parameters: email (string) and password (string)
-	#TODO:add e-mail confirmation and token generation.
 	#return USER ID
 	def POST(self):
 		user_data = web.input()	

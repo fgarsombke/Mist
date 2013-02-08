@@ -51,14 +51,14 @@ def findNearestClimateStation(latitude, longitude):
 
 class aDevice:
 	#GET API FOR DEVICE
-	#RRETURN one device: expected parameter: deviceid (long)
+	#RRETURN one device: expected parameter: deviceID (long)
 	#RETURN all devices: expetected parameter: none?
 	def GET(self):
 		device_data = web.input()	
 		devices = 0		
 	
-		if device_data.deviceid:
-			devices = getDevice(device_data.deviceid)
+		if device_data.deviceID:
+			devices = getDevice(device_data.deviceID)
 		else:
 			devices = getAllDevices()
 	

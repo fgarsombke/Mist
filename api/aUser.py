@@ -57,15 +57,24 @@ def getDeviceIDForUser(userid):
 
 class aUser:
 	#GET API FOR USER
-	#return one user: expected parameter: userId
-	#return all users: expected parameter: null
+	#return one user: expected parameter: userID
+	#return all users: expected parameter: password
 	def GET(self):
 		user_data = web.input()
-
+		#check for parameters
 		if user_data:
-			userid = user_data.userid
-			user = getUser(userid)	
-			return user
+                	userid = user_data.userID
+                        suppliedPass = user_data.password
+                        user = getUserWithEmail(userid) # SQL
+                        #check password
+			salt = user[3] 
+                        encodedPass = hashlib.sha512(suppliedPass + salt).hexdigest()
+                         
+                        if encodedPass == user[2]: #password is the 2nd column of users table
+                                #valid, so return user object
+				return user
+			else:
+				return 0
 		else:
 			users = getAllUsers()
 			return users

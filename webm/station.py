@@ -16,39 +16,33 @@ def insertStationInDatabase(stationID, desc, latitude, longitude):
 	db.commit()
 	return results
 
-def getAllStations():
-	conf = DBConfig.DBConfig()
-	db = conf.connectToLocalConfigDatabase()
-	cursor = db.cursor()
-	cursor.execute("SELECT * FROM climateStations")
-	results = cursor.fetchall()
-	return results
-
-def getStation(stationID):
-	conf = DBConfig.DBConfig()
-	db = conf.connectToLocalConfigDatabase()
-	cursor = db.cursor()
-	cursor.execute("SELECT * FROM climateStations WHERE climateStations.climateStationID = (%s)", stationID)
-	results = cursor.fetchone()
-	return results	
-
 class station:
-	#GET API FOR STATION
-	#reutrn one station: expected parameter: stationid (long)
-	#return all stations: expected parameter: null
+	#GET the station page.
+	#check for stationID parameter.  if exists, get specific station, otherwise get all.
 	def GET(self):
 		station_data = web.input()
 		render = web.template.render('templates/', base = 'layout')
-	
-		#parameters
-		if station_data:	
-			station = getStation(station_data.staionid) # SQL
-			return render.station("STATION " + str(station[0]) + " " + str(station[1]) + " " + str(station[7]) + " " + str(station[8]))
-		else:
-			stations = getAllStations()
-			returnString = ""
-			#for station in stations:
-			return render.station(stations)
+
+		#Construct API request	
+		if station_data.stationID:	
+                	#stationID query, get one station
+                	 query_args = {'stationID':session.stationID} 
+                else:
+			#empty query, get all stations
+			query_args = {}        
+ 
+		encoded_args = urllib.urlencode(query_args)
+                url = "http://0.0.0.0:8080/api/station?" + encoded_args
+                stations = ""
+
+		#Execute API request
+                try:
+                        stations = urllib2.urlopen(url)
+                except urllib2.URLError, e:
+                        print e
+
+		#Render results
+		return render.station(str(stations))
 
 	#POST API FOR STATION CREATION
 	#expeceted parameters: stationid, description, latitude, longitude
