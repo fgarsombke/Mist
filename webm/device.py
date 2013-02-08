@@ -6,6 +6,8 @@ import base64
 import MySQLdb
 sys.path.append('../db/')
 from db import DBConfig
+import urllib2
+import urllib
 
 def insertDeviceInDatabase(productId, userId, latitude, longitude, stationID):
 	conf = DBConfig.DBConfig()
@@ -49,7 +51,7 @@ class device:
                         print e
 
 		#Render results
-		return render.device(devices)
+		return render.device(str(devices.read()))
 
 	#POST API FOR DEVICE CREATION
 	#expeceted parameters: userid, latitude, longitude, wifi network, wifi password, stationID 

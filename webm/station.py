@@ -6,6 +6,9 @@ import base64
 import MySQLdb
 sys.path.append('../db')
 from db import DBConfig
+import urllib2
+import urllib
+
 
 def insertStationInDatabase(stationID, desc, latitude, longitude):
 	conf = DBConfig.DBConfig()
@@ -24,9 +27,10 @@ class station:
 		render = web.template.render('templates/', base = 'layout')
 
 		#Construct API request	
-		if station_data.stationID:	
-                	#stationID query, get one station
-                	 query_args = {'stationID':session.stationID} 
+		if station_data:
+			if station_data.stationID:	
+                		#stationID query, get one station
+                		 query_args = {'stationID':session.stationID} 
                 else:
 			#empty query, get all stations
 			query_args = {}        
@@ -37,12 +41,12 @@ class station:
 
 		#Execute API request
                 try:
-                        stations = urllib2.urlopen(url)
+                        stations = urllib2.urlopen(url) #NEED TO JSONIZE!!!!
                 except urllib2.URLError, e:
                         print e
 
 		#Render results
-		return render.station(str(stations))
+		return render.station(str(stations.read()))  #JSONIZE!!!!
 
 	#POST API FOR STATION CREATION
 	#expeceted parameters: stationid, description, latitude, longitude
