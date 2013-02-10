@@ -54,10 +54,8 @@ if __name__ == '__main__':
 		session = web.session.Session(app, store, initializer={'count': 0, 'userID':0, 'deviceID':0})
 		session.count = 4
 		web.config._session = session
-		print session
 	else:
 		session = web.config._session
-		print session
 		
 	app.run()  
 
