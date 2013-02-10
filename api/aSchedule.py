@@ -10,6 +10,7 @@ sys.path.append('../db')
 from db import DBConfig
 import collections
 import json
+from jsonencode import MyEncoder
 
 def queueIrrigation(productID, zoneNumber, startTime, duration, date):
     conf = DBConfig.DBConfig()
@@ -45,11 +46,13 @@ class aSchedule:
                 d = collections.OrderedDict()
                 d['productID'] = row[0]
                 d['zoneNumber'] = row[1]
-                d['startTime'] = row[2] #json enconding issues...
+                if row[2]:
+                    d['startTime'] = row[2] #json enconding issues...
                 d['duration'] = row[3]
-                d['created'] = row[4] #json encoding issues...
+                if row[4]:
+                    d['created'] = row[4] #json enconding issues...
                 objects_list.append(d)
-            j = json.dumps(objects_list)
+            j = json.dumps(objects_list, cls=MyEncoder)
             return j
         else:
             return 0
