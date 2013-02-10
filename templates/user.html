@@ -1,13 +1,16 @@
-$def with (message, user)
+$def with (user)
 
         <div class="span9">
           <div class="hero-unit">
             <div>
-              <h1>
-              	$message $user
-              </h1>
-              
+              <h3>
+                    UserID: $user['userID'] <br>
+                    Email: $user['email'] <br>
+                    Password: $user['password'] <br>
+                    Salt: $user['salt'] <br>
+                    Created: $user['created'] <br>
+                    Updated: $user['updated'] <br>
+              </h3>
         </div>
       </div>
     </div>
-   

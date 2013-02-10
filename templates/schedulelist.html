@@ -5,10 +5,13 @@ $def with (list)
     <div>
         <h3>
             $for i in list
-				$i <br> <br>
+                ProductID: $i['productID'] <br> 
+                Zone Number: $i['zoneNumber'] <br>
+                Start Time: $i['startTime'] <br>
+                Duration: $i['duration'] <br>
+                Created: $i['created'] <br>
+                <br> <br>
         </h3>
-              
     </div>
 	</div>
 </div>
-   

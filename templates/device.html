@@ -4,7 +4,15 @@ $def with (devices)
             <div>
               <h3>
               	$for i in devices:
-					$i <br> <br>
+                ProductID: $i['productID'] <br>
+                UserID: $i['userID'] <br>
+                Latitude: $i['latitude'] <br>
+                Longitude: $i['longitude'] <br>
+                Wifi Network: $i['wifiNetwork'] <br>
+                Wifi Password: $i['wifiPassword'] <br>
+                Number of Zones: $i['numZones'] <br>
+                Climate Station: $i['climateStationID']
+                <br> <br>
               </h3>
               
           </div>

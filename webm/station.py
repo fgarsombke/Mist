@@ -44,7 +44,6 @@ class station:
             stations = json.loads(urllib2.urlopen(url).read()) 
         except urllib2.URLError, e:
             print e
-
         #Render results
         return render.station(stations)
 

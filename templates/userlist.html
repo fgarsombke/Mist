@@ -1,14 +1,17 @@
 $def with (userlist)
 
-<div class="span9">
-    <div class="hero-unit">
-    <div>
-        <h3>
-            $for i in userlist
-				$i <br> <br>
-        </h3>
-              
+        <div class="span9">
+          <div class="hero-unit">
+            <div>
+              <h3>
+                  $for user in userlist
+                    UserID: $user['userID'] <br>
+                    Email: $user['email'] <br>
+                    Password: $user['password'] <br>
+                    Salt: $user['salt'] <br>
+                    Created: $user['created'] <br>
+                    Updated: $user['updated'] <br>
+              </h3>
+        </div>
+      </div>
     </div>
-	</div>
-</div>
-   

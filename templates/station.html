@@ -2,14 +2,21 @@ $def with (stations)
 
  <div class="span9">
           <div class="hero-unit">
-            <div>   
+            <div>
 			<h3>
-     			  $for i in stations:
-						$i <br> <br>
-			</h3>     
-        </div>
-      </div>
-    </div>
-   
-              
-   
+                $for i in stations
+                    Climate Station: $i['climateStationID'] <br>
+                    Description: $i['description'] <br>
+                    County: $i['county'] <br>
+                    City: $i['city'] <br>
+                    Zip Code: $i['zipCode'] <br>
+                    State: $i['state'] <br>
+                    Country: $i['country'] <br>
+                    Latitude: $i['latitude'] <br>
+                    Longitude: $i['longitude'] <br>
+                    Altitude: $i['altitude'] <br>
+                    <br>
+			</h3>
+            </div>
+         </div>
+ </div>

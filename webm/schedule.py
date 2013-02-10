@@ -48,7 +48,6 @@ class schedule:
         session = web.config._session
         if session.deviceID:
             deviceID = session.deviceID
-        print deviceID
         #use deviceID to get schedule from api/aSchedule.
         if deviceID != 0:
             query_args = {'deviceID':deviceID}
@@ -70,8 +69,7 @@ class schedule:
         #check if user logged in
         #if so use his deviceID to post another schedule...
         if schedule_data:   
-            #productID = schedule_data.productID
-            productID = 3460
+            productID = schedule_data.deviceID
             zoneNumber = schedule_data.zoneNumber
             startTime = schedule_data.startTime
             date = schedule_data.date
