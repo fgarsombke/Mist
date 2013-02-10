@@ -40,9 +40,9 @@ class list:
         url = "http://0.0.0.0:8080/api/user?" #+ encoded_args
         users = ""
         try:
-            users = urllib2.urlopen(url)
+            users = json.loads(urllib2.urlopen(url).read())
         except urllib2.URLError, e:
-            print e 
+            print e
         return render.userlist(users)
     
     def POST(self):
@@ -76,7 +76,7 @@ class user:
                 session.userID = user['userID']
                 #TODO: switch this to an API request
                 session.deviceID = getDeviceIDForUser(user['userID']) 
-                return render.user("Verified", user)
+                return render.user(user)
             else:
                 #back to home page.
                 return render.index2()

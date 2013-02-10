@@ -83,9 +83,20 @@ class aUser:
                 return j
             else: #password incorrect
                 return 0
-        else: #no parameters supplied, return all users. #JSON?
+        else: #no parameters supplied, return all users.
             users = getAllUsers()
-            return users
+            objects_list = []
+            for row in users:
+                d = collections.OrderedDict()
+                d['userID'] = row[0]
+                d['email'] = row[1]
+                d['password'] = row[2]
+                d['salt'] = row[3]
+                d['created'] = row[4]
+                d['updated'] = row[5]
+                objects_list.append(d)
+            j = json.dumps(objects_list)
+            return j
 
     #POST API FOR USER CREATION
     #expeceted parameters: email (string) and password (string)
