@@ -52,7 +52,8 @@ void Simulator::Initialize(ptime simStartTime,
    sim_time_multiplier_ = simSpeedMultiplier;
 }
 
-void Simulator::Run() {
+void Simulator::Run() 
+{
    // Basic logic: 
    //    -Do one tick
    //    -Set time for next tick
@@ -91,7 +92,8 @@ void Simulator::Run() {
 }
 
 
-void Simulator::doTickWork(pt::ptime tickStartTime,  pt::time_duration tickDuration) {
+void Simulator::doTickWork(pt::ptime tickStartTime,  pt::time_duration tickDuration) 
+{
    pt::ptime tickEndTime = tickStartTime + tickDuration;
 
 
