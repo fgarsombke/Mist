@@ -22,13 +22,14 @@ namespace pt = boost::posix_time;
 namespace gt = boost::gregorian;
 
 
-void DebugPrintYard(const Yard& y) {
+void DebugPrintYard(const Yard& y) 
+{
    ofstream dbgFile;
-   dbgFile.open("yardEx.csv");
+   dbgFile.open("yardExPerlin.csv");
 
    for(unsigned int i = 0; i < y.yard_length(); ++i) {
       for(unsigned int j = 0; j < y.yard_width(); ++j) {
-         dbgFile << y.GetCellAt(i,j).rel_height() << ', ';
+         dbgFile << y.GetCellAt(i,j).rel_height() << ", ";
       }
       dbgFile << endl;
    }
@@ -37,8 +38,12 @@ void DebugPrintYard(const Yard& y) {
 }
 
 
-int main(int argc, char * argv[]) {
+int main(int argc, char * argv[]) 
+{
    try {
+      ios_base::sync_with_stdio(false);
+
+
       SimOptions * options = nullptr;
       try {
          options = new SimOptions(argc, argv);
@@ -50,10 +55,10 @@ int main(int argc, char * argv[]) {
 
       LawnGenerator generator;
 
-      unique_ptr<Yard> yard = generator.Generate(options->geo_locale(), 1024, 1024);
+      unique_ptr<Yard> yard = generator.Generate(options->geo_locale(), 512, 512);
 
 
-
+      DebugPrintYard(*yard);
 
       Simulator sim(*yard);
 

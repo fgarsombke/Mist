@@ -6,6 +6,8 @@
 
 namespace LawnSim {
 
+typedef void (*FillHeightFunc_t)(bm::matrix<double> &heights);
+
 class LawnGenerator {
 public:
    LawnGenerator() {
@@ -13,9 +15,15 @@ public:
    }
 
    // Generates a square yard
-   std::unique_ptr<Yard> Generate(GeoLocale locale, unsigned int rows, unsigned int cols) const;
+   std::unique_ptr<Yard> Generate(GeoLocale locale, size_t rows, size_t cols) const;
 
 private:
+   bm::matrix<YardCell> GenerateCells(size_t rows, 
+                                      size_t cols,
+                                      FillHeightFunc_t hFunc = FillHeightsDiagonally) const;
+
+   inline static void FillHeightsDiagonally(bm::matrix<double> &heights);
+   inline static void FillHeightsPerlin(bm::matrix<double> &heights);
 
 };
 

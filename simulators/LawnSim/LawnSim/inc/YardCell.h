@@ -18,17 +18,14 @@ public:
       : initial_health_(0),
         rel_height_(0)
    {
-
    }
 
-   double rel_height() const { return rel_height_; }
 
-   
+   double rel_height() const { return rel_height_; }
 // ------------------------------------------------------------------------------
 private:
-   const double initial_health_;
-   const double rel_height_;
-
+   double initial_health_;
+   double rel_height_;
 };
 
 }
