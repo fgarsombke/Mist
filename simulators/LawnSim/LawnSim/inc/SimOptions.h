@@ -6,6 +6,7 @@
 using namespace std;
 using namespace boost::posix_time;
 
+namespace Mist {
 namespace LawnSim {
 
 struct SimOptions {
@@ -39,6 +40,9 @@ public:
    unsigned int sim_speed_ratio() const { return sim_speed_ratio_; }
    const GeoLocale geo_locale() const {  return geo_locale_; }
 
+   ptime start_time() const { return start_time_; }
+   ptime end_time() const { return end_time_; }
 };
 
+}
 }

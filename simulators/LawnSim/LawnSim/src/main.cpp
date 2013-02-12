@@ -1,10 +1,8 @@
-#include <fstream>
-#include <ostream>
-#include <iostream>
-
 #include "LawnSimStd.h"
 
 #include <fstream>
+#include <ostream>
+#include <iostream>
 
 #include <boost/program_options/errors.hpp>
 #include <boost/date_time.hpp>
@@ -15,7 +13,8 @@
 #include "Simulator.h"
 #include "LawnGenerator.h"
 
-using namespace LawnSim;
+
+using namespace Mist::LawnSim;
 using namespace std;
 namespace dt = boost::date_time;
 namespace pt = boost::posix_time;
@@ -62,14 +61,14 @@ int main(int argc, char * argv[])
 
       Simulator sim(*yard);
 
-      pt::ptime start(gt::date(2013, gt::Jan, 1));
-      pt::ptime end(gt::date(2013, gt::Jan, 2));
+      pt::ptime start(options->start_time());
+      pt::ptime end(options->end_time());
 
-      sim.Initialize(start, end, options->sim_tick_period(), options->sim_speed_ratio());
+      sim.Reset(start, end, options->sim_tick_period(), options->sim_speed_ratio());
 
       sim.Run();
    } catch (std::exception& e) {
-      cout << e.what() << endl;
+      cout << "Fatal Exception: " << e.what() << endl;
       return 1;
    }
 

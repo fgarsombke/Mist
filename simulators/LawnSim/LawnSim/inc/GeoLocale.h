@@ -1,6 +1,6 @@
 #pragma once
 
-namespace LawnSim {
+namespace Mist {
 
 class GeoLocale{
 public:

@@ -2,6 +2,7 @@
 
 #include "Constants.h"
 
+namespace Mist {
 namespace LawnSim {
 
 namespace Constants{
@@ -16,4 +17,5 @@ namespace Constants{
 
 }
 
+}
 }

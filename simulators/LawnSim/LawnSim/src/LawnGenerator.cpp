@@ -9,6 +9,9 @@
 
 using std::unique_ptr;
 
+// TODO: We should probably use something from here:
+//    http://lodev.org/cgtutor/randomnoise.html
+namespace Mist {
 namespace LawnSim {
 
 unique_ptr<Yard> LawnGenerator::Generate(GeoLocale locale, size_t rows, size_t cols) const 
@@ -100,4 +103,6 @@ void LawnGenerator::FillHeightsDiagonally(bm::matrix<double> &heights) {
    }
 }
 
+
+}
 }

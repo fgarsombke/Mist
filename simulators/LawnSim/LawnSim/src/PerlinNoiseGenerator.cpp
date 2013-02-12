@@ -5,7 +5,6 @@
 
 namespace Perlin {
 
-
 PerlinModified::PerlinModified()
    : persistence_(0), frequency_(0), amplitude_(0),
      octaves_(0), random_seed_(0)

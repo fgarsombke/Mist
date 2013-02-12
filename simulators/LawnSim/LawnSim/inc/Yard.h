@@ -7,7 +7,7 @@
 
 namespace bm = boost::numeric::ublas;
 
-
+namespace Mist {
 namespace LawnSim {
 
 class Yard 
@@ -16,7 +16,6 @@ private:
    friend class LawnGenerator;
 
    const bm::matrix<YardCell> yard_cells_;
-
 
    const GeoLocale locale_;
 
@@ -28,4 +27,5 @@ public:
    size_t yard_width() const { return yard_cells_.size2(); }
 };
 
+}
 }

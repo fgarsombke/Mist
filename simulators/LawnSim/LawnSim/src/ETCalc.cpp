@@ -7,6 +7,7 @@
 #include <cmath>
 
 // Separate namespace for calculations
+namespace Mist {
 namespace FAO_ET {
 // TODO: Modify based on current grass health
 
@@ -97,7 +98,7 @@ inline bool IsLeapYear(unsigned int year) {
 }
 
 
-ETCalc::ETCalc(LawnSim::GeoLocale locale) {
+ETCalc::ETCalc(GeoLocale locale) {
    // Precompute solar parameters
 }
 
@@ -117,4 +118,5 @@ double ETCalc::CalculateET_o(const ETCalcParameters &ETParams) const {
 
 
 
+}
 }
