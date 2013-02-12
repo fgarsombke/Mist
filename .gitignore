@@ -39,3 +39,4 @@ Thumbs.db
 *.pyc
 local.config
 *.sdf
+*.idb
