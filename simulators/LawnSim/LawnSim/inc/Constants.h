@@ -1,6 +1,6 @@
 #pragma once
 
-
+namespace Mist {
 namespace LawnSim {
 
 namespace Constants{
@@ -17,4 +17,5 @@ namespace Constants{
 
 }
 
+}
 }

@@ -31,10 +31,20 @@ inline int SleepForMS(int x) {
 
 #endif
 
+namespace Mist {
 namespace LawnSim {
-   
 
-void Simulator::Initialize(ptime simStartTime, 
+   
+Simulator::Simulator(const Yard &yard)
+   : yard_(yard)
+{
+   // Set start time ahead of end time so the sim won't run
+   sim_start_time_ = ptime(boost::gregorian::date(1970,1,2));
+   sim_end_time_ = ptime(boost::gregorian::date(1970,1,1));
+}
+
+
+void Simulator::Reset(ptime simStartTime, 
                            ptime simEndTime,
                            unsigned int simTickPeriod,
                            unsigned int simSpeedMultiplier
@@ -43,13 +53,13 @@ void Simulator::Initialize(ptime simStartTime,
    
    sim_start_time_ = simStartTime;
    sim_end_time_ = simEndTime;
+   sim_tick_duration_ = time_duration(pt::milliseconds(simTickPeriod));
 
    if (simTickPeriod%simSpeedMultiplier != 0) {
       throw std::invalid_argument(Constants::SimMultDoesNotDivide);
    }
 
    tick_period_ms_ = simTickPeriod/simSpeedMultiplier;
-   sim_time_multiplier_ = simSpeedMultiplier;
 }
 
 void Simulator::Run() 
@@ -60,12 +70,12 @@ void Simulator::Run()
    //    -Sleep until it's time to tick again
 
    real_start_time_ = GetSystemTimeMS();
-   unsigned int nextTickTime = real_start_time_;       //Set so that computation below will work
+   int nextTickTime = real_start_time_;       //Set so that computation below will work
 
    pt::ptime this_tick_sim_time = sim_start_time_;
    
    while(this_tick_sim_time <= sim_end_time_) {
-      time_duration tick_duration = pt::milliseconds(sim_time_multiplier_ * tick_period_ms_);
+      time_duration tick_duration = sim_tick_duration_;
 
       // TODO: Add boost Logging
       // Do the tick work
@@ -77,15 +87,17 @@ void Simulator::Run()
       // Compute the simulated time
       this_tick_sim_time += tick_duration;
 
-      long long sleepTime = nextTickTime - GetSystemTimeMS();
+      decltype(GetSystemTimeMS()) sysTime = GetSystemTimeMS();
+      int sleepTime = nextTickTime - sysTime;
 
       // Don't sleep if we're already behind
       // TODO: Figure out a better way to handle slowdown
       if (sleepTime > 0) {
-         SleepForMS((int)sleepTime);
+         SleepForMS(sleepTime);
       } else {
+         std::cout << "Tick Period: " << tick_period_ms_ << std::endl;
          // Slow down a little
-         tick_period_ms_ = (unsigned int)(tick_period_ms_ * 1.1f);
+         tick_period_ms_ = (unsigned int)(ceil(tick_period_ms_ * 1.01f));
       }
    }
   
@@ -96,8 +108,13 @@ void Simulator::doTickWork(pt::ptime tickStartTime,  pt::time_duration tickDurat
 {
    pt::ptime tickEndTime = tickStartTime + tickDuration;
 
+   // On every Tick, we need to deliver the right amount of water to the 
+
+
 
    printf("Tick: %s\n", pt::to_simple_string(tickStartTime).c_str());
 }
 
+
+}
 }

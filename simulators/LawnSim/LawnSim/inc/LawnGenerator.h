@@ -4,6 +4,7 @@
 
 #include "Yard.h"
 
+namespace Mist {
 namespace LawnSim {
 
 typedef void (*FillHeightFunc_t)(bm::matrix<double> &heights);
@@ -27,4 +28,5 @@ private:
 
 };
 
+}
 }

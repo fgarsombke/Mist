@@ -2,6 +2,7 @@
 
 #include "LawnSimStd.h"
 
+namespace Mist {
 namespace LawnSim {
 
 class YardCell
@@ -28,4 +29,5 @@ private:
    double rel_height_;
 };
 
+}
 }

@@ -2,7 +2,7 @@
 
 #include "LawnSimStd.h"
 
-
+namespace Mist {
 namespace LawnSim {
 
 // Represents a single sprinkler head.
@@ -18,4 +18,5 @@ private:
 
 };
 
+}
 }

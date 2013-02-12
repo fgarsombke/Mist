@@ -6,7 +6,9 @@
 
 #include "Yard.h"
 
+namespace Mist {
 namespace LawnSim {
+
 
 // Generates a new, random yard
 Yard::Yard(GeoLocale locale, bm::matrix<YardCell> yardCells) 
@@ -20,4 +22,5 @@ const YardCell& Yard::GetCellAt(size_t row, size_t col) const {
 }
 
 
+}
 }

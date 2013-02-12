@@ -3,6 +3,7 @@
 #include "LawnSimStd.h"
 #include "GeoLocale.h"
 
+namespace Mist {
 namespace FAO_ET {
 
 struct ETCalcParameters {
@@ -20,11 +21,12 @@ struct ETCalcParameters {
 
 class ETCalc {
 public:
-   ETCalc(LawnSim::GeoLocale locale);
+   ETCalc(GeoLocale locale);
 
 
    double CalculateET_o(const ETCalcParameters &ETParams) const;
 
 };
 
+}
 }
