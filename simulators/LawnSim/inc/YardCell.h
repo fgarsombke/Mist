@@ -21,6 +21,8 @@ public:
    }
 
 
+   const YardCellInfo cell_info() const { return cell_info_; }
+
 private:
    YardCellInfo cell_info_;
 

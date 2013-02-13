@@ -28,10 +28,6 @@ private:
 
 
    Yard yard_;
-
-   inline void doTickWork(const ptime tickStartTime, 
-                          const time_duration tickDuration);
-
 public:
    Simulator(const YardInfo &yard);
 
