@@ -4,6 +4,8 @@
 
 #include "YardInfo.h"
 #include "Yard.h"
+#include "WeatherDataSource.h"
+
 
 using namespace boost::posix_time;
 
@@ -43,7 +45,7 @@ private:
 
    unsigned int real_start_time_;      // Last Real world (simulator) start time 
 
-
+   WeatherDataSource weather_source_;
    Yard yard_;
 };
 
