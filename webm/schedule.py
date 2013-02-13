@@ -32,6 +32,24 @@ def getScheduleForDevice(productID):
     results = cursor.fetchall()
     return results  
 
+class addSchedule:
+    def GET(self):
+        render = web.template.render('templates/', base='layout')
+        return render.addSchedule()
+    def POST(self):
+        schedule_data = web.input() 
+        render = web.template.render('templates/', base='layout')
+        #check if user logged in
+        #if so use his deviceID to post another schedule...
+        if schedule_data:   
+            productID = schedule_data.deviceID
+            zoneNumber = schedule_data.zoneNumber
+            startTime = schedule_data.startTime
+            date = schedule_data.date
+            duration = schedule_data.duration
+            queueIrrigation(productID, zoneNumber, startTime, duration, date) 
+        return render.addSchedule()
+
 class schedule:
     def GET(self):
         schedule_data = web.input()

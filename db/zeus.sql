@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS users (
 					);
 					
 CREATE TABLE IF NOT EXISTS devices (
-					productID INTEGER NOT NULL PRIMARY KEY,
+					productID INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY,
 					userID INTEGER NOT NULL,
 					latitude FLOAT,
 					longitude FLOAT,

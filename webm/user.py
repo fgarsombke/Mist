@@ -33,6 +33,16 @@ def getDeviceIDForUser(userid):
     results = cursor.fetchone()
     return results[0]   
 
+
+class addUser:
+    def GET(self):
+        render = web.template.render('templates/', base='layout')
+        return render.addUser()
+
+    def POST(self):
+        render = web.template.render('templates/', base='layout')
+        return render.addUser()
+
 class list:
     def GET(self):
         user_data = web.input()
