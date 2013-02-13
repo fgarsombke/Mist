@@ -39,8 +39,7 @@ if __name__ == '__main__':
 		'/device', 'device',
         '/device/add', 'addDevice',
 		'/schedule', 'schedule',
-        '/schedule/add', 'addSchedule',
-		
+        '/schedule/add', 'addSchedule',	
         '/zone', 'zone',
 
         #API URLs
