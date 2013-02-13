@@ -1,27 +1,37 @@
 $def with ()
 <link href="static/css/datepicker.css" rel="stylesheet">
    <div class="span12">
-      <form method="get" action="/schedule">
+      <form method="post" action="/device/add">
         <fieldset>
-          <legend>Enter deviceID to get schedule for</legend>
+          <legend>Enter the irrigation event to queue:</legend>
+        
+
 	  <div class="clearfix">
-            <label>DeviceID</label>
+            <label>UserID</label>
             <div class="input">
-                <input class="mini" type="text" value="3460" name = "deviceID"/>
+                <input class="mini" type="text" value="3460" name = "userID"/>
             </div>
           </div><!-- /clearfix -->
-	
+          
+     <div class="clearfix">
+	  <label> other stuff</label>
+	    <div class="input">
+                <input class="mini" type="text" value="12" name = "duration"/>
+            </div>
+	</div>
+
 	  <div class="actions">
-            <input type="submit" class="btn primary" value="Get List">&nbsp;</button>
+            <input type="submit" class="btn primary" value="Enqueue">&nbsp;</button>
           </div>
+        
 	</fieldset>
       </form>
     </div>
 
-
 <script src="http://code.jquery.com/jquery-1.7.min.js"></script>
     <script src="static/js/bootstrap-datepicker.js"></script>
     <script>
+      
 	/* Update datepicker plugin so that MM/DD/YYYY format is used. */
       $$.extend($$.fn.datepicker.defaults, {
         parse: function (string) {

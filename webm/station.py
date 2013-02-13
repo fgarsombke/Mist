@@ -19,6 +19,15 @@ def insertStationInDatabase(stationID, desc, latitude, longitude):
     db.commit()
     return results
 
+class addStation:
+    def GET(self):
+        render = web.template.render('templates/', base = 'layout')
+        return render.addStation()
+
+    def POST(self):
+        render = web.template.render('templates/', base = 'layout')
+        return render.addStation()
+
 class station:
     #GET the station page.
     #check for stationID parameter.  if exists, get specific station, otherwise get all.

@@ -1,0 +1,87 @@
+$def with ()
+<link href="static/css/datepicker.css" rel="stylesheet">
+   <div class="span12">
+      <form method="post" action="/device/add">
+        <fieldset>
+          <legend>Enter information about new Mist device:</legend>
+        
+
+	  <div class="clearfix">
+            <label>UserID</label>
+            <div class="input">
+                <input class="mini" type="text" value="" name = "userID"/>
+            </div>
+          </div><!-- /clearfix -->
+          
+	  <div class="clearfix">
+            <label>Latitude</label>
+            <div class="input">
+                <input class="mini" type="text" value="" name = "latitude"/>
+            </div>
+        </div><!-- /clearfix -->
+
+	  <div class="clearfix">
+            <label>Longitude</label>
+            <div class="input">
+                <input class="mini" type="text" value="" name = "longitude"/>
+            </div>
+        </div><!-- /clearfix -->
+
+	  <div class="clearfix">
+            <label>Wifi Network</label>
+            <div class="input">
+                <input class="mini" type="text" value="" name = "wifiNetwork"/>
+            </div>
+        </div><!-- /clearfix -->
+
+     <div class="clearfix">
+	  <label>Wifi Password</label>
+	      <div class="input">
+                <input class="mini" type="text" value="" name = "wifiPassword"/>
+          </div>
+	</div>
+
+	  <div class="clearfix">
+            <label>Number of Zones</label>
+            <div class="input">
+                <input class="mini" type="text" value="" name = "numZones"/>
+            </div>
+          </div><!-- /clearfix -->
+
+
+	  <div class="actions">
+            <input type="submit" class="btn primary" value="Enqueue">&nbsp;</button>
+          </div>
+        
+	</fieldset>
+      </form>
+    </div>
+
+<script src="http://code.jquery.com/jquery-1.7.min.js"></script>
+    <script src="static/js/bootstrap-datepicker.js"></script>
+    <script>
+      
+	/* Update datepicker plugin so that MM/DD/YYYY format is used. */
+      $$.extend($$.fn.datepicker.defaults, {
+        parse: function (string) {
+          var matches;
+          if ((matches = string.match(/^(\d{2,2})\/(\d{2,2})\/(\d{4,4})$$/))) {
+            return new Date(matches[3], matches[1] - 1, matches[2]);
+          } else {
+            return null;
+          }
+        },
+        format: function (date) {
+          var
+            month = (date.getMonth() + 1).toString(),
+            dom = date.getDate().toString();
+          if (month.length === 1) {
+            month = "0" + month;
+          }
+          if (dom.length === 1) {
+            dom = "0" + dom;
+          }
+          return date.getFullYear() + "-" + month + "-" +  dom;
+        }
+      });  
+    </script>
