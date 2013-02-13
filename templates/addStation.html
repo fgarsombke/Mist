@@ -1,24 +1,82 @@
 $def with ()
 <link href="static/css/datepicker.css" rel="stylesheet">
    <div class="span12">
-      <form method="post" action="/device/add">
+      <form method="post" action="/station/add">
         <fieldset>
-          <legend>Enter the irrigation event to queue:</legend>
-        
+          <legend>Enter information about weather station to add:</legend>
 
 	  <div class="clearfix">
-            <label>UserID</label>
+            <label>Climate Station ID</label>
             <div class="input">
-                <input class="mini" type="text" value="3460" name = "userID"/>
+                <input class="mini" type="text" value="ex: KAUS" name = "climateStationID"/>
             </div>
           </div><!-- /clearfix -->
           
      <div class="clearfix">
-	  <label> other stuff</label>
+	  <label>description</label>
 	    <div class="input">
-                <input class="mini" type="text" value="12" name = "duration"/>
+                <input class="mini" type="text" value="" name = "description"/>
             </div>
 	</div>
+    
+    <div class="clearfix">
+	  <label>city</label>
+	    <div class="input">
+                <input class="mini" type="text" value="" name = "city"/>
+            </div>
+	</div>
+
+    <div class="clearfix">
+	  <label>county</label>
+	    <div class="input">
+                <input class="mini" type="text" value="" name = "county"/>
+            </div>
+        </div>
+        
+     <div class="clearfix">
+	  <label>zipCode</label>
+	    <div class="input">
+                <input class="mini" type="text" value="" name = "zipCode"/>
+            </div>
+	</div>
+
+    <div class="clearfix">
+	  <label>state</label>
+	    <div class="input">
+                <input class="mini" type="text" value="" name = "state"/>
+            </div>
+	</div>
+
+    <div class="clearfix">
+	  <label>country</label>
+	    <div class="input">
+                <input class="mini" type="text" value="" name = "country"/>
+            </div>
+	</div>
+
+    <div class="clearfix">
+	  <label>latitude</label>
+	    <div class="input">
+                <input class="mini" type="text" value="" name = "latitude"/>
+            </div>
+	</div>
+
+
+    <div class="clearfix">
+	  <label>longitude</label>
+	    <div class="input">
+                <input class="mini" type="text" value="" name = "longitude"/>
+            </div>
+	</div>
+
+
+    <div class="clearfix">
+	  <label>altitude</label>
+	    <div class="input">
+                <input class="mini" type="text" value="" name = "altitude"/>
+            </div>
+	</div>
+
 
 	  <div class="actions">
             <input type="submit" class="btn primary" value="Enqueue">&nbsp;</button>

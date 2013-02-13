@@ -1,29 +1,27 @@
 $def with ()
 <link href="static/css/datepicker.css" rel="stylesheet">
    <div class="span12">
-      <form method="post" action="/device/add">
+      <form method="post" action="/user/add">
         <fieldset>
-          <legend>Enter the irrigation event to queue:</legend>
-        
+          <legend>Create a Mist Cloud account</legend>
 
 	  <div class="clearfix">
-            <label>UserID</label>
+            <label>E-mail</label>
             <div class="input">
-                <input class="mini" type="text" value="3460" name = "userID"/>
+                <input class="mini" type="text" value="example@mailbox.com" name = "email"/>
             </div>
           </div><!-- /clearfix -->
-          
+
      <div class="clearfix">
-	  <label> other stuff</label>
+	  <label>Password</label>
 	    <div class="input">
-                <input class="mini" type="text" value="12" name = "duration"/>
+                <input class="mini" type="text" value="" name = "password"/>
             </div>
 	</div>
 
-	  <div class="actions">
+    <div class="actions">
             <input type="submit" class="btn primary" value="Enqueue">&nbsp;</button>
           </div>
-        
 	</fieldset>
       </form>
     </div>
@@ -31,8 +29,8 @@ $def with ()
 <script src="http://code.jquery.com/jquery-1.7.min.js"></script>
     <script src="static/js/bootstrap-datepicker.js"></script>
     <script>
-      
-	/* Update datepicker plugin so that MM/DD/YYYY format is used. */
+
+      /* Update datepicker plugin so that MM/DD/YYYY format is used. */
       $$.extend($$.fn.datepicker.defaults, {
         parse: function (string) {
           var matches;
