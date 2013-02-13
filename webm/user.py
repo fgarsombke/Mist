@@ -41,6 +41,33 @@ class addUser:
 
     def POST(self):
         render = web.template.render('templates/', base='layout')
+        user_data = web.input()
+
+        if user_data.email:
+            email = user_data.email
+            validate = validateEmail(user_data.email)
+        else:
+            print "ERROR: Email parameter is empty."
+
+        if user_data.password:
+            password = user_data.password
+            validate = validatePassword(user_data.password)
+        else:
+            print "ERROR: Password parameter is empty."
+
+        if validate:
+            #Construct API request
+            query_args = {'email':email, 'password':password}
+            encoded_args = urllib.urlencode(query_args)
+            url = "http://0.0.0.0:8080/api/user?"
+            req = urllib2.Request(url, encoded_args)
+            userID = ""
+            #Execute API request
+            try:
+                userID = json.loads(urllib2.urlopen(req).read())
+            except urllib2.URLError, e:
+                print e
+
         return render.addUser()
 
 class list:

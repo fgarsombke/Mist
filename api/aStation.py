@@ -9,11 +9,11 @@ from db import DBConfig
 import collections
 import json
 
-def insertStationInDatabase(stationID, desc, latitude, longitude):
+def insertStationInDatabase(climateStationID, description, city, county, zipCode, state, country, latitude, longitude, altitude):
     conf = DBConfig.DBConfig()
     db = conf.connectToLocalConfigDatabase()
     cursor = db.cursor()
-    cursor.execute("INSERT INTO climateStations (climateStationID, description, latitude, longitude) VALUES (%s, %s, %s, %s)", (stationID, desc, latitude, longitude))
+    cursor.execute("INSERT INTO climateStations (climateStationID, description, city, county, zipCode, state, country, latitude, longitude, altitude) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", (climateStationID, description, city, county, zipCode, state, country, latitude, longitude, altitude))
     results = cursor.lastrowid
     db.commit()
     return results
@@ -67,13 +67,24 @@ class aStation:
         return j
 
     #POST API FOR STATION CREATION
-    #expeceted parameters: stationid, description, latitude, longitude
-    #return STATION ID? 
+    #expeceted parameters: stationid, description, latitude, longitude, altitude
+    #return STATION ID
     def POST(self):
         station_data = web.input()
 
         #verify parameters
-
+        climateStationID = station_data.climateStationID
+        description = station_data.description
+        city = station_data.city
+        county = station_data.county
+        zipCode = station_data.zipCode
+        state = station_data.state
+        country = station_data.country
+        latitude = station_data.latitude
+        longitude = station_data.longitude
+        altitude = station_data.altitude
+       
         #if verified, put in database
-        stationId = insertStationInDatabase(station_data.stationid, station_data.description, station_data.latitude, station_data.longitude) #SQL
+        stationId = insertStationInDatabase(climateStationID, description, city, county, zipCode, state, country, latitude, longitude, altitude)
+        
         return stationId
