@@ -23,7 +23,7 @@ namespace pt = boost::posix_time;
 namespace gt = boost::gregorian;
 
 
-void DebugPrintYard(const YardInfo& y) 
+void DebugPrintYardInfo(const YardInfo& y) 
 {
    ofstream dbgFile;
    dbgFile.open("yardExPerlin.csv");
@@ -38,6 +38,24 @@ void DebugPrintYard(const YardInfo& y)
    }
 
    dbgFile.close();
+}
+
+void DebugPrintYard(const Yard& y) 
+{
+   auto cells = y.cells();
+
+   for(unsigned int i = 0; i < cells.size1(); ++i) {
+      for(unsigned int j = 0; j < cells.size2(); ++j) {
+         cout << "Yard Cell (" << i << ", " << j << "): " << endl;
+         cout << "\t";
+         
+         for(double entry : cells(i,j).drift_entry()) {
+            cout << entry << ", ";
+         }
+
+         cout << endl;
+      }
+   }
 }
 
 
@@ -58,18 +76,24 @@ int main(int argc, char * argv[])
 
       LawnGenerator generator;
 
-      unique_ptr<YardInfo> yard = generator.Generate(options->geo_locale(), 512, 512);
+      unique_ptr<YardInfo> yardInfo = generator.Generate(options->geo_locale(), 20, 20);
 
-      auto controller = Mist::Controllers::Controller::GetControllerByName("NullController", Mist::Controllers::ControllerConfig());
+      std::unique_ptr<Mist::Controllers::Controller> controller = Mist::Controllers::Controller::GetControllerByName("NullController", Mist::Controllers::ControllerConfig());
 
-      DebugPrintYard(*yard);
+      //DebugPrintYardInfo(*yard);
 
-      Simulator sim(*yard);
+      Simulator sim(*yardInfo);
+
+      yardInfo.release();
+
+      //DebugPrintYard(sim.yard());
 
       pt::ptime start(options->start_time());
       pt::ptime end(options->end_time());
 
       sim.Reset(start, end, options->sim_tick_period(), options->sim_speed_ratio());
+
+      delete options;
 
       sim.Run();
    } catch (std::exception& e) {

@@ -22,13 +22,15 @@ public:
    size_t yard_length() const { return yard_cells_.size1(); }
    size_t yard_width() const { return yard_cells_.size2(); }
 
+   const GeoLocale locale() const { return locale_; }
+
 private: 
    friend class LawnGenerator;
 
    const bm::matrix<YardCellInfo> yard_cells_;
 
    // The sprinklers in the yard, along with their positions
-   const vector<pair<Sprinkler, pair<int,int> > > sprinkler_;
+   const bm::unbounded_array<pair<Sprinkler, pair<int,int> > > sprinkler_;
 
    const GeoLocale locale_;
 

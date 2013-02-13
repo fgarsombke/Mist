@@ -1,5 +1,4 @@
 #include "LawnSimStd.h"
-#include "Constants.h"
 
 #include "Simulator.h"
 
@@ -79,7 +78,7 @@ void Simulator::Run()
 
       // TODO: Add boost Logging
       // Do the tick work
-      doTickWork(this_tick_sim_time, tick_duration);
+      yard_.ElapseTime(weather_source_.GetData(yard_.locale(), pt::time_period(this_tick_sim_time, tick_duration)));
       
       // Compute next tick time
       nextTickTime += tick_period_ms_;
@@ -102,27 +101,6 @@ void Simulator::Run()
    }
   
 }
-
-
-void Simulator::doTickWork(pt::ptime tickStartTime,  pt::time_duration tickDuration) 
-{
-   pt::ptime tickEndTime = tickStartTime + tickDuration;
-
-   // On every Tick, we need to deliver the right amount of water to each cell
-
-
-   // Water 
-   // Possibly rain
-   // Shine sunlight
-   // Apply heat
-   // Apply humidity
-   // Blow wind
-
-   // Grow 
-
-   printf("Tick: %s\n", pt::to_simple_string(tickStartTime).c_str());
-}
-
 
 }
 }
