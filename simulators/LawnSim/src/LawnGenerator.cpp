@@ -48,7 +48,7 @@ void LawnGenerator::FillHeightsPerlin(bm::matrix<double> &heights) {
    size_t rows = heights.size1();
    size_t cols = heights.size2();
 
-   Perlin::PerlinModified perGen(1, 1, .001, 5, time(0));
+   Perlin::PerlinModified perGen(1, 1, .001, 5, 0);//time(0));
 
    for (unsigned int i = 0; i < rows; ++i) {
       for (unsigned int j = 0; j < cols; ++j) {

@@ -6,7 +6,8 @@
 #include <stdexcept>
 
 #include <iostream>
-#include <vector>
+#include <algorithm>
+#include <array>
 
 // Boost Headers
 #include <boost/numeric/ublas/matrix.hpp>
@@ -18,4 +19,5 @@ namespace dt = boost::date_time;
 
 
 // My Headers
+#include "Constants.h"
 

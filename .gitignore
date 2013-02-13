@@ -40,5 +40,11 @@ Thumbs.db
 *.pyc
 local.config
 *.sdf
+*.tlog
+*.pdb
+*.obj
+*.ipch
+*.pch
 *.idb
 *.lastbuildstate
+

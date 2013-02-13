@@ -1,4 +1,5 @@
 #pragma once
+#include "LawnSimStd.h"
 
 namespace Mist {
 namespace LawnSim {
