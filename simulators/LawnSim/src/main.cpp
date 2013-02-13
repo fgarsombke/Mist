@@ -58,7 +58,7 @@ int main(int argc, char * argv[])
 
       LawnGenerator generator;
 
-      unique_ptr<YardInfo> yard = generator.Generate(options->geo_locale(), 512, 512);
+      unique_ptr<YardInfo> yard = generator.Generate(options->geo_locale(), 8, 8);
 
       auto controller = Mist::Controllers::Controller::GetControllerByName("NullController", Mist::Controllers::ControllerConfig());
 

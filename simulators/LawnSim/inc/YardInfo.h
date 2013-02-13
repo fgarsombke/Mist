@@ -28,7 +28,7 @@ private:
    const bm::matrix<YardCellInfo> yard_cells_;
 
    // The sprinklers in the yard, along with their positions
-   const vector<pair<Sprinkler, pair<int,int> > > sprinkler_;
+   const bm::unbounded_array<pair<Sprinkler, pair<int,int> > > sprinkler_;
 
    const GeoLocale locale_;
 
