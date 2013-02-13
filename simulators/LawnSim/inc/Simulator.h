@@ -11,6 +11,23 @@ namespace Mist {
 namespace LawnSim {
 
 class Simulator {
+public:
+   Simulator(const YardInfo &yard);
+
+
+   void Reset(ptime simStartTime, 
+               ptime simEndTime,
+               unsigned int simTickPeriod,
+               unsigned int simSpeedMultiplier
+   );
+
+   void Run();
+
+   void Stop();
+
+   const Yard &yard() const { return yard_; }
+
+
 private:
 
    // Simulation Parameters
@@ -28,20 +45,6 @@ private:
 
 
    Yard yard_;
-public:
-   Simulator(const YardInfo &yard);
-
-
-   void Reset(ptime simStartTime, 
-               ptime simEndTime,
-               unsigned int simTickPeriod,
-               unsigned int simSpeedMultiplier
-   );
-
-   void Run();
-
-   void Stop();
-
 };
 
 }
