@@ -76,13 +76,15 @@ int main(int argc, char * argv[])
 
       LawnGenerator generator;
 
-      unique_ptr<YardInfo> yard = generator.Generate(options->geo_locale(), 1024, 1024);
+      unique_ptr<YardInfo> yardInfo = generator.Generate(options->geo_locale(), 20, 20);
 
       std::unique_ptr<Mist::Controllers::Controller> controller = Mist::Controllers::Controller::GetControllerByName("NullController", Mist::Controllers::ControllerConfig());
 
       //DebugPrintYardInfo(*yard);
 
-      Simulator sim(*yard);
+      Simulator sim(*yardInfo);
+
+      yardInfo.release();
 
       //DebugPrintYard(sim.yard());
 

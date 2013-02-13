@@ -22,6 +22,8 @@ public:
    size_t yard_length() const { return yard_cells_.size1(); }
    size_t yard_width() const { return yard_cells_.size2(); }
 
+   const GeoLocale locale() const { return locale_; }
+
 private: 
    friend class LawnGenerator;
 

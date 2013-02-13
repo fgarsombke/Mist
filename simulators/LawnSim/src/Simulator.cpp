@@ -1,5 +1,4 @@
 #include "LawnSimStd.h"
-#include "Constants.h"
 
 #include "Simulator.h"
 
@@ -79,9 +78,7 @@ void Simulator::Run()
 
       // TODO: Add boost Logging
       // Do the tick work
-      yard_.ElapseTime(pt::time_period(this_tick_sim_time, tick_duration));
-
-      printf("Tick: %s\n", pt::to_simple_string(this_tick_sim_time).c_str());
+      yard_.ElapseTime(weather_source_.GetData(yard_.locale(), pt::time_period(this_tick_sim_time, tick_duration)));
       
       // Compute next tick time
       nextTickTime += tick_period_ms_;

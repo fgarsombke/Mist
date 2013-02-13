@@ -1,13 +1,15 @@
 #include "LawnSimStd.h"
 
 #include "Yard.h"
+#include "WeatherData.h"
 
 namespace Mist {
 namespace LawnSim {
 
    
 Yard::Yard(const YardInfo& yardInfo)
-   : cells_(InitCells(yardInfo)), cells_by_height_(InitHeightMap(cells_))
+   : cells_(InitCells(yardInfo)), cells_by_height_(InitHeightMap(cells_)), 
+     locale_(yardInfo.locale())
 {
    // Zero everything out
 
@@ -195,12 +197,18 @@ const bm::unbounded_array<size_t> Yard::InitHeightMap(const bm::matrix<YardCell>
 }
 
 
-void Yard::ElapseTime(pt::time_period interval) {
-   
+void Yard::ElapseTime(const WeatherData &data) {
+   printf("ElapseTime: %s\n", pt::to_simple_string(data.period()).c_str());
+
    // On every Tick, we need to deliver the right amount of water to each cell
 
+
+
    // Water    
-   
+   for (YardCell &cell : cells_.data()) {
+      
+   }
+
    // Possibly rain
    // Shine sunlight
    // Apply heat

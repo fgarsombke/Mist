@@ -25,7 +25,7 @@ private:
    DriftEntry drift_entry_;
 
    // Water soaks down into the depths
-   double water_saturation_;
+   double surface_water_;
 
 };
 
