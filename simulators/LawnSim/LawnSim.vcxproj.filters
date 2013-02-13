@@ -72,6 +72,9 @@
     <ClInclude Include="inc\DriftEntry.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="inc\NeighborData.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Constants.cpp">
@@ -102,6 +105,12 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\YardCell.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\DriftEntry.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\LawnSimStd.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

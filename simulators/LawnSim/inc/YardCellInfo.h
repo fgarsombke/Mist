@@ -26,6 +26,8 @@ public:
 // ------------------------------------------------------------------------------
 private:
    double initial_health_;
+
+   // Height above zero in millimeters
    double rel_height_;
 };
 
