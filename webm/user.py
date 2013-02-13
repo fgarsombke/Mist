@@ -16,15 +16,6 @@ def validateEmail(email):
 def validatePassword(password):
     return True
 
-def insertUserInDatabase(username, salt, password):
-    conf = DBConfig.DBConfig()
-    db = conf.connectToLocalConfigDatabase()
-    cursor = db.cursor()
-    cursor.execute("INSERT INTO users (email, password, salt) VALUES (%s, %s, %s)", (username, password, salt))
-    results = cursor.lastrowid
-    db.commit()
-    return results
-    
 def getDeviceIDForUser(userid):
     conf = DBConfig.DBConfig()
     db = conf.connectToLocalConfigDatabase()    
@@ -32,7 +23,6 @@ def getDeviceIDForUser(userid):
     cursor.execute("SELECT * FROM devices WHERE devices.userID = (%s)", userid)
     results = cursor.fetchone()
     return results[0]   
-
 
 class addUser:
     def GET(self):
@@ -120,29 +110,9 @@ class user:
         else:
             return render.index2()
 
-    #POST API FOR USER CREATION
-    #expeceted parameters: email (string) and password (string)
-    #return USER ID
     def POST(self):
-        user_data = web.input() 
         render = web.template.render('templates/')
-        validate = True
-
-        if user_data.email:
-            validate = validateEmail(user_data.email)
-        else:
-            print "ERROR: Email parameter is empty."
-
-        if user_data.password:
-            validate = validatePassword(user_data.password)
-        else:
-            print "ERROR: Password parameter is empty."
-
-        if validate:
-            salt = uuid.uuid4().hex 
-            encodedPass = hashlib.sha512(user_data.password + salt).hexdigest()
-            userID = insertUserInDatabase(user_data.email, salt, encodedPass) #SQL
-            return render.user(userID)
+        return render.user()
 
 class logout:
     def GET(self):
