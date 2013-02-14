@@ -58,8 +58,8 @@ class aSchedule:
     #parameters productID, zoneNumber, startTime, duration
     def POST(self):
         schedule_data = web.input() 
-    
-        if schedule_data:   
+
+        if schedule_data:
             productID = schedule_data.productID
             zoneNumber = schedule_data.zoneNumber
             startTime = schedule_data.startTime
