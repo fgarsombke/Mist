@@ -15,17 +15,23 @@ public:
 
    YardCell();
 
+   void ResetState();
+
+
+
 
    const YardCellInfo cell_info() const { return cell_info_; }
    const DriftEntry drift_entry() const { return drift_entry_; }
 private:
-   YardCellInfo cell_info_;
+   size_t yard_position_;
 
-   double current_health_;
+   YardCellInfo cell_info_;
    DriftEntry drift_entry_;
 
-   // Water soaks down into the depths
-   double surface_water_;
+   double current_health_;
+   
+   // The yard cell only gets water soaked into the soil
+   double absorbed_water_;
 
 };
 

@@ -20,8 +20,8 @@ public:
 
 private:
    bm::matrix<YardCellInfo> GenerateCells(size_t rows, 
-                                      size_t cols,
-                                      FillHeightFunc_t hFunc = FillHeightsDiagonally) const;
+                                         size_t cols,
+                                         FillHeightFunc_t hFunc = FillHeightsDiagonally) const;
 
    inline static void FillHeightsDiagonally(bm::matrix<double> &heights);
    inline static void FillHeightsPerlin(bm::matrix<double> &heights);

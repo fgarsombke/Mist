@@ -37,6 +37,10 @@ protected:
    const ControllerConfig config () const { return config_; }
 
 private:
+   Controller &operator=(const Controller &other);
+   Controller(const Controller &other);
+
+
    const ControllerConfig config_;   
 };
 
