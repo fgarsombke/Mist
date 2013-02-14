@@ -26,16 +26,12 @@ inline int SleepForMS(int x) {
    nanosleep(&tim, NULL);
 }
 
-
-
 #endif
 
-namespace Mist {
-namespace LawnSim {
+namespace Mist { namespace LawnSim {
 
-   
-Simulator::Simulator(const YardInfo &yard)
-   : yard_(yard)
+Simulator::Simulator(const YardInfo &yard, unique_ptr<Controllers::Controller> &controller)
+   : yard_(yard), controller_(std::move(controller))
 {
    // Set start time ahead of end time so the sim won't run
    sim_start_time_ = ptime(boost::gregorian::date(1970,1,2));
@@ -44,12 +40,14 @@ Simulator::Simulator(const YardInfo &yard)
 
 
 void Simulator::Reset(ptime simStartTime, 
-                           ptime simEndTime,
-                           unsigned int simTickPeriod,
-                           unsigned int simSpeedMultiplier
+                      ptime simEndTime,
+                      unsigned int simTickPeriod,
+                      unsigned int simSpeedMultiplier
 ) {
    // TODO: Reset the running simulation
-   
+   Stop();
+
+
    sim_start_time_ = simStartTime;
    sim_end_time_ = simEndTime;
    sim_tick_duration_ = time_duration(pt::milliseconds(simTickPeriod));
@@ -59,10 +57,15 @@ void Simulator::Reset(ptime simStartTime,
    }
 
    tick_period_ms_ = simTickPeriod/simSpeedMultiplier;
+
+   // Put the yard into it's initial state
+   yard_.ResetState();
 }
 
 void Simulator::Run() 
 {
+   std::vector<time_duration> sprinklerDurations = std::vector<pt::time_duration>(yard_.SprinklersCount());
+
    // Basic logic: 
    //    -Do one tick
    //    -Set time for next tick
@@ -75,10 +78,17 @@ void Simulator::Run()
    
    while(this_tick_sim_time <= sim_end_time_) {
       time_duration tick_duration = sim_tick_duration_;
+      time_period tick_period = time_period(this_tick_sim_time, tick_duration);
 
       // TODO: Add boost Logging
+      // TODO: Precompute WeatherData for the next tick
       // Do the tick work
-      yard_.ElapseTime(weather_source_.GetData(yard_.locale(), pt::time_period(this_tick_sim_time, tick_duration)));
+
+      WeatherData weatherData = weather_source_.GetData(yard_.locale(), tick_period);
+      controller_->ElapseTime(tick_period, sprinklerDurations);
+
+      // Let the yard check whether or not the sprinkler durations list was resized
+      yard_.ElapseTime(tick_period, weatherData, sprinklerDurations);
       
       // Compute next tick time
       nextTickTime += tick_period_ms_;
@@ -86,7 +96,7 @@ void Simulator::Run()
       // Compute the simulated time
       this_tick_sim_time += tick_duration;
 
-      decltype(GetSystemTimeMS()) sysTime = GetSystemTimeMS();
+      int sysTime = GetSystemTimeMS();
       int sleepTime = nextTickTime - sysTime;
 
       // Don't sleep if we're already behind
@@ -96,11 +106,18 @@ void Simulator::Run()
       } else {
          std::cout << "Tick Period: " << tick_period_ms_ << std::endl;
          // Slow down a little
-         tick_period_ms_ = (unsigned int)(ceil(tick_period_ms_ * 1.01f));
+         nextTickTime = sysTime;
+         tick_period_ms_ = (unsigned int)(ceil(tick_period_ms_ * 1.1f));
       }
    }
   
 }
 
+
+
+void Simulator::Stop() 
+{
+   // TODO: Implement
 }
-}
+
+}}

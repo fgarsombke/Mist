@@ -62,27 +62,26 @@ void DebugPrintYard(const Yard& y)
 int main(int argc, char * argv[]) 
 {
    try {
+      // Speed up debugging output
       ios_base::sync_with_stdio(false);
 
-
-      SimOptions * options = nullptr;
+      std::unique_ptr<SimOptions> options;
+      
       try {
-         options = new SimOptions(argc, argv);
+         options.reset(new SimOptions(argc, argv));
       } catch (boost::program_options::error& e) {
          cerr << "Error: " << e.what() << endl;
          return 1;
       }
    
-
       LawnGenerator generator;
 
-      unique_ptr<YardInfo> yardInfo = generator.Generate(options->geo_locale(), 20, 20);
-
-      std::unique_ptr<Mist::Controllers::Controller> controller = Mist::Controllers::Controller::GetControllerByName("NullController", Mist::Controllers::ControllerConfig());
+      auto yardInfo = generator.Generate(options->geo_locale(), 20, 20);
+      auto controller = Mist::Controllers::Controller::GetControllerByName("NullController", Mist::Controllers::ControllerConfig());
 
       //DebugPrintYardInfo(*yard);
 
-      Simulator sim(*yardInfo);
+      Simulator sim(*yardInfo, controller);
 
       yardInfo.release();
 
@@ -93,8 +92,8 @@ int main(int argc, char * argv[])
 
       sim.Reset(start, end, options->sim_tick_period(), options->sim_speed_ratio());
 
-      delete options;
-
+      options.release();
+      
       sim.Run();
    } catch (std::exception& e) {
       cout << "Fatal Exception: " << e.what() << endl;

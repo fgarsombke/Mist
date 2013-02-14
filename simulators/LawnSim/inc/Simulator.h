@@ -14,7 +14,7 @@ namespace LawnSim {
 
 class Simulator {
 public:
-   Simulator(const YardInfo &yard);
+   Simulator(const YardInfo &yard, unique_ptr<Controllers::Controller> &controller);
 
 
    void Reset(ptime simStartTime, 
@@ -41,6 +41,8 @@ private:
 
    
    /////////////////////////////
+
+   unique_ptr<Controllers::Controller> controller_;
 
 
    unsigned int real_start_time_;      // Last Real world (simulator) start time 

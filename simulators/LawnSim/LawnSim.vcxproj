@@ -19,6 +19,8 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\..\inc\WeatherData.h" />
+    <ClInclude Include="..\..\inc\WeatherDataSource.h" />
     <ClInclude Include="inc\Constants.h" />
     <ClInclude Include="inc\DBHook.h" />
     <ClInclude Include="inc\DriftEntry.h" />

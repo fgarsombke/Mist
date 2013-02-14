@@ -9,14 +9,23 @@ namespace LawnSim {
    
 Yard::Yard(const YardInfo& yardInfo)
    : cells_(InitCells(yardInfo)), cells_by_height_(InitHeightMap(cells_)), 
-     locale_(yardInfo.locale())
+     locale_(yardInfo.locale()), 
+     surface_water_(yardInfo.yard_length(), yardInfo.yard_width(), 0),
+     sprinklers_(std::move(yardInfo.sprinklers()))
 {
-   // Zero everything out
-
-
+   // Zero everything out and
    // Generate a height sorted view of the Yard
 
 
+   // Generate rain mask
+   // TODO: Should this be nonideal?
+   rain_mask_ = bm::scalar_matrix<double>(cells_.size1(), cells_.size2(), 1.0);
+
+   // TODO: Implement
+   sprinkler_masks_ = SprinklerMaskList_t(sprinklers_.size());
+   for (SprinklerMask_t &mask : sprinkler_masks_) {
+      mask = SprinklerMask_t(cells_.size1(), cells_.size2());
+   }
 }
 
 
@@ -26,6 +35,8 @@ const bm::matrix<YardCell> Yard::InitCells(const YardInfo& yardInfo)
    if (yardInfo.yard_length() == 0 || yardInfo.yard_width() == 0) {
       throw std::invalid_argument("Yard Length and Width must be nonzero.");
    }
+
+   // First compute the constant values, mostly simulation parameters
 
    bm::matrix<YardCell> cells = bm::matrix<YardCell>(yardInfo.yard_length(), yardInfo.yard_width(), YardCell());
    auto cellInfos = yardInfo.yard_cells();
@@ -146,8 +157,7 @@ const bm::matrix<YardCell> Yard::InitCells(const YardInfo& yardInfo)
          rh = 0;
       }
    }
-
-   
+  
    // Do Last Column
    for (size_t row = 1; row < lstRow; ++row) {
       myInfo = cellInfos(row, lstCol);
@@ -161,7 +171,6 @@ const bm::matrix<YardCell> Yard::InitCells(const YardInfo& yardInfo)
       cells(row, lstCol) = YardCell(myInfo, rh);
       rh = 0;
    }
-
 
    // Do last row
    for (size_t col = 1; col < cellInfos.size2() - 1; ++col) {
@@ -196,26 +205,66 @@ const bm::unbounded_array<size_t> Yard::InitHeightMap(const bm::matrix<YardCell>
    return retVal;
 }
 
-
-void Yard::ElapseTime(const WeatherData &data) {
-   printf("ElapseTime: %s\n", pt::to_simple_string(data.period()).c_str());
-
-   // On every Tick, we need to deliver the right amount of water to each cell
-
-
-
-   // Water    
+void Yard::ResetState() {
+   // Initialize each cell to its default state
    for (YardCell &cell : cells_.data()) {
-      
+      cell.ResetState();
+   }
+   
+   // Remove the surface water
+   surface_water_.clear();
+}
+
+
+void Yard::ElapseTime(pt::time_period tickPeriod, const WeatherData &data, std::vector<pt::time_duration> sprinklerDurations) {
+   // TODO: Change the api so that sprinklerDurations cannot be accidentally resized
+
+   cout << "ElapseTime: " << tickPeriod << endl;
+
+   double dt = tickPeriod.length().ticks()/((double)tickPeriod.length().ticks_per_second());
+
+   // Add sprinkler water to the surface
+   for (int i = 0; i < sprinkler_masks_.size(); ++i) {
+      pt::time_duration dt_s = sprinklerDurations[i];
+      surface_water_ += ((dt_s.ticks()/((double)dt_s.ticks_per_second())) * sprinkler_masks_[i]);
    }
 
-   // Possibly rain
+   // On every Tick, we need to deliver the right amount of water to each cell
+   //std::for_each(make_zip_iterator(boost::make_tuple(sprinklerDurations.begin(), sprinkler_masks_.begin())),
+   //              make_zip_iterator(boost::make_tuple(sprinklerDurations.end(), sprinkler_masks_.end())),
+   //              [this](boost::tuple<pt::time_duration, bm::compressed_matrix<double> > p) {
+   //   // Tuple consists of (sprinkler durations, mask)
+   //   pt::time_duration t = p.get<0>();
+   //   bm::compressed_matrix<double> m = p.get<1>();
+
+   //   surface_water_ += ((t.ticks()/((double)t.ticks_per_second())) * m);
+   //});
+
+   // Add rain water to the surface
+   if (data.rainfall().is_initialized()) {
+      surface_water_ += (data.rainfall().get() * rain_mask_);
+   }
+
+   
+   //Redistribute the water over the surface
+   for (size_t pos : cells_by_height_) {
+      DriftEntry de = cells_.data()[pos].drift_entry();
+      if (de.Right()) {
+         // TODO: Use matrix slices
+      }
+   }
+   
    // Shine sunlight
+   
    // Apply heat
+   
    // Apply humidity
+   
    // Blow wind
 
-   // Grow 
+
+   // Grow
+
 }
 
 

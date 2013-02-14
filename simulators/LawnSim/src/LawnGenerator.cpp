@@ -20,7 +20,11 @@ unique_ptr<YardInfo> LawnGenerator::Generate(GeoLocale locale, size_t rows, size
       throw std::invalid_argument("rows and cols must both be nonzero.");
    }
 
-   return unique_ptr<YardInfo>(new YardInfo(locale, GenerateCells(rows, cols, FillHeightsPerlin)));
+   // Place 4 sprinklers at each corner
+   SprinklersList_t sprinklers = SprinklersList_t(4);
+
+
+   return unique_ptr<YardInfo>(new YardInfo(locale, GenerateCells(rows, cols, FillHeightsPerlin), sprinklers));
 }
 
 
