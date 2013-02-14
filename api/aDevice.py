@@ -9,11 +9,11 @@ from db import DBConfig
 import json
 import collections
 
-def insertDeviceInDatabase(productId, userId, latitude, longitude, stationID):
+def insertDeviceInDatabase(userId, latitude, longitude, stationID, wifiNetwork, wifiPassword, numZones):
     conf = DBConfig.DBConfig()
-    db = conf.connectToLocalConfigDatabase()    
+    db = conf.connectToLocalConfigDatabase()
     cursor = db.cursor()
-    cursor.execute("INSERT INTO devices (productID, userID, latitude, longitude, climateStationID) VALUES (%s, %s, %s, %s, %s)", (productId, userId, latitude, longitude, stationID))
+    cursor.execute("INSERT INTO devices (userID, latitude, longitude, wifiNetwork, wifiPassword, numZones, climateStationID) VALUES (%s, %s, %s, %s, %s, %s, %s)", (userId, latitude, longitude, wifiNetwork, wifiPassword, numZones, stationID))
     results = cursor.lastrowid
     db.commit()
     return results
@@ -82,16 +82,16 @@ class aDevice:
         return j
 
     #POST API FOR DEVICE CREATION
-    #expeceted parameters: userid, latitude, longitude, wifi network, wifi password, stationID 
-    #return DEVICE ID?  or actuallt maybe this is supplied by the device it self???
+    #expeceted parameters: userid, latitude, longitude, wifi network, wifi password, numZones 
+    #return DEVICE ID?  or actually maybe this is supplied by the device it self???
     def POST(self):
         device_data = web.input()   
-        userId = 0  
-        #verify parameters
-        if device_data:
+        deviceId = 0
+        #verify parameters.  should it be JSON?
+        if device_data.userID and device_data.latitude and device_data.longitude and device_data.wifiNetwork and device_data.wifiPassword and device_data.numZones:
             #find nearest climate station!
             assignedStationID = findNearestClimateStation(device_data.latitude, device_data.longitude)
-            userId = insertDeviceInDatabase(device_data.productid, device_data.userid, device_data.latitude, device_data.longitude, assignedStationID) #SQL
-        #TODO: JSONize output
-        return userId
+            deviceId = insertDeviceInDatabase(device_data.userID, device_data.latitude, device_data.longitude, assignedStationID, device_data.wifiNetwork, device_data.wifiPassword, device_data.numZones) #SQL
+        #TODO: JSONize output?
+        return deviceId
         

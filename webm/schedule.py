@@ -13,24 +13,36 @@ import urllib
 import json
 
 
-def queueIrrigation(productID, zoneNumber, startTime, duration, date):
-    conf = DBConfig.DBConfig()
-    db = conf.connectToLocalConfigDatabase()    
-    cursor = db.cursor()
-    startTime = date + " " + startTime #NEED TO FIX THIS FORMATTING
-    timestamp = datetime.now() 
-    cursor.execute("INSERT INTO queuedIrrigations (productID, zoneNumber, startTime, duration, created) VALUES (%s, %s, %s, %s, %s)", (productID, zoneNumber, startTime, duration, timestamp))
-    results = cursor.lastrowid
-    db.commit()
-    return results
+class addSchedule:
+    def GET(self):
+        render = web.template.render('templates/', base='layout')
+        return render.addSchedule()
 
-def getScheduleForDevice(productID):
-    conf = DBConfig.DBConfig()
-    db = conf.connectToLocalConfigDatabase()    
-    cursor = db.cursor()
-    cursor.execute("SELECT * FROM queuedIrrigations WHERE (queuedIrrigations.productID = (%s))", (productID))
-    results = cursor.fetchall()
-    return results  
+    def POST(self):
+        schedule_data = web.input() 
+        render = web.template.render('templates/', base='layout')
+
+        if schedule_data:
+            productID = schedule_data.deviceID
+            zoneNumber = schedule_data.zoneNumber
+            startTime = schedule_data.startTime
+            date = schedule_data.date
+            duration = schedule_data.duration
+
+        #Construct POST API Request
+        query_args = {'productID':productID, 'zoneNumber':zoneNumber, 'startTime':startTime, 'date':date, 'duration':duration}
+        encoded_args = urllib.urlencode(query_args)
+        url = "http://0.0.0.0:8080/api/schedule?"
+        req = urllib2.Request(url, encoded_args)
+        devices = ""
+
+        #Execute API request
+        try:
+            schedule = json.loads(urllib2.urlopen(req).read())
+        except urllib2.URLError, e:
+            print e
+        #Execute POST API Rquest
+        return render.addSchedule()
 
 class schedule:
     def GET(self):
@@ -64,15 +76,5 @@ class schedule:
             return render.schedule()
 
     def POST(self):
-        schedule_data = web.input() 
         render = web.template.render('templates/', base='layout')
-        #check if user logged in
-        #if so use his deviceID to post another schedule...
-        if schedule_data:   
-            productID = schedule_data.deviceID
-            zoneNumber = schedule_data.zoneNumber
-            startTime = schedule_data.startTime
-            date = schedule_data.date
-            duration = schedule_data.duration
-            queueIrrigation(productID, zoneNumber, startTime, duration, date) 
-            return render.schedule()
+        return render.schedule()

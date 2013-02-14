@@ -1,0 +1,83 @@
+$def with ()
+<link href="static/css/datepicker.css" rel="stylesheet">
+   <div class="span12">
+      <form method="post" action="/schedule/add">
+        <fieldset>
+          <legend>Enter the irrigation event to queue:</legend>
+        
+	  <div class="clearfix">
+            <label>Date and Military Time</label>
+            <div class="input">
+                <input data-datepicker="datepicker" class="small" type="text" value="2013-01-27" name="date"/>
+                <input class="mini" type="text" value="14:37" name = "startTime"/>
+            </div>
+          </div><!-- /clearfix -->
+	
+	<div class="clearfix">
+            <label for="zoneNumber">Zone Number</label>
+            <div class="input">
+              <select name="zoneNumber" id="zoneNumber">
+                <option>1</option>
+                <option>2</option>
+                <option>3</option>
+                <option>4</option>
+                <option>5</option>
+                <option>6</option>
+                <option>7</option>
+                <option>8</option>
+                <option>9</option>
+                <option>10</option>
+              </select>
+            </div>
+          </div><!-- /clearfix -->
+
+	  <div class="clearfix">
+            <label>DeviceID</label>
+            <div class="input">
+                <input class="mini" type="text" value="3460" name = "deviceID"/>
+            </div>
+          </div><!-- /clearfix -->
+          
+     <div class="clearfix">
+	  <label> Duration (minutes)</label>
+	    <div class="input">
+                <input class="mini" type="text" value="12" name = "duration"/>
+            </div>
+	</div>
+
+	  <div class="actions">
+            <input type="submit" class="btn primary" value="Enqueue">&nbsp;</button>
+          </div>
+        
+	</fieldset>
+      </form>
+    </div>
+
+<script src="http://code.jquery.com/jquery-1.7.min.js"></script>
+    <script src="static/js/bootstrap-datepicker.js"></script>
+    <script>
+      
+	/* Update datepicker plugin so that MM/DD/YYYY format is used. */
+      $$.extend($$.fn.datepicker.defaults, {
+        parse: function (string) {
+          var matches;
+          if ((matches = string.match(/^(\d{2,2})\/(\d{2,2})\/(\d{4,4})$$/))) {
+            return new Date(matches[3], matches[1] - 1, matches[2]);
+          } else {
+            return null;
+          }
+        },
+        format: function (date) {
+          var
+            month = (date.getMonth() + 1).toString(),
+            dom = date.getDate().toString();
+          if (month.length === 1) {
+            month = "0" + month;
+          }
+          if (dom.length === 1) {
+            dom = "0" + dom;
+          }
+          return date.getFullYear() + "-" + month + "-" +  dom;
+        }
+      });  
+    </script>

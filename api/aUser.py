@@ -103,20 +103,13 @@ class aUser:
     #return USER ID
     def POST(self):
         user_data = web.input() 
-        validate = True
 
-        if user_data.email:
-            validate = validateEmail(user_data.email)
-        else:
-            print "ERROR: Email parameter is empty."
+        #hash+salt password
+        salt = uuid.uuid4().hex
+        encodedPass = hashlib.sha512(user_data.password + salt).hexdigest()
 
-        if user_data.password:
-            validate = validatePassword(user_data.password)
-        else:
-            print "ERROR: Password parameter is empty."
+        #store in DB
+        userID = insertUserInDatabase(user_data.email, salt, encodedPass) #SQL
 
-        if validate:
-            salt = uuid.uuid4().hex 
-            encodedPass = hashlib.sha512(user_data.password + salt).hexdigest()
-            userID = insertUserInDatabase(user_data.email, salt, encodedPass) #SQL
-            return userID
+        #return ID of new user to requester
+        return userID

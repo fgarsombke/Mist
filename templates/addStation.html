@@ -1,0 +1,116 @@
+$def with ()
+<link href="static/css/datepicker.css" rel="stylesheet">
+   <div class="span12">
+      <form method="post" action="/station/add">
+        <fieldset>
+          <legend>Enter information about weather station to add:</legend>
+
+	  <div class="clearfix">
+            <label>Climate Station ID</label>
+            <div class="input">
+                <input class="mini" type="text" value="ex: KAUS" name = "climateStationID"/>
+            </div>
+          </div><!-- /clearfix -->
+          
+     <div class="clearfix">
+	  <label>description</label>
+	    <div class="input">
+                <input class="mini" type="text" value="" name = "description"/>
+            </div>
+	</div>
+    
+    <div class="clearfix">
+	  <label>city</label>
+	    <div class="input">
+                <input class="mini" type="text" value="" name = "city"/>
+            </div>
+	</div>
+
+    <div class="clearfix">
+	  <label>county</label>
+	    <div class="input">
+                <input class="mini" type="text" value="" name = "county"/>
+            </div>
+        </div>
+        
+     <div class="clearfix">
+	  <label>zipCode</label>
+	    <div class="input">
+                <input class="mini" type="text" value="" name = "zipCode"/>
+            </div>
+	</div>
+
+    <div class="clearfix">
+	  <label>state</label>
+	    <div class="input">
+                <input class="mini" type="text" value="" name = "state"/>
+            </div>
+	</div>
+
+    <div class="clearfix">
+	  <label>country</label>
+	    <div class="input">
+                <input class="mini" type="text" value="" name = "country"/>
+            </div>
+	</div>
+
+    <div class="clearfix">
+	  <label>latitude</label>
+	    <div class="input">
+                <input class="mini" type="text" value="" name = "latitude"/>
+            </div>
+	</div>
+
+
+    <div class="clearfix">
+	  <label>longitude</label>
+	    <div class="input">
+                <input class="mini" type="text" value="" name = "longitude"/>
+            </div>
+	</div>
+
+
+    <div class="clearfix">
+	  <label>altitude</label>
+	    <div class="input">
+                <input class="mini" type="text" value="" name = "altitude"/>
+            </div>
+	</div>
+
+
+	  <div class="actions">
+            <input type="submit" class="btn primary" value="Enqueue">&nbsp;</button>
+          </div>
+        
+	</fieldset>
+      </form>
+    </div>
+
+<script src="http://code.jquery.com/jquery-1.7.min.js"></script>
+    <script src="static/js/bootstrap-datepicker.js"></script>
+    <script>
+      
+	/* Update datepicker plugin so that MM/DD/YYYY format is used. */
+      $$.extend($$.fn.datepicker.defaults, {
+        parse: function (string) {
+          var matches;
+          if ((matches = string.match(/^(\d{2,2})\/(\d{2,2})\/(\d{4,4})$$/))) {
+            return new Date(matches[3], matches[1] - 1, matches[2]);
+          } else {
+            return null;
+          }
+        },
+        format: function (date) {
+          var
+            month = (date.getMonth() + 1).toString(),
+            dom = date.getDate().toString();
+          if (month.length === 1) {
+            month = "0" + month;
+          }
+          if (dom.length === 1) {
+            dom = "0" + dom;
+          }
+          return date.getFullYear() + "-" + month + "-" +  dom;
+        }
+      });  
+    </script>

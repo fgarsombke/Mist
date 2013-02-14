@@ -2,12 +2,16 @@
 import web
 import sys
 from webm.user import user
+from webm.user import addUser
 from webm.user import list
 from webm.user import logout
 from webm.device import device
+from webm.device import addDevice
 from webm.station import station
+from webm.station import addStation
 from webm.zone import zone
 from webm.index import index
+from webm.schedule import addSchedule
 from webm.schedule import schedule
 from api.aUser import aUser
 from api.aStation import aStation
@@ -24,15 +28,22 @@ if __name__ == '__main__':
 	render = web.template.render('templates/')
 
 	urls = (
-		'/', 'index',
+        #WEB APP URLs
+        '/', 'index',
 		'/user', 'user',
-		'/user/list', 'list',
+        '/user/add', 'addUser',
+        '/user/list', 'list',
 		'/user/logout', 'logout',
+        '/station/add', 'addStation',
 		'/station/list', 'station',
 		'/device', 'device',
-		'/zone', 'zone',
+        '/device/add', 'addDevice',
 		'/schedule', 'schedule',
-		'/api/user', 'aUser', 
+        '/schedule/add', 'addSchedule',	
+        '/zone', 'zone',
+
+        #API URLs
+        '/api/user', 'aUser', 
 		'/api/station', 'aStation',
 		'/api/device', 'aDevice',
 		'/api/schedule', 'aSchedule'

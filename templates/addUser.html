@@ -1,28 +1,36 @@
 $def with ()
 <link href="static/css/datepicker.css" rel="stylesheet">
    <div class="span12">
-      <form method="get" action="/schedule">
+      <form method="post" action="/user/add">
         <fieldset>
-          <legend>Enter deviceID to get schedule for</legend>
+          <legend>Create a Mist Cloud account</legend>
+
 	  <div class="clearfix">
-            <label>DeviceID</label>
+            <label>E-mail</label>
             <div class="input">
-                <input class="mini" type="text" value="3460" name = "deviceID"/>
+                <input class="mini" type="text" value="example@mailbox.com" name = "email"/>
             </div>
           </div><!-- /clearfix -->
-	
-	  <div class="actions">
-            <input type="submit" class="btn primary" value="Get List">&nbsp;</button>
+
+     <div class="clearfix">
+	  <label>Password</label>
+	    <div class="input">
+                <input class="mini" type="text" value="" name = "password"/>
+            </div>
+	</div>
+
+    <div class="actions">
+            <input type="submit" class="btn primary" value="Enqueue">&nbsp;</button>
           </div>
 	</fieldset>
       </form>
     </div>
 
-
 <script src="http://code.jquery.com/jquery-1.7.min.js"></script>
     <script src="static/js/bootstrap-datepicker.js"></script>
     <script>
-	/* Update datepicker plugin so that MM/DD/YYYY format is used. */
+
+      /* Update datepicker plugin so that MM/DD/YYYY format is used. */
       $$.extend($$.fn.datepicker.defaults, {
         parse: function (string) {
           var matches;
