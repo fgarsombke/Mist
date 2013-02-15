@@ -21,7 +21,7 @@ static const double K = .15;
 static const double L = .02;
 
 // Asmptotic correction constant
-// Divide by 8 for 8 adjacent zones
+// Divide by 8 for 8 subcells
 static const double C = (MaxDriftAmount/(1.0 + (K*M/(K*M+L))))/8.0;
 
 // Function Offset
@@ -39,21 +39,21 @@ DriftEntry::DriftEntry(NeighborHeightDiffs_t &heightDiffs)
    // In the equation below, d~slope of the yard between adjacent cells.
    double totalFlowVolume = 1;
 
-   auto diffs = heightDiffs.begin();
-   auto driftParams = this->begin();
-   SetSelf(1.0);
-   driftParams[8] = 1.0;
+   this->Center() = 1.0;
 
    double cellFlowConstant;
+   double total = 0;
 
-   for (int i = 1; i < 8; i+=2) {
-      // Scale corners by distance
-      diffs[i] *= invSqrt2;
-   }
-
+   // Scale corners by distance
+   heightDiffs.TopLeft() *= invSqrt2;
+   heightDiffs.TopRight() *= invSqrt2;
+   heightDiffs.BottomLeft() *= invSqrt2;
+   heightDiffs.BottomRight() *= invSqrt2;
+   
+   // Compute the sigmoid for each distance
    for (int i = 0; i < 8; ++i) {
-      if (diffs[i] < 0) {
-         double d = HeightUConv*diffs[i]; 
+      if (heightDiffs.data().data()[i] < 0) {
+         double d = HeightUConv*heightDiffs.data().data()[i]; 
 
          // Compute the sigmoid
          cellFlowConstant = C*(M*(d-K)/(M*abs(d-K)+L) + Offset);
@@ -61,9 +61,11 @@ DriftEntry::DriftEntry(NeighborHeightDiffs_t &heightDiffs)
          cellFlowConstant = 0;
       }
 
-      driftParams[i] = cellFlowConstant;
-      driftParams[8] += cellFlowConstant;
+      this->data_mutable().data()[i] = cellFlowConstant;
+      total += cellFlowConstant;
    }
+
+   this->Center() = total + 1;
 }
 
 

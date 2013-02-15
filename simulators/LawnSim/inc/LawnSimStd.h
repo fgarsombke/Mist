@@ -19,7 +19,7 @@
 
 namespace pt = boost::posix_time;
 namespace dt = boost::date_time;
-
+namespace bm = boost::numeric::ublas;
 
 // My Headers
 #include "Constants.h"

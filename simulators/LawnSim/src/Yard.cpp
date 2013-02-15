@@ -57,12 +57,12 @@ const bm::matrix<YardCell> Yard::InitCells(const YardInfo& yardInfo)
       if (cells.size1() != 1) {
          // One rown, multiple columns
          myInfo = cellInfos(0, lstCol);
-         rh.SetLeft(cellInfos(0, lstCol - 1).rel_height() - myInfo.rel_height());
+         rh.Left() = cellInfos(0, lstCol - 1).rel_height() - myInfo.rel_height();
          cells(0, lstCol) = YardCell(myInfo, rh);
 
          myInfo = cellInfos(0,0);
-         rh.SetLeft(0);
-         rh.SetRight(cellInfos(0, 1).rel_height() - myInfo.rel_height());
+         rh.Left() = 0;
+         rh.Right() = cellInfos(0, 1).rel_height() - myInfo.rel_height();
          cells(0,0) = YardCell(myInfo, rh);
       } else {
          cells(0,0) = YardCell(myInfo, rh);
@@ -70,41 +70,41 @@ const bm::matrix<YardCell> Yard::InitCells(const YardInfo& yardInfo)
       }
    } else if (cells.size2() == 1) {
       // Multiple rows, one column
-      rh.SetBottom(cellInfos(1, 0).rel_height() - myInfo.rel_height());
+      rh.Bottom() = cellInfos(1, 0).rel_height() - myInfo.rel_height();
       cells(0, 0) = YardCell(myInfo, rh);
 
       myInfo = cellInfos(lstRow,0);
-      rh.SetBottom(0);
-      rh.SetTop(cellInfos(lstRow - 1, 0).rel_height() - myInfo.rel_height());
+      rh.Bottom() = 0;
+      rh.Top() = cellInfos(lstRow - 1, 0).rel_height() - myInfo.rel_height();
 
       cells(lstRow,0) = YardCell(myInfo, rh);
    } else { 
       // Matrix is 2x2 or larger
       // Do corners
-      rh.SetRight(cellInfos(0, 1).rel_height() - myInfo.rel_height());
-      rh.SetBottomRight(cellInfos(1, 1).rel_height() - myInfo.rel_height());
-      rh.SetBottom(cellInfos(1, 0).rel_height() - myInfo.rel_height());
+      rh.Right() = cellInfos(0, 1).rel_height() - myInfo.rel_height();
+      rh.BottomRight() = cellInfos(1, 1).rel_height() - myInfo.rel_height();
+      rh.Bottom() = cellInfos(1, 0).rel_height() - myInfo.rel_height();
       cells(0,0) = YardCell(myInfo, rh);
       rh = 0;
       
       myInfo = cellInfos(0, lstCol);
-      rh.SetLeft(cellInfos(0, lstCol - 1).rel_height() - myInfo.rel_height());
-      rh.SetBottomLeft(cellInfos(1, lstCol - 1).rel_height() - myInfo.rel_height());
-      rh.SetBottom(cellInfos(1, lstCol).rel_height() - myInfo.rel_height());
+      rh.Left() = cellInfos(0, lstCol - 1).rel_height() - myInfo.rel_height();
+      rh.BottomLeft() = cellInfos(1, lstCol - 1).rel_height() - myInfo.rel_height();
+      rh.Bottom() = cellInfos(1, lstCol).rel_height() - myInfo.rel_height();
       cells(0, lstCol) = YardCell(myInfo, rh);
       rh = 0;
       
       myInfo = cellInfos(lstRow, 0);
-      rh.SetTop(cellInfos(lstRow - 1, 0).rel_height() - myInfo.rel_height());
-      rh.SetTopRight(cellInfos(lstRow - 1, 1).rel_height() - myInfo.rel_height());
-      rh.SetRight(cellInfos(lstRow, 1).rel_height() - myInfo.rel_height());
+      rh.Top() = cellInfos(lstRow - 1, 0).rel_height() - myInfo.rel_height();
+      rh.TopRight() = cellInfos(lstRow - 1, 1).rel_height() - myInfo.rel_height();
+      rh.Right() = cellInfos(lstRow, 1).rel_height() - myInfo.rel_height();
       cells(lstRow, 0) = YardCell(myInfo, rh);
       rh = 0;
 
       myInfo = cellInfos(lstRow, lstCol);
-      rh.SetTop(cellInfos(lstRow - 1, lstCol).rel_height() - myInfo.rel_height());
-      rh.SetTopLeft(cellInfos(lstRow - 1, lstCol - 1).rel_height() - myInfo.rel_height());
-      rh.SetLeft(cellInfos(lstRow, lstCol - 1).rel_height() - myInfo.rel_height());
+      rh.Top() = cellInfos(lstRow - 1, lstCol).rel_height() - myInfo.rel_height();
+      rh.TopLeft() = cellInfos(lstRow - 1, lstCol - 1).rel_height() - myInfo.rel_height();
+      rh.Left() = cellInfos(lstRow, lstCol - 1).rel_height() - myInfo.rel_height();
       cells(lstRow, lstCol) = YardCell(myInfo, rh);
       rh = 0;
    }
@@ -115,11 +115,11 @@ const bm::matrix<YardCell> Yard::InitCells(const YardInfo& yardInfo)
    for (size_t col = 1; col < lstCol; ++col) {
       myInfo = cellInfos(0, col);
 
-      rh.SetLeft(cellInfos(0, col - 1).rel_height() - myInfo.rel_height());
-      rh.SetBottomLeft(cellInfos(1, col - 1).rel_height() - myInfo.rel_height());
-      rh.SetBottom(cellInfos(1, col).rel_height() - myInfo.rel_height());
-      rh.SetBottomRight(cellInfos(1, col + 1).rel_height() - myInfo.rel_height());
-      rh.SetRight(cellInfos(0, col + 1).rel_height() - myInfo.rel_height());
+      rh.Left() = cellInfos(0, col - 1).rel_height() - myInfo.rel_height();
+      rh.BottomLeft() = cellInfos(1, col - 1).rel_height() - myInfo.rel_height();
+      rh.Bottom() = cellInfos(1, col).rel_height() - myInfo.rel_height();
+      rh.BottomRight() = cellInfos(1, col + 1).rel_height() - myInfo.rel_height();
+      rh.Right() = cellInfos(0, col + 1).rel_height() - myInfo.rel_height();
 
       cells(0, col) = YardCell(myInfo, rh);
       rh = 0;
@@ -129,11 +129,11 @@ const bm::matrix<YardCell> Yard::InitCells(const YardInfo& yardInfo)
    for (size_t row = 1; row < lstRow; ++row) {
       myInfo = cellInfos(row, 0);
 
-      rh.SetBottom(cellInfos(row + 1, 0).rel_height() - myInfo.rel_height());
-      rh.SetBottomRight(cellInfos(row + 1, 1).rel_height() - myInfo.rel_height());
-      rh.SetRight(cellInfos(row, 1).rel_height() - myInfo.rel_height());
-      rh.SetTopRight(cellInfos(row - 1, 1).rel_height() - myInfo.rel_height());
-      rh.SetTop(cellInfos(row - 1, 0).rel_height() - myInfo.rel_height());
+      rh.Bottom() = cellInfos(row + 1, 0).rel_height() - myInfo.rel_height();
+      rh.BottomRight() = cellInfos(row + 1, 1).rel_height() - myInfo.rel_height();
+      rh.Right() = cellInfos(row, 1).rel_height() - myInfo.rel_height();
+      rh.TopRight() = cellInfos(row - 1, 1).rel_height() - myInfo.rel_height();
+      rh.Top() = cellInfos(row - 1, 0).rel_height() - myInfo.rel_height();
 
       cells(row, 0) = YardCell(myInfo, rh);
       rh = 0;
@@ -144,14 +144,14 @@ const bm::matrix<YardCell> Yard::InitCells(const YardInfo& yardInfo)
       for (size_t col = 1; col < lstCol; ++col) {
          myInfo = cellInfos(row, col);
 
-         rh.SetRight(cellInfos(row, col+1).rel_height() - myInfo.rel_height());
-         rh.SetTopRight(cellInfos(row - 1, col + 1).rel_height() - myInfo.rel_height());
-         rh.SetTop(cellInfos(row - 1, col).rel_height() - myInfo.rel_height());
-         rh.SetTopLeft(cellInfos(row - 1, col - 1).rel_height() - myInfo.rel_height());
-         rh.SetLeft(cellInfos(row, col - 1).rel_height() - myInfo.rel_height());
-         rh.SetBottomLeft(cellInfos(row + 1, col - 1).rel_height() - myInfo.rel_height());
-         rh.SetBottom(cellInfos(row + 1, col).rel_height() - myInfo.rel_height());
-         rh.SetBottomRight(cellInfos(row + 1, col + 1).rel_height() - myInfo.rel_height());
+         rh.Right() = cellInfos(row, col+1).rel_height() - myInfo.rel_height();
+         rh.TopRight() = cellInfos(row - 1, col + 1).rel_height() - myInfo.rel_height();
+         rh.Top() = cellInfos(row - 1, col).rel_height() - myInfo.rel_height();
+         rh.TopLeft() = cellInfos(row - 1, col - 1).rel_height() - myInfo.rel_height();
+         rh.Left() = cellInfos(row, col - 1).rel_height() - myInfo.rel_height();
+         rh.BottomLeft() = cellInfos(row + 1, col - 1).rel_height() - myInfo.rel_height();
+         rh.Bottom() = cellInfos(row + 1, col).rel_height() - myInfo.rel_height();
+         rh.BottomRight() = cellInfos(row + 1, col + 1).rel_height() - myInfo.rel_height();
 
          cells(row, col) = YardCell(myInfo, rh);
          rh = 0;
@@ -162,11 +162,11 @@ const bm::matrix<YardCell> Yard::InitCells(const YardInfo& yardInfo)
    for (size_t row = 1; row < lstRow; ++row) {
       myInfo = cellInfos(row, lstCol);
 
-      rh.SetTop(cellInfos(row - 1, lstCol).rel_height() - myInfo.rel_height());
-      rh.SetTopLeft(cellInfos(row - 1, lstCol - 1).rel_height() - myInfo.rel_height());
-      rh.SetLeft(cellInfos(row, lstCol - 1).rel_height() - myInfo.rel_height());
-      rh.SetBottomLeft(cellInfos(row + 1, lstCol - 1).rel_height() - myInfo.rel_height());
-      rh.SetBottom(cellInfos(row + 1, lstCol).rel_height() - myInfo.rel_height());
+      rh.Top() = cellInfos(row - 1, lstCol).rel_height() - myInfo.rel_height();
+      rh.TopLeft() = cellInfos(row - 1, lstCol - 1).rel_height() - myInfo.rel_height();
+      rh.Left() = cellInfos(row, lstCol - 1).rel_height() - myInfo.rel_height();
+      rh.BottomLeft() = cellInfos(row + 1, lstCol - 1).rel_height() - myInfo.rel_height();
+      rh.Bottom() = cellInfos(row + 1, lstCol).rel_height() - myInfo.rel_height();
 
       cells(row, lstCol) = YardCell(myInfo, rh);
       rh = 0;
@@ -176,11 +176,11 @@ const bm::matrix<YardCell> Yard::InitCells(const YardInfo& yardInfo)
    for (size_t col = 1; col < cellInfos.size2() - 1; ++col) {
       myInfo = cellInfos(lstRow, col);
 
-      rh.SetLeft(cellInfos(lstRow, col - 1).rel_height() - myInfo.rel_height());
-      rh.SetTopLeft(cellInfos(lstRow - 1, col - 1).rel_height() - myInfo.rel_height());
-      rh.SetTop(cellInfos(lstRow - 1, col).rel_height() - myInfo.rel_height());
-      rh.SetTopRight(cellInfos(lstRow - 1, col + 1).rel_height() - myInfo.rel_height());
-      rh.SetRight(cellInfos(lstRow, col + 1).rel_height() - myInfo.rel_height());
+      rh.Left() = cellInfos(lstRow, col - 1).rel_height() - myInfo.rel_height();
+      rh.TopLeft() = cellInfos(lstRow - 1, col - 1).rel_height() - myInfo.rel_height();
+      rh.Top() = cellInfos(lstRow - 1, col).rel_height() - myInfo.rel_height();
+      rh.TopRight() = cellInfos(lstRow - 1, col + 1).rel_height() - myInfo.rel_height();
+      rh.Right() = cellInfos(lstRow, col + 1).rel_height() - myInfo.rel_height();
 
       cells(lstRow, col) = YardCell(myInfo, rh);
       rh = 0;

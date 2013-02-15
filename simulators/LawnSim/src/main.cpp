@@ -49,7 +49,7 @@ void DebugPrintYard(const Yard& y)
          cout << "Yard Cell (" << i << ", " << j << "): " << endl;
          cout << "\t";
          
-         for(double entry : cells(i,j).drift_entry().data()) {
+         for(double entry : cells(i,j).drift_entry()) {
             cout << entry << ", ";
          }
 
@@ -76,8 +76,8 @@ int main(int argc, char * argv[])
    
       LawnGenerator generator;
 
-      auto yardInfo = generator.Generate(options->geo_locale(), 20, 20);
-      auto controller = Mist::Controllers::Controller::GetControllerByName("NullController", Mist::Controllers::ControllerConfig());
+      auto yardInfo = generator.Generate(options->geo_locale(), 1000, 1000);
+      auto controller  = Mist::Controllers::Controller::GetControllerByName("NullController", Mist::Controllers::ControllerConfig());
 
       //DebugPrintYardInfo(*yard);
 

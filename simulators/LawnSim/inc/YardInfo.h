@@ -6,9 +6,6 @@
 
 #include "GeoLocale.h"
 
-
-namespace bm = boost::numeric::ublas;
-
 namespace Mist { namespace LawnSim {
 
 typedef bm::unbounded_array<std::pair<Sprinkler, std::pair<size_t,size_t> > > SprinklersList_t;
