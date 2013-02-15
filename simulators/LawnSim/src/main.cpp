@@ -49,7 +49,7 @@ void DebugPrintYard(const Yard& y)
          cout << "Yard Cell (" << i << ", " << j << "): " << endl;
          cout << "\t";
          
-         for(double entry : cells(i,j).drift_entry()) {
+         for(double entry : cells(i,j).drift_entry().data()) {
             cout << entry << ", ";
          }
 
