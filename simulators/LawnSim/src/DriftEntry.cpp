@@ -39,8 +39,9 @@ DriftEntry::DriftEntry(NeighborHeightDiffs_t &heightDiffs)
    // In the equation below, d~slope of the yard between adjacent cells.
    double totalFlowVolume = 1;
 
-   double * diffs = heightDiffs.begin();
-   double * driftParams = this->begin();
+   auto diffs = heightDiffs.begin();
+   auto driftParams = this->begin();
+   SetSelf(1.0);
    driftParams[8] = 1.0;
 
    double cellFlowConstant;
