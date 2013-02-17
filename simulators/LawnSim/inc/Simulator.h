@@ -14,7 +14,7 @@ namespace LawnSim {
 
 class Simulator {
 public:
-   Simulator(const YardInfo &yard, unique_ptr<Controllers::Controller> &controller);
+   Simulator(std::unique_ptr<YardInfo> &yardInfo, unique_ptr<Controllers::Controller> &controller);
 
 
    void Reset(ptime simStartTime, 

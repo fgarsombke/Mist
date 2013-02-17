@@ -9,7 +9,7 @@ template<class T>
 class NeighborData {
 public:
    typedef T value_t;
-   typedef bm::c_matrix<value_t, 3, 3> data_t;
+   typedef bnu::c_matrix<value_t, 3, 3> data_t;
    typedef value_t * iterator;
    typedef const value_t * const_iterator;
 
@@ -55,20 +55,10 @@ protected:
 
 private:
    // Drift constants starting at the right going counter clockwise
-   bm::c_matrix<value_t, 3, 3> data_;
+   bnu::c_matrix<value_t, 3, 3> data_;
 };
 
 
 typedef NeighborData<double> NeighborHeightDiffs_t;
-
-
-
-
-
-
-
-
-
-
 
 }}

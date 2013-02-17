@@ -4,14 +4,6 @@
 
 namespace Mist { namespace LawnSim {
 
-namespace YardCellType {
-   typedef enum YardCellType_t {
-      Grass,
-
-   };
-}
-
-
 class YardCellInfo
 {
 public:

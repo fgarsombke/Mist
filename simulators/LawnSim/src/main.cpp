@@ -7,8 +7,8 @@
 #include <boost/program_options/errors.hpp>
 #include <boost/date_time.hpp>
 
-#include "GeoLocale.h"
 #include "YardInfo.h"
+#include "Yard.h"
 #include "SimOptions.h"
 #include "Simulator.h"
 #include "LawnGenerator.h"
@@ -23,12 +23,17 @@ namespace pt = boost::posix_time;
 namespace gt = boost::gregorian;
 
 
+void DebugPrintYardInfo(const YardInfo& y);
+void DebugPrintYard(const Yard& y) ;
+
+#ifdef _DEBUG
+
 void DebugPrintYardInfo(const YardInfo& y) 
 {
    ofstream dbgFile;
    dbgFile.open("yardExPerlin.csv");
 
-   bm::matrix<YardCellInfo> cellInfos = y.yard_cells();
+   bnu::matrix<YardCellInfo> cellInfos = y.yard_cells();
 
    for(unsigned int i = 0; i < y.yard_length(); ++i) {
       for(unsigned int j = 0; j < y.yard_width(); ++j) {
@@ -40,24 +45,8 @@ void DebugPrintYardInfo(const YardInfo& y)
    dbgFile.close();
 }
 
-void DebugPrintYard(const Yard& y) 
-{
-   auto cells = y.cells();
 
-   for(unsigned int i = 0; i < cells.size1(); ++i) {
-      for(unsigned int j = 0; j < cells.size2(); ++j) {
-         cout << "Yard Cell (" << i << ", " << j << "): " << endl;
-         cout << "\t";
-         
-         for(double entry : cells(i,j).drift_entry()) {
-            cout << entry << ", ";
-         }
-
-         cout << endl;
-      }
-   }
-}
-
+#endif
 
 int main(int argc, char * argv[]) 
 {
@@ -76,16 +65,10 @@ int main(int argc, char * argv[])
    
       LawnGenerator generator;
 
-      auto yardInfo = generator.Generate(options->geo_locale(), 1000, 1000);
+      auto yardInfo = generator.Generate(options->geo_locale(), 640, 640);
       auto controller  = Mist::Controllers::Controller::GetControllerByName("NullController", Mist::Controllers::ControllerConfig());
 
-      //DebugPrintYardInfo(*yard);
-
-      Simulator sim(*yardInfo, controller);
-
-      yardInfo.release();
-
-      //DebugPrintYard(sim.yard());
+      Simulator sim(yardInfo, controller);
 
       pt::ptime start(options->start_time());
       pt::ptime end(options->end_time());

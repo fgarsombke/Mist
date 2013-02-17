@@ -30,12 +30,14 @@ inline int SleepForMS(int x) {
 
 namespace Mist { namespace LawnSim {
 
-Simulator::Simulator(const YardInfo &yard, unique_ptr<Controllers::Controller> &controller)
-   : yard_(yard), controller_(std::move(controller))
+Simulator::Simulator(std::unique_ptr<YardInfo> &yardInfo, unique_ptr<Controllers::Controller> &controller)
+   : yard_(*yardInfo.get()), controller_(std::move(controller))
 {
    // Set start time ahead of end time so the sim won't run
    sim_start_time_ = ptime(boost::gregorian::date(1970,1,2));
    sim_end_time_ = ptime(boost::gregorian::date(1970,1,1));
+
+   yardInfo.release();
 }
 
 

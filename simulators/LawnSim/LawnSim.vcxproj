@@ -25,11 +25,12 @@
     <ClInclude Include="inc\DBHook.h" />
     <ClInclude Include="inc\DriftEntry.h" />
     <ClInclude Include="inc\ETCalc.h" />
+    <ClInclude Include="inc\InvalidOperationException.h" />
+    <ClInclude Include="inc\LawnCoordinate.h" />
     <ClInclude Include="inc\LawnGenerator.h" />
     <ClInclude Include="inc\LawnSimStd.h" />
     <ClInclude Include="inc\NeighborData.h" />
     <ClInclude Include="inc\PerlinNoiseGen.h" />
-    <ClInclude Include="inc\Precompiled.h" />
     <ClInclude Include="inc\SimOptions.h" />
     <ClInclude Include="inc\Simulator.h" />
     <ClInclude Include="inc\Sprinkler.h" />
@@ -42,6 +43,7 @@
     <ClCompile Include="src\Constants.cpp" />
     <ClCompile Include="src\DriftEntry.cpp" />
     <ClCompile Include="src\ETCalc.cpp" />
+    <ClCompile Include="src\LawnCoordinate.cpp" />
     <ClCompile Include="src\LawnGenerator.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\PerlinNoiseGenerator.cpp" />
@@ -144,7 +146,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;GSL_DISABLE_DEPRECATED%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Program Files (x86)\GnuWin32\include;D:\Software\boost_1_52_0;$(ProjectDir)inc;$(ProjectDir)../../inc;$(ProjectDir)../Controllers/inc</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Program Files (x86)\GnuWin32\include;D:\Software\boost;$(ProjectDir)inc;$(ProjectDir)../../inc;$(ProjectDir)../Controllers/inc</AdditionalIncludeDirectories>
       <SDLCheck>false</SDLCheck>
       <PrecompiledHeaderFile>LawnSimStd.h</PrecompiledHeaderFile>
       <AdditionalOptions>-D_SCL_SECURE_NO_WARNINGS %(AdditionalOptions)</AdditionalOptions>
@@ -153,7 +155,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Program Files (x86)\GnuWin32\lib;D:\Software\boost_1_52_0\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Program Files (x86)\GnuWin32\lib;D:\Software\boost\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>WINMM.LIB;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -190,7 +192,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Program Files (x86)\GnuWin32\include;D:\Software\boost_1_52_0;$(ProjectDir)inc;$(ProjectDir)../../inc;$(ProjectDir)../Controllers/inc</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Program Files (x86)\GnuWin32\include;D:\Software\boost;$(ProjectDir)inc;$(ProjectDir)../../inc;$(ProjectDir)../Controllers/inc</AdditionalIncludeDirectories>
       <SDLCheck>false</SDLCheck>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeTypeInfo>true</RuntimeTypeInfo>
@@ -204,7 +206,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>C:\Program Files (x86)\GnuWin32\lib;D:\Software\boost_1_52_0\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>C:\Program Files (x86)\GnuWin32\lib;D:\Software\boost\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>WINMM.LIB;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>

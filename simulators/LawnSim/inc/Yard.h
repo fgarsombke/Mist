@@ -6,14 +6,15 @@
 #include "YardCell.h"
 #include "DriftEntry.h"
 #include "WeatherData.h"
-#include "GeoLocale.h"
+#include "LawnCoordinate.h"
 
+#include "GeoLocale.h"
 #include "Controller.h"
 
 namespace Mist { namespace LawnSim {
 
-typedef bm::compressed_matrix<double> SprinklerMask_t;
-typedef bm::unbounded_array<SprinklerMask_t> SprinklerMaskList_t;
+typedef bnu::compressed_matrix<double> SprinklerMask_t;
+typedef bnu::unbounded_array<SprinklerMask_t> SprinklerMaskList_t;
 
 
 
@@ -21,7 +22,7 @@ class Yard {
 public:
    Yard(const YardInfo& yardInfo);
 
-   const bm::matrix<YardCell> &cells() const { return cells_; }
+   const bnu::matrix<YardCell> &cells() const { return cells_; }
 
    void ElapseTime(pt::time_period tickPeriod, const WeatherData &data, std::vector<pt::time_duration> sprinklerDurations);
 
@@ -30,16 +31,18 @@ public:
    size_t SprinklersCount() const { return sprinklers_.size(); }
    const GeoLocale locale() const { return locale_; }
 
+   void DebugPrint() const;
 private:
    const GeoLocale locale_;
 
-   bm::matrix<YardCell> cells_;
+   // Initialize First
+   bnu::matrix<YardCell> cells_;
 
    // The sprinklers in the yard, along with their positions in the yard
    const SprinklersList_t sprinklers_;
 
    // Stores the indices of the yardcells in order of decreasing height
-   const bm::unbounded_array<size_t> cells_by_height_;
+   const bnu::unbounded_array<LawnCoordinate> cells_by_height_;
 
    // The sprinkler "masks" which indicate how much water is to be delivered to each cell
    // The units are mm/s, so each matrix needs to be multiplied by time duration when watering
@@ -48,16 +51,16 @@ private:
 
    // Contains fraction rain amoun modifiers so that rain will be distributed unevenly across the yard
    // TODO: Possibly get a more sophistocated mask
-   bm::scalar_matrix<double> rain_mask_;
+   bnu::scalar_matrix<double> rain_mask_;
 
    // The water on the surface across the yard, which has not yet been absorbed into the soil
-   bm::matrix<double> surface_water_;
+   bnu::matrix<double> surface_water_;
 
 
    SprinklerMaskList_t InitSprinklerMasks(const YardInfo &yardInfo);
 
-   static const bm::matrix<YardCell> InitCells(const YardInfo& yardInfo);
-   static const bm::unbounded_array<size_t> InitHeightMap(const bm::matrix<YardCell> &cells);
+   static const bnu::matrix<YardCell> InitCells(const YardInfo& yardInfo);
+   static const bnu::unbounded_array<LawnCoordinate> InitHeightMap(YardInfo const &yardInfo);
 };
 
 

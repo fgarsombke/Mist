@@ -9,9 +9,7 @@ namespace bt = boost::posix_time;
 
 using namespace std;
 
-namespace Mist {
-namespace LawnSim {
-
+namespace Mist { namespace LawnSim {
 
 SimOptions::SimOptions(int argc, char * argv[]) {
    double latitude;
@@ -90,8 +88,6 @@ SimOptions::SimOptions(int argc, char * argv[]) {
    if (end_time_ == empty_ptime) {
       throw std::invalid_argument("End time was in an invalid format.\n");
    }
-
 }
 
-}
-}
+}}

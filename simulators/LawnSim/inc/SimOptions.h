@@ -3,15 +3,13 @@
 #include "LawnSimStd.h"
 #include "GeoLocale.h"
 
-using namespace std;
 using namespace boost::posix_time;
 
-namespace Mist {
-namespace LawnSim {
+namespace Mist { namespace LawnSim {
 
 struct SimOptions {
 private:
-   string controller_;
+   std::string controller_;
 
    ptime start_time_;
    ptime end_time_;
@@ -44,5 +42,4 @@ public:
    ptime end_time() const { return end_time_; }
 };
 
-}
-}
+}}
