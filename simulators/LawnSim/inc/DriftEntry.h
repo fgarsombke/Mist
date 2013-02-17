@@ -5,7 +5,8 @@
 
 namespace Mist { namespace LawnSim {
 
-class DriftEntry : public NeighborData<double> {
+class DriftEntry : public NeighborData<double> 
+{
 public:
    DriftEntry() 
       : NeighborData<double>()
@@ -18,19 +19,7 @@ public:
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
+std::ostream& operator<<(std::ostream &out, DriftEntry lc);
 
 
 }}

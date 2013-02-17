@@ -28,13 +28,13 @@ unique_ptr<YardInfo> LawnGenerator::Generate(GeoLocale locale, size_t rows, size
 }
 
 
-bm::matrix<YardCellInfo> LawnGenerator::GenerateCells(size_t rows, 
+bnu::matrix<YardCellInfo> LawnGenerator::GenerateCells(size_t rows, 
                                                   size_t cols, 
                                                   FillHeightFunc_t hFunc) const 
 {
-   bm::matrix<YardCellInfo> cells(rows, cols, YardCellInfo());
+   bnu::matrix<YardCellInfo> cells(rows, cols, YardCellInfo());
    
-   bm::matrix<double> heights(rows, cols);
+   bnu::matrix<double> heights(rows, cols);
 
    // Generate the heights
    hFunc(heights);
@@ -48,7 +48,7 @@ bm::matrix<YardCellInfo> LawnGenerator::GenerateCells(size_t rows,
    return cells;
 }
 
-void LawnGenerator::FillHeightsPerlin(bm::matrix<double> &heights) {
+void LawnGenerator::FillHeightsPerlin(bnu::matrix<double> &heights) {
    size_t rows = heights.size1();
    size_t cols = heights.size2();
 
@@ -61,7 +61,7 @@ void LawnGenerator::FillHeightsPerlin(bm::matrix<double> &heights) {
    }
 }
 
-void LawnGenerator::FillHeightsDiagonally(bm::matrix<double> &heights) {
+void LawnGenerator::FillHeightsDiagonally(bnu::matrix<double> &heights) {
    size_t rows = heights.size1();
    size_t cols = heights.size2();
    

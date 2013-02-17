@@ -49,9 +49,9 @@ DriftEntry::DriftEntry(NeighborHeightDiffs_t &heightDiffs)
    heightDiffs.TopRight() *= invSqrt2;
    heightDiffs.BottomLeft() *= invSqrt2;
    heightDiffs.BottomRight() *= invSqrt2;
-   
+
    // Compute the sigmoid for each distance
-   for (int i = 0; i < 8; ++i) {
+   for (int i = 0; i < 9; ++i) {
       if (heightDiffs.data().data()[i] < 0) {
          double d = HeightUConv*heightDiffs.data().data()[i]; 
 
@@ -68,11 +68,33 @@ DriftEntry::DriftEntry(NeighborHeightDiffs_t &heightDiffs)
    this->Center() = total + 1;
 }
 
+#ifdef _DEBUG
 
+std::ostream& operator<<(std::ostream &out, DriftEntry lc) {
+   using namespace std;
+   out << endl << "DriftEntry: " << endl << "[" << endl;
 
+   //out.precision(8);
+   //out.width(10);
 
+   for (int i = 0; i < 3; ++i) {
+      out << "\t";
 
+      out << lc.data()(i, 0) << ", ";
+      out << lc.data()(i, 1) << ", ";
+      out << lc.data()(i, 2);
 
+      out << endl;
+   }
+
+   out << endl << "]" << endl;
+
+   out << resetiosflags(ios::floatfield);
+
+   return out;
+}
+
+#endif
 
 
 

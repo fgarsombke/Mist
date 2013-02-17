@@ -39,9 +39,6 @@
     <ClInclude Include="inc\PerlinNoiseGen.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="inc\Precompiled.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="inc\SimOptions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -81,6 +78,12 @@
     <ClInclude Include="..\..\inc\WeatherDataSource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="inc\LawnCoordinate.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\InvalidOperationException.h">
+      <Filter>Header Files\Exceptions</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Constants.cpp">
@@ -117,6 +120,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\LawnSimStd.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\LawnCoordinate.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

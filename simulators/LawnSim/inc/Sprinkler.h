@@ -25,7 +25,7 @@ public:
    }
 
    // Stored at a rate of mm/s
-   //const bm::matrix<double> SprayRates();
+   //const bnu::matrix<double> SprayRates();
 
 private:
    const double watering_rate_;     // In mm/s
