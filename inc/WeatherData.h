@@ -42,6 +42,9 @@ private:
 
    // As a fraction (not percentage)
    boost::optional<double> avg_humidity_;
+
+   // Barometric Pressure 
+   boost::optional<double> avg_pressure_;
 };
 
 }
