@@ -8,12 +8,14 @@ sys.path.append('../db/')
 from db import DBConfig
 import json
 import collections
+from jsonencode import MyEncoder
 
 class WeatherData:
-    def __init__(self, startTemp, endTemp, windVelocity, avgHumidity, avgPressure, avgDew, timestamp):
+    def __init__(self, startTemp, endTemp, avgTemp, avgWind, avgHumidity, avgPressure, avgDew, timestamp):
         self.startTemp = startTemp
         self.endTemp = endTemp
-        self.windVelocty = windVelocity
+        self.avgTemp = avgTemp
+        self.avgWind = avgWind
         self.avgHumidity = avgHumidity
         self.avgPressure = avgPressure
         self.avgDew = avgDew
@@ -28,75 +30,72 @@ def findNearestClimateStation(latitude, longitude):
     return nearestStation[0]
 
 def getWeatherData(station, time):
-	
+    
     conf = DBConfig.DBConfig()
-	db = conf.connectToLocalConfigDatabase()
-	cursor = db.cursor()														 
-	
+    db = conf.connectToLocalConfigDatabase()
+    cursor = db.cursor()                                                         
+
+    #PARAMETERIZE TIME INTERVAL!!!
+
     sqlString = """SELECT * FROM hourlyClimateData WHERE climateStationID = '%s' AND hourlyClimateData.date > DATE_SUB(now(), INTERVAL 1 DAY)""" % (station)
-	cursor.execute(sqlString)
-	results = cursor.fetchall()	
-	cursor.close()
-	
+    cursor.execute(sqlString)
+    results = cursor.fetchall() 
+    cursor.close()
+    
     #compute WeatherData object
-	avgDailyTemp = 0
-	avgDailyWind = 0
-	avgDailyHumidity = 0
-	avgDailyPressure = 0
-	avgDailyDew = 0
-	maxTemp = -1000
-	minTemp = 1000
+    avgTemp = 0
+    avgWind = 0
+    avgHumidity = 0
+    avgPressure = 0
+    avgDew = 0
+    maxTemp = -1000
+    minTemp = 1000
 
-	humidCount = 0
-	tempCount = 0
-	pressureCount = 0
-	dewCount = 0
-	windCount = 0
+    humidCount = 0
+    tempCount = 0
+    pressureCount = 0
+    dewCount = 0
+    windCount = 0
 
-	#iterate through the last 24 hours of weather readings
-	if len(results) > 12:				
-		# average each of the last 21 readings
-		for result in results:
-			
-			#verify that all results exist (NOT NULL)
-			if result[2] is not None:
-				tempCount += 1
-				#update min/max temps
-                if result[2] >= maxTemp:
-					maxTemp = result[2]
-				if result[2] <= minTemp:
-					minTemp = result[2]
-				
-				avgDailyTemp += result[2]
-	
-            if result[3] is not None:
-				humidCount += 1
-				avgDailyHumidity += result[3]
+    for result in results:  
+        #verify that all results exist (NOT NULL)
+        if result[2] is not None:
+            tempCount += 1
+            #update min/max temps
+            if result[2] >= maxTemp:
+                maxTemp = result[2]
+            if result[2] <= minTemp:
+                minTemp = result[2] 
+            avgTemp += result[2]
+    
+        if result[3] is not None:
+            humidCount += 1
+            avgHumidity += result[3]
 
-            if result[4] is not None:
-				pressureCount += 1
-    			avgDailyPressure += result[4]
+        if result[4] is not None:
+            pressureCount += 1
+            avgPressure += result[4]
 
-            if result[5] is not None:
-				dewCount += 1
-				avgDailyDew += result[5]
+        if result[5] is not None:
+            dewCount += 1
+            avgDew += result[5]
 
-            if result[6] is not None:
-				windCount += 1
-				avgDailyWind += result[6]
-	
-		#compute averages
-		if humidCount != 0 and tempCount != 0 and pressureCount != 0 and dewCount != 0 and windCount != 0:	
-			avgDailyTemp = avgDailyTemp / tempCount
-			avgDailyWind = avgDailyWind / windCount
-			avgDailyHumidity = avgDailyHumidity / humidCount
-			avgDailyPressure = avgDailyPressure / pressureCount
-			avgDailyDew = avgDailyDew / dewCount
-			isoTime = results[len(results) - 1][8] #Most recent time reading
+        if result[6] is not None:
+            windCount += 1
+            avgWind += result[6]
+    
+    #compute averages
+    isoTime = ""
+    if humidCount != 0 and tempCount != 0 and pressureCount != 0 and dewCount != 0 and windCount != 0:  
+        avgTemp = avgTemp / tempCount
+        avgWind = avgWind / windCount
+        avgHumidity = avgHumidity / humidCount
+        avgPressure = avgPressure / pressureCount
+        avgDew = avgDew / dewCount #NOT USING
+        isoTime = results[len(results) - 1][8] #Most recent time reading
 
-        data = WeatherData(startTemp, endTemp, avgDailyTemp, avgDailyWind, avgDailyHumidity, avgDailyPressure, avgDailyDew)
-
-        return data
+    data = WeatherData(minTemp, maxTemp, avgTemp, avgWind, avgHumidity, avgPressure, avgDew, isoTime)
+    return data
 
 
 class aWeather:
@@ -110,20 +109,20 @@ class aWeather:
             #get nearest station
             station = findNearestClimateStation(weather_data.latitude, weather_data.longitude)
             #compute necessary data from that station
-            weatherData = getWeatherData(station, time)
+            weatherData = getWeatherData(station, weather_data.time)
             #JSONize
             objects_list = []
             d = collections.OrderedDict()
             d['startTemp'] = weatherData.startTemp
             d['endTemp'] = weatherData.endTemp
             d['avgTemp'] = weatherData.avgTemp
-            d['windVelocity'] = weatherData.windVelocity
+            d['avgWind'] = weatherData.avgWind
             d['avgHumidity'] = weatherData.avgHumidity
             d['avgPressure'] = weatherData.avgPressure
             d['avgDew'] = weatherData.avgDew
-            d['timeStamp'] = weatherData.timestamp
+            d['timestamp'] = weatherData.timestamp
             objects_list.append(d)
-            j = json.dumps(objects_list)
+            j = json.dumps(objects_list, cls=MyEncoder)
             #return JSONized data
             return j
         else:

@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 import web
 import sys
+
 from webm.user import user
 from webm.user import addUser
 from webm.user import list
@@ -13,10 +14,14 @@ from webm.zone import zone
 from webm.index import index
 from webm.schedule import addSchedule
 from webm.schedule import schedule
+from webm.weather import weather
+
 from api.aUser import aUser
 from api.aStation import aStation
 from api.aDevice import aDevice
 from api.aSchedule import aSchedule
+from api.aWeather import aWeather
+
 sys.path.append('./db')
 from db import DBConfig
 
@@ -40,14 +45,16 @@ if __name__ == '__main__':
         '/device/add', 'addDevice',
 		'/schedule', 'schedule',
         '/schedule/add', 'addSchedule',	
+        '/weather', 'weather',
         '/zone', 'zone',
 
         #API URLs
         '/api/user', 'aUser', 
 		'/api/station', 'aStation',
 		'/api/device', 'aDevice',
-		'/api/schedule', 'aSchedule'
-		)
+		'/api/schedule', 'aSchedule',
+		'/api/weather', 'aWeather'
+        )
 
 	config = open("/Users/makilian/Mist/local.config")
 	host = config.readline().rstrip()
