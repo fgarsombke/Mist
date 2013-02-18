@@ -1,0 +1,20 @@
+$def with (list)
+
+<div class="span9">
+    <div class="hero-unit">
+    <div>
+        <h3>
+            $for i in list
+                Start Temperature: $i['startTemp'] <br> 
+                End Temperature: $i['endTemp'] <br>
+                Average Temperature: $i['avgTemp'] <br>
+                Average Wind Velocity: $i['avgWind'] <br>
+                Average Humidity: $i['avgHumidity'] <br>
+                Average Pressure: $i['avgPressure'] <br>
+                Average Dew: $i['avgDew'] <br>
+                Timestamp: $i['timestamp'] <br>
+                <br> <br>
+        </h3>
+    </div>
+	</div>
+</div>
