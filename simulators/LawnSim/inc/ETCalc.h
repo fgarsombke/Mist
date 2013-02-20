@@ -3,8 +3,7 @@
 #include "LawnSimStd.h"
 #include "GeoLocale.h"
 
-namespace Mist {
-namespace FAO_ET {
+namespace Mist { namespace FAO_ET {
 
 struct ETCalcParameters {
    const double windSpeed;    // In m/s
@@ -28,5 +27,4 @@ public:
 
 };
 
-}
-}
+}}

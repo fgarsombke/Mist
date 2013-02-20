@@ -1,7 +1,11 @@
 #pragma once
-#include "LawnSimStd.h"
+#include "MistStd.h"
 #include "GeoLocale.h"
 #include "WeatherData.h"
+
+using std::string;
+using std::vector;
+using std::ostream;
 
 namespace Mist {
 
@@ -14,8 +18,10 @@ public:
       return WeatherData();
    }
 
-private:
+   int GetHtml(string &host_,string &port_, string url_path, ostream &out_, vector<string> &headers, unsigned int timeout) const;
 
+private:
+   
 
 
 };
