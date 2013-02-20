@@ -59,6 +59,11 @@ private:
 
    SprinklerMaskList_t InitSprinklerMasks(const YardInfo &yardInfo);
 
+
+   void Absorb();
+
+   void DoGrow();
+
    static const bnu::matrix<YardCell> InitCells(const YardInfo& yardInfo);
    static const bnu::unbounded_array<LawnCoordinate> InitHeightMap(YardInfo const &yardInfo);
 };

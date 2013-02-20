@@ -380,10 +380,18 @@ void Yard::ElapseTime(pt::time_period tickPeriod, const WeatherData &data, std::
 
 
    // Grow
-
+   DoGrow();
 }
 
+void Yard::DoGrow() 
+{
+   // Grow the grass in the yard
+   
+   for (YardCell &cell : cells_.data()) {
+      
+   }
 
+}
 
 #ifdef _DEBUG
 void Yard::DebugPrint() const
