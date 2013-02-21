@@ -17,7 +17,7 @@
 #include <boost/date_time.hpp>
 #include <boost/iterator/zip_iterator.hpp>
 #include <boost/tuple/tuple.hpp>
-#include <boost\math\special_functions\fpclassify.hpp>
+#include <boost/math/special_functions/fpclassify.hpp>
 
 namespace pt = boost::posix_time;
 namespace dt = boost::date_time;

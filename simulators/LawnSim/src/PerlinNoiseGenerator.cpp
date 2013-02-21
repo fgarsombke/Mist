@@ -1,6 +1,6 @@
 #include "LawnSimStd.h"
 
-#include "PerlinNoiseGen.h"
+#include "PerlinNoiseGenerator.h"
 
 
 namespace Perlin {

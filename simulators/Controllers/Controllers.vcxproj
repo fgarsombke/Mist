@@ -162,6 +162,7 @@
   <ItemGroup>
     <ClInclude Include="inc\Controller.h" />
     <ClInclude Include="inc\ControllerConfig.h" />
+    <ClInclude Include="inc\NullController.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Controller.cpp" />

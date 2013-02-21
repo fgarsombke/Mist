@@ -33,22 +33,22 @@ public:
    YardCellType_t cell_type() const { return cell_type_; }
    const DriftEntry drift_entry() const;
 private:
+   YardCellInfo cell_info_;
+   
+   YardCellType_t cell_type_;
+   
+   DriftEntry drift_entry_;
+   double current_health_;
+   
+   // The yard cell only gets water soaked into the soil
+   double absorbed_water_;
+   
    YardCell(YardCellInfo info, YardCellType_t type);
 
    YardCell(YardCellInfo info, YardCellType_t type, NeighborHeightDiffs_t &heightDiffs);
 
    // Returns the amount of water lost from the soil
    double Grow(double waterSupplied, const FAO_ET::ETCalcParameters &etParams);
-
-   YardCellType_t cell_type_;
-
-   YardCellInfo cell_info_;
-   DriftEntry drift_entry_;
-   
-   double current_health_;
-   
-   // The yard cell only gets water soaked into the soil
-   double absorbed_water_;
 };
 
 
