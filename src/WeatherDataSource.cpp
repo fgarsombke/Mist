@@ -9,25 +9,25 @@ using std::stringstream;
 
 
 
-int main() 
-{
-   using namespace std;
-   stringstream s;
-   Mist::WeatherDataSource w;
+// int main() 
+// {
+   // using namespace std;
+   // stringstream s;
+   // Mist::WeatherDataSource w;
 
-   
+   // vector<string> headers;
    //int ret = w.GetHtml(string("192.168.7.11"), string("8080"), string("api/weather?latitude=30&longitude=-100&time=45"), cout, vector<string>(), 5000);
-   int ret = w.GetHtml(string("192.168.7.11"), string("8080"), string("/api/weather?latitude=30&longitude=-100&time=45"), cout, vector<string>(), 5000);
+   // int ret = w.GetHtml(string("192.168.7.11"), string("8080"), string("/api/weather?latitude=30&longitude=-100&time=45"), cout, headers, 5000);
 
 
-   cout << "Result: " << ret << endl;
+   // cout << "Result: " << ret << endl;
    
-   return 0;
-}
+   // return 0;
+// }
 
 namespace Mist {
 
-int WeatherDataSource::GetHtml(string &host_,string &port_, string url_path, ostream &out_, vector<string> &headers, unsigned int timeout) const
+int WeatherDataSource::GetHtml(const string &host_,const string &port_, const string &url_path, ostream &out_, vector<string> &headers, unsigned int timeout) const
 {
     try{
         using namespace boost::asio::ip;

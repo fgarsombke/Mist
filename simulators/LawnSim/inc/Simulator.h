@@ -9,8 +9,7 @@
 
 using namespace boost::posix_time;
 
-namespace Mist {
-namespace LawnSim {
+namespace Mist { namespace LawnSim {
 
 class Simulator {
 public:
@@ -41,15 +40,15 @@ private:
 
    
    /////////////////////////////
-
+   Yard yard_;
+   
    unique_ptr<Controllers::Controller> controller_;
 
 
    unsigned int real_start_time_;      // Last Real world (simulator) start time 
 
    WeatherDataSource weather_source_;
-   Yard yard_;
+   
 };
 
-}
-}
+}}

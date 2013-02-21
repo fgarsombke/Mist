@@ -21,7 +21,7 @@ public:
       return WeatherData();
    }
 
-   int GetHtml(string &host_,string &port_, string url_path, ostream &out_, vector<string> &headers, unsigned int timeout) const;
+   int GetHtml(const string &host_,const string &port_, const string &url_path, ostream &out_, vector<string> &headers, unsigned int timeout) const;
 
 private:
    

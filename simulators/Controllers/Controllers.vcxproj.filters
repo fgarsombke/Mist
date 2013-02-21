@@ -21,6 +21,9 @@
     <ClInclude Include="inc\ControllerConfig.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="inc\NullController.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\Controller.cpp">

@@ -25,14 +25,13 @@ public:
    { return sprinklers_; }
 
 private: 
-   friend class LawnGenerator;
-
+   friend class LawnGenerator;  
+   const GeoLocale locale_;
+   
    const bnu::matrix<YardCellInfo> yard_cells_;
 
    // The sprinklers in the yard, along with their positions in the yard
    const SprinklersList_t sprinklers_;
-
-   const GeoLocale locale_;
 
     YardInfo(const GeoLocale locale, 
              const bnu::matrix<YardCellInfo> yardCells, 
