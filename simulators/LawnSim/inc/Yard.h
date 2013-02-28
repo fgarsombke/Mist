@@ -38,11 +38,11 @@ private:
    // Initialize First
    bnu::matrix<YardCell> cells_;
 
-   // The sprinklers in the yard, along with their positions in the yard
-   const SprinklersList_t sprinklers_;
-
    // Stores the indices of the yardcells in order of decreasing height
    const bnu::unbounded_array<LawnCoordinate> cells_by_height_;
+   
+   // The sprinklers in the yard, along with their positions in the yard
+   const SprinklersList_t sprinklers_;
 
    // The sprinkler "masks" which indicate how much water is to be delivered to each cell
    // The units are mm/s, so each matrix needs to be multiplied by time duration when watering
@@ -58,6 +58,11 @@ private:
 
 
    SprinklerMaskList_t InitSprinklerMasks(const YardInfo &yardInfo);
+
+
+   void Absorb();
+
+   void DoGrow();
 
    static const bnu::matrix<YardCell> InitCells(const YardInfo& yardInfo);
    static const bnu::unbounded_array<LawnCoordinate> InitHeightMap(YardInfo const &yardInfo);

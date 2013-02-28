@@ -1,12 +1,13 @@
 #include "LawnSimStd.h"
 
+#include "main.h"
+
 #include <fstream>
 #include <ostream>
-#include <iostream>
 
 #include <boost/program_options/errors.hpp>
-#include <boost/date_time.hpp>
 
+#include "GeoLocale.h"
 #include "YardInfo.h"
 #include "Yard.h"
 #include "SimOptions.h"
@@ -24,7 +25,6 @@ namespace gt = boost::gregorian;
 
 
 void DebugPrintYardInfo(const YardInfo& y);
-void DebugPrintYard(const Yard& y) ;
 
 #ifdef _DEBUG
 
@@ -62,10 +62,8 @@ int main(int argc, char * argv[])
          cerr << "Error: " << e.what() << endl;
          return 1;
       }
-   
-      LawnGenerator generator;
 
-      auto yardInfo = generator.Generate(options->geo_locale(), 640, 640);
+      auto yardInfo = LawnGenerator().Generate(options->geo_locale(), 1000, 1000);
       auto controller  = Mist::Controllers::Controller::GetControllerByName("NullController", Mist::Controllers::ControllerConfig());
 
       Simulator sim(yardInfo, controller);
@@ -74,7 +72,7 @@ int main(int argc, char * argv[])
       pt::ptime end(options->end_time());
 
       sim.Reset(start, end, options->sim_tick_period(), options->sim_speed_ratio());
-
+      
       options.release();
       
       sim.Run();

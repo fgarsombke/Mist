@@ -6,9 +6,7 @@
 namespace pt = boost::posix_time;
 using namespace std;
 
-namespace Mist {
-namespace Controllers  {
-
+namespace Mist { namespace Controllers  {
 
 class Controller {
 public:
@@ -43,6 +41,5 @@ private:
 
    const ControllerConfig config_;   
 };
-
 
 }}

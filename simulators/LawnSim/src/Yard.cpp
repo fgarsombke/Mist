@@ -9,10 +9,10 @@ namespace Mist { namespace LawnSim {
 
    
 Yard::Yard(const YardInfo& yardInfo)
-   : cells_(InitCells(yardInfo)), cells_by_height_(InitHeightMap(yardInfo)), 
-     locale_(yardInfo.locale()), 
-     surface_water_(cells_.size1(), cells_.size2(), 0),
-     sprinklers_(std::move(yardInfo.sprinklers()))
+   : locale_(yardInfo.locale()), cells_(InitCells(yardInfo)), 
+     cells_by_height_(InitHeightMap(yardInfo)),
+     sprinklers_(std::move(yardInfo.sprinklers())),
+	 surface_water_(cells_.size1(), cells_.size2(), 0)
 {
    // Zero everything out and
    // Generate a height sorted view of the Yard
@@ -348,7 +348,7 @@ void Yard::ElapseTime(pt::time_period tickPeriod, const WeatherData &data, std::
    double dt = tickPeriod.length().ticks()/((double)tickPeriod.length().ticks_per_second());
 
    // Add sprinkler water to the surface
-   for (int i = 0; i < sprinkler_masks_.size(); ++i) {
+   for (size_t i = 0; i < sprinkler_masks_.size(); ++i) {
       pt::time_duration dt_s = sprinklerDurations[i];
       noalias(matrix_range<matrix<double> >(surface_water_, 
                                              range(1, surface_water_.size1() - 1), 
@@ -380,10 +380,18 @@ void Yard::ElapseTime(pt::time_period tickPeriod, const WeatherData &data, std::
 
 
    // Grow
-
+   DoGrow();
 }
 
+void Yard::DoGrow() 
+{
+   // Grow the grass in the yard
+   
+   for (YardCell &cell : cells_.data()) {
+      
+   }
 
+}
 
 #ifdef _DEBUG
 void Yard::DebugPrint() const
