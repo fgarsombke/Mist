@@ -7,7 +7,11 @@
 #include <Windows.h>
 //#include <mmsystem.h>
 
-#define GetSystemTimeMS() GetTickCount() //timeGetTime()  
+// In Milliseconds
+inline unsigned int GetSystemTimeMS() 
+{
+   return GetTickCount(); //timeGetTime();
+}
 
 inline int SleepForMS(int x) { 
    return SleepEx(x, false);
@@ -16,14 +20,27 @@ inline int SleepForMS(int x) {
 #else
 
 #include <time.h>
-inline int SleepForMS(int x) {  
+
+// In Milliseconds
+inline unsigned int GetSystemTimeMS() 
+{
+   struct timespec ts;
+   if(clock_gettime(CLOCK_MONOTONIC,&ts) != 0) {
+		throw std::logic_error("clock_gettime failed.");//error
+   }
+   
+   return ts.tv_sec*1000 + ts.tv_nsec/1000000;
+}
+
+inline int SleepForMS(int x) 
+{  
    struct timespec tim; 
    int sleepSec = (x)/1000; 
    int sleepRem = (x)%1000; 
    tim.tv_sec = sleepSec; 
    tim.tv_nsec = sleepRem * 1000000L; 
 
-   nanosleep(&tim, NULL);
+   return nanosleep(&tim, NULL);
 }
 
 #endif
@@ -103,7 +120,7 @@ void Simulator::Run()
 
       // Don't sleep if we're already behind
       // TODO: Figure out a better way to handle slowdown
-      if (sleepTime > 0) {
+     if (sleepTime > 0) {
          SleepForMS(sleepTime);
       } else {
          std::cout << "Tick Period: " << tick_period_ms_ << std::endl;

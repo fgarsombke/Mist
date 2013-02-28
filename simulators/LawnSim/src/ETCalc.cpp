@@ -1,5 +1,3 @@
-#pragma once
-
 #include "LawnSimStd.h"
 
 #include "ETCalc.h"
@@ -7,8 +5,7 @@
 #include <cmath>
 
 // Separate namespace for calculations
-namespace Mist {
-namespace FAO_ET {
+namespace Mist { namespace FAO_ET {
 // TODO: Modify based on current grass health
 
 
@@ -115,8 +112,4 @@ double ETCalc::CalculateET_o(const ETCalcParameters &ETParams) const {
    return 0;
 }
 
-
-
-
-}
-}
+}}

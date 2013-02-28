@@ -5,21 +5,21 @@
 namespace Mist { namespace LawnSim { namespace Exceptions {
 
 
-class InvalidOperationException : public std::exception
+class InvalidOperationException : public std::logic_error
 {
 public:
-   InvalidOperationException(const char * const &c)
-      : std::exception(c)
+   InvalidOperationException(const std::string& what_arg)
+      : std::logic_error(what_arg)
    {
    }
 
-   InvalidOperationException(const char * &c, int i)
-      : std::exception(c, i)
+   InvalidOperationException(const char * const what_arg)
+      : std::logic_error(what_arg)
    {
    }
 
    InvalidOperationException()
-      : std::exception()
+      : std::logic_error("Invalid Operation")
    {
    }
 };

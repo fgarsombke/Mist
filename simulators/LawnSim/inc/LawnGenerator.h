@@ -23,8 +23,8 @@ private:
                                          size_t cols,
                                          FillHeightFunc_t hFunc = FillHeightsDiagonally) const;
 
-   inline static void FillHeightsDiagonally(bnu::matrix<double> &heights);
-   inline static void FillHeightsPerlin(bnu::matrix<double> &heights);
+   static void FillHeightsDiagonally(bnu::matrix<double> &heights);
+   static void FillHeightsPerlin(bnu::matrix<double> &heights);
 
 };
 

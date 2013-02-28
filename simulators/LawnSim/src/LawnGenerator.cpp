@@ -5,7 +5,7 @@
 #include <math.h>
 
 #include "LawnGenerator.h"
-#include "PerlinNoiseGen.h"
+#include "PerlinNoiseGenerator.h"
 
 using std::unique_ptr;
 
@@ -70,7 +70,7 @@ void LawnGenerator::FillHeightsDiagonally(bnu::matrix<double> &heights) {
    RNGType rng;
    //RNGType rng(time(0));
 
-   size_t featureSize = rows/4;
+   //size_t featureSize = rows/4;
 
    double driftparameter = 0;
 

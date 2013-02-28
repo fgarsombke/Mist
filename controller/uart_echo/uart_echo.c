@@ -14,7 +14,7 @@ void __error__(char *pcFilename, unsigned long ulLine){}
 #endif
 
 char BUFFER[100]; 
-unsigned short BFLAG = 0;
+volatile unsigned short BFLAG = 0;
 
 // The UART interrupt handler.
 #define TOGGLE  1
@@ -30,7 +30,7 @@ void UARTIntHandler(void) {
     while(UARTCharsAvail(UART0_BASE)) {
         char c = UARTCharGetNonBlocking(UART0_BASE); 
 
-        if(jsonFl == 1 && comFl == 0) {
+        if(jsonFl == 1 && comFl == 0 && BFLAG == 0) {
             BUFFER[i] = c;
             i = i + 1;
         }
@@ -89,15 +89,16 @@ int main(void) {
     SysCtlDelay(SysCtlClockGet()/12);
 
     while(1) {
-        UARTSend((unsigned char *)"GET /test \n\n", 12);
+        UARTSend((unsigned char *)"GET /mist\r\n", 12);
         SysCtlDelay(SysCtlClockGet());
-
         if(BFLAG == 1) {
+            RIT128x96x4Clear();
             t[0] = 0x30 + i;
             RIT128x96x4StringDraw(t, 12,  0, 15);
             i = (i + 1) % 10;
             RIT128x96x4StringDraw(BUFFER, 12,  8, 15);
             parseJSON();
+            bufferClr();
             BFLAG = 0;
         }
     }
@@ -111,7 +112,7 @@ void bufferClr(void) {
 }
 
 void parseJSON(void) {
-    volatile unsigned short i;
+    unsigned short i;
     jsmn_parser parser;
     jsmntok_t t[8];
     jsmn_init(&parser);
@@ -132,8 +133,6 @@ void parseJSON(void) {
             RIT128x96x4StringDraw("UNKNOWN", 12,  (i+2)*8, 15);
         }
     }
-
-    
 }
 
 // enter command mode
@@ -150,5 +149,4 @@ void UARTSend(const unsigned char *pucBuffer, unsigned long ulCount) {
         UARTCharPutNonBlocking(UART0_BASE, *pucBuffer++);
     }
 }
-
 

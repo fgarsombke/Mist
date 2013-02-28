@@ -1,5 +1,3 @@
-#pragma once
-
 #include "LawnSimStd.h"
 #include "DriftEntry.h"
 
