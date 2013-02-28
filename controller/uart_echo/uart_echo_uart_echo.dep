@@ -1,0 +1,30 @@
+Dependencies for Project 'uart_echo', Target 'uart_echo': (DO NOT MODIFY !)
+F (..\drivers\rit128x96x4.c)(0x50FF0033)(-c --cpu Cortex-M3 -D__MICROLIB -g -O2 --apcs=interwork --split_sections -I.. -I..\..\.. -I C:\Keil\ARM\RV31\INC -I C:\Keil\ARM\CMSIS\Include -I C:\Keil\ARM\Inc\Luminary -Drvmdk -DPART_LM3S1968 -o ".\rvmdk\rit128x96x4.o" --omf_browse ".\rvmdk\rit128x96x4.crf" --depend ".\rvmdk\rit128x96x4.d")
+I (..\..\..\inc/hw_ssi.h)(0x50FF00A0)
+I (..\..\..\inc/hw_memmap.h)(0x50FF00A0)
+I (..\..\..\inc/hw_sysctl.h)(0x50FF00A0)
+I (..\..\..\inc/hw_types.h)(0x50FF00A0)
+I (..\..\..\driverlib/debug.h)(0x50FF0097)
+I (..\..\..\driverlib/gpio.h)(0x50FF0097)
+I (..\..\..\driverlib/pin_map.h)(0x50FF0098)
+I (..\..\..\driverlib/ssi.h)(0x50FF0098)
+I (..\..\..\driverlib/sysctl.h)(0x50FF0098)
+I (..\drivers/rit128x96x4.h)(0x50FF0033)
+F (.\startup_rvmdk.S)(0x50FF0034)(--cpu Cortex-M3 -g --apcs=interwork --pd "__MICROLIB SETA 1" -I C:\Keil\ARM\RV31\INC -I C:\Keil\ARM\CMSIS\Include -I C:\Keil\ARM\Inc\Luminary -o ".\rvmdk\startup_rvmdk.o" --depend ".\rvmdk\startup_rvmdk.d")
+F (.\uart_echo.c)(0x5126829A)(-c --cpu Cortex-M3 -D__MICROLIB -g -O2 --apcs=interwork --split_sections -I.. -I..\..\.. -I C:\Keil\ARM\RV31\INC -I C:\Keil\ARM\CMSIS\Include -I C:\Keil\ARM\Inc\Luminary -Drvmdk -DPART_LM3S1968 -o ".\rvmdk\uart_echo.o" --omf_browse ".\rvmdk\uart_echo.crf" --depend ".\rvmdk\uart_echo.d")
+I (..\..\..\inc/hw_ints.h)(0x50FF00A0)
+I (..\..\..\inc/hw_memmap.h)(0x50FF00A0)
+I (..\..\..\inc/hw_types.h)(0x50FF00A0)
+I (..\..\..\driverlib/debug.h)(0x50FF0097)
+I (..\..\..\driverlib/gpio.h)(0x50FF0097)
+I (..\..\..\driverlib/pin_map.h)(0x50FF0098)
+I (..\..\..\driverlib/interrupt.h)(0x50FF0097)
+I (..\..\..\driverlib/sysctl.h)(0x50FF0098)
+I (..\..\..\driverlib/uart.h)(0x50FF0098)
+I (..\drivers/rit128x96x4.h)(0x50FF0033)
+I (jsmn.h)(0x5115FF4F)
+F (.\jsmn.c)(0x5115FF2A)(-c --cpu Cortex-M3 -D__MICROLIB -g -O2 --apcs=interwork --split_sections -I.. -I..\..\.. -I C:\Keil\ARM\RV31\INC -I C:\Keil\ARM\CMSIS\Include -I C:\Keil\ARM\Inc\Luminary -Drvmdk -DPART_LM3S1968 -o ".\rvmdk\jsmn.o" --omf_browse ".\rvmdk\jsmn.crf" --depend ".\rvmdk\jsmn.d")
+I (C:\Keil\ARM\ARMCC\bin\..\include\stdlib.h)(0x4EB18954)
+I (jsmn.h)(0x5115FF4F)
+F (..\..\..\driverlib\rvmdk-cm3\driverlib-cm3.lib)(0x50FF0098)()
+F (.\readme.txt)(0x50FF0034)()

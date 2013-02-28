@@ -1,6 +1,6 @@
 /******************************************************************************
  *
- * uart_echo.ld - Linker configuration file for uart_echo.
+ * uart_echo_sourcerygxx.ld - Scatter file for Sourcery CodeBench
  *
  * Copyright (c) 2005-2012 Texas Instruments Incorporated.  All rights reserved.
  * Software License Agreement
@@ -22,36 +22,18 @@
  *
  *****************************************************************************/
 
-MEMORY
-{
-    FLASH (rx) : ORIGIN = 0x00000000, LENGTH = 0x00040000
-    SRAM (rwx) : ORIGIN = 0x20000000, LENGTH = 0x00010000
-}
+/******************************************************************************
+ *
+ * Define the end of the heap space, which determines the beginning of the
+ * stack space.
+ *
+ *****************************************************************************/
+__cs3_heap_end = __cs3_region_end_ram - 256;
 
-SECTIONS
-{
-    .text :
-    {
-        _text = .;
-        KEEP(*(.isr_vector))
-        *(.text*)
-        *(.rodata*)
-        _etext = .;
-    } > FLASH
-
-    .data : AT(ADDR(.text) + SIZEOF(.text))
-    {
-        _data = .;
-        *(vtable)
-        *(.data*)
-        _edata = .;
-    } > SRAM
-
-    .bss :
-    {
-        _bss = .;
-        *(.bss*)
-        *(COMMON)
-        _ebss = .;
-    } > SRAM
-}
+/******************************************************************************
+ *
+ * Define the interrupt handlers used by the application.
+ *
+ *****************************************************************************/
+EXTERN(UARTIntHandler)
+__cs3_isr_uart0 = UARTIntHandler;

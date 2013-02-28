@@ -1,6 +1,6 @@
 //*****************************************************************************
 //
-// startup_gcc.c - Startup code for use with GNU tools.
+// startup_ccs.c - Startup code for use with TI's Code Composer Studio.
 //
 // Copyright (c) 2005-2012 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
@@ -34,6 +34,21 @@ static void IntDefaultHandler(void);
 
 //*****************************************************************************
 //
+// External declaration for the reset handler that is to be called when the
+// processor is started
+//
+//*****************************************************************************
+extern void _c_int00(void);
+
+//*****************************************************************************
+//
+// Linker variable that marks the top of the stack.
+//
+//*****************************************************************************
+extern unsigned long __STACK_TOP;
+
+//*****************************************************************************
+//
 // External declaration for the interrupt handler used by the application.
 //
 //*****************************************************************************
@@ -41,28 +56,15 @@ extern void UARTIntHandler(void);
 
 //*****************************************************************************
 //
-// The entry point for the application.
-//
-//*****************************************************************************
-extern int main(void);
-
-//*****************************************************************************
-//
-// Reserve space for the system stack.
-//
-//*****************************************************************************
-static unsigned long pulStack[64];
-
-//*****************************************************************************
-//
 // The vector table.  Note that the proper constructs must be placed on this to
-// ensure that it ends up at physical address 0x0000.0000.
+// ensure that it ends up at physical address 0x0000.0000 or at the start of
+// the program if located at a start address other than 0.
 //
 //*****************************************************************************
-__attribute__ ((section(".isr_vector")))
+#pragma DATA_SECTION(g_pfnVectors, ".intvecs")
 void (* const g_pfnVectors[])(void) =
 {
-    (void (*)(void))((unsigned long)pulStack + sizeof(pulStack)),
+    (void (*)(void))((unsigned long)&__STACK_TOP),
                                             // The initial stack pointer
     ResetISR,                               // The reset handler
     NmiSR,                                  // The NMI handler
@@ -127,19 +129,6 @@ void (* const g_pfnVectors[])(void) =
 
 //*****************************************************************************
 //
-// The following are constructs created by the linker, indicating where the
-// the "data" and "bss" segments reside in memory.  The initializers for the
-// for the "data" segment resides immediately following the "text" segment.
-//
-//*****************************************************************************
-extern unsigned long _etext;
-extern unsigned long _data;
-extern unsigned long _edata;
-extern unsigned long _bss;
-extern unsigned long _ebss;
-
-//*****************************************************************************
-//
 // This is the code that gets called when the processor first starts execution
 // following a reset event.  Only the absolutely necessary set is performed,
 // after which the application supplied entry() routine is called.  Any fancy
@@ -151,34 +140,11 @@ extern unsigned long _ebss;
 void
 ResetISR(void)
 {
-    unsigned long *pulSrc, *pulDest;
-
     //
-    // Copy the data segment initializers from flash to SRAM.
+    // Jump to the CCS C initialization routine.
     //
-    pulSrc = &_etext;
-    for(pulDest = &_data; pulDest < &_edata; )
-    {
-        *pulDest++ = *pulSrc++;
-    }
-
-    //
-    // Zero fill the bss segment.
-    //
-    __asm("    ldr     r0, =_bss\n"
-          "    ldr     r1, =_ebss\n"
-          "    mov     r2, #0\n"
-          "    .thumb_func\n"
-          "zero_loop:\n"
-          "        cmp     r0, r1\n"
-          "        it      lt\n"
-          "        strlt   r2, [r0], #4\n"
-          "        blt     zero_loop");
-
-    //
-    // Call the application's entry point.
-    //
-    main();
+    __asm("    .global _c_int00\n"
+          "    b.w     _c_int00");
 }
 
 //*****************************************************************************
