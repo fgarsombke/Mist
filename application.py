@@ -75,5 +75,4 @@ if __name__ == '__main__':
 	else:
 		session = web.config._session
 		
-	app.run()  
-
+	app.run()

@@ -30,10 +30,10 @@ def findNearestClimateStation(latitude, longitude):
     return nearestStation[0]
 
 def getWeatherData(station, time):
-    
+
     conf = DBConfig.DBConfig()
     db = conf.connectToLocalConfigDatabase()
-    cursor = db.cursor()                                                         
+    cursor = db.cursor()
 
     #PARAMETERIZE TIME INTERVAL!!!
 
@@ -41,7 +41,7 @@ def getWeatherData(station, time):
     cursor.execute(sqlString)
     results = cursor.fetchall() 
     cursor.close()
-    
+
     #compute WeatherData object
     avgTemp = 0
     avgWind = 0
@@ -67,7 +67,7 @@ def getWeatherData(station, time):
             if result[2] <= minTemp:
                 minTemp = result[2] 
             avgTemp += result[2]
-    
+
         if result[3] is not None:
             humidCount += 1
             avgHumidity += result[3]
@@ -83,7 +83,7 @@ def getWeatherData(station, time):
         if result[6] is not None:
             windCount += 1
             avgWind += result[6]
-    
+
     #compute averages
     isoTime = ""
     if humidCount != 0 and tempCount != 0 and pressureCount != 0 and dewCount != 0 and windCount != 0:  
