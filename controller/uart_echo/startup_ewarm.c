@@ -1,6 +1,7 @@
 //*****************************************************************************
 //
-// startup_gcc.c - Startup code for use with GNU tools.
+// startup_ewarm.c - Startup code for use with IAR's Embedded Workbench,
+//                   version 5.
 //
 // Copyright (c) 2005-2012 Texas Instruments Incorporated.  All rights reserved.
 // Software License Agreement
@@ -24,6 +25,13 @@
 
 //*****************************************************************************
 //
+// Enable the IAR extensions for this source file.
+//
+//*****************************************************************************
+#pragma language=extended
+
+//*****************************************************************************
+//
 // Forward declaration of the default fault handlers.
 //
 //*****************************************************************************
@@ -41,17 +49,31 @@ extern void UARTIntHandler(void);
 
 //*****************************************************************************
 //
-// The entry point for the application.
+// The entry point for the application startup code.
 //
 //*****************************************************************************
-extern int main(void);
+extern void __iar_program_start(void);
 
 //*****************************************************************************
 //
 // Reserve space for the system stack.
 //
 //*****************************************************************************
-static unsigned long pulStack[64];
+static unsigned long pulStack[64] @ ".noinit";
+
+//*****************************************************************************
+//
+// A union that describes the entries of the vector table.  The union is needed
+// since the first entry is the stack pointer and the remainder are function
+// pointers.
+//
+//*****************************************************************************
+typedef union
+{
+    void (*pfnHandler)(void);
+    unsigned long ulPtr;
+}
+uVectorEntry;
 
 //*****************************************************************************
 //
@@ -59,10 +81,9 @@ static unsigned long pulStack[64];
 // ensure that it ends up at physical address 0x0000.0000.
 //
 //*****************************************************************************
-__attribute__ ((section(".isr_vector")))
-void (* const g_pfnVectors[])(void) =
+__root const uVectorEntry __vector_table[] @ ".intvec" =
 {
-    (void (*)(void))((unsigned long)pulStack + sizeof(pulStack)),
+    { .ulPtr = (unsigned long)pulStack + sizeof(pulStack) },
                                             // The initial stack pointer
     ResetISR,                               // The reset handler
     NmiSR,                                  // The NMI handler
@@ -127,19 +148,6 @@ void (* const g_pfnVectors[])(void) =
 
 //*****************************************************************************
 //
-// The following are constructs created by the linker, indicating where the
-// the "data" and "bss" segments reside in memory.  The initializers for the
-// for the "data" segment resides immediately following the "text" segment.
-//
-//*****************************************************************************
-extern unsigned long _etext;
-extern unsigned long _data;
-extern unsigned long _edata;
-extern unsigned long _bss;
-extern unsigned long _ebss;
-
-//*****************************************************************************
-//
 // This is the code that gets called when the processor first starts execution
 // following a reset event.  Only the absolutely necessary set is performed,
 // after which the application supplied entry() routine is called.  Any fancy
@@ -151,34 +159,10 @@ extern unsigned long _ebss;
 void
 ResetISR(void)
 {
-    unsigned long *pulSrc, *pulDest;
-
-    //
-    // Copy the data segment initializers from flash to SRAM.
-    //
-    pulSrc = &_etext;
-    for(pulDest = &_data; pulDest < &_edata; )
-    {
-        *pulDest++ = *pulSrc++;
-    }
-
-    //
-    // Zero fill the bss segment.
-    //
-    __asm("    ldr     r0, =_bss\n"
-          "    ldr     r1, =_ebss\n"
-          "    mov     r2, #0\n"
-          "    .thumb_func\n"
-          "zero_loop:\n"
-          "        cmp     r0, r1\n"
-          "        it      lt\n"
-          "        strlt   r2, [r0], #4\n"
-          "        blt     zero_loop");
-
     //
     // Call the application's entry point.
     //
-    main();
+    __iar_program_start();
 }
 
 //*****************************************************************************
