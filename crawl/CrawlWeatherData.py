@@ -4,7 +4,6 @@ import sys
 import MySQLdb
 import datetime
 import time
-sys.path.append('/Users/makilian/Mist/db') #doesn't work with cron job
 import DBConfig
 
 def main():

@@ -4,7 +4,6 @@ import datetime
 import time
 import math
 import MySQLdb
-sys.path.append('../db')
 import DBConfig
 import ComputeET
 
