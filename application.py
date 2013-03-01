@@ -56,7 +56,7 @@ if __name__ == '__main__':
 		'/api/weather', 'aWeather'
         )
 
-	config = open("/Users/makilian/Mist/local.config")
+	config = open("local.config")
 	host = config.readline().rstrip()
 	username = config.readline().rstrip()
 	password = config.readline().rstrip()
