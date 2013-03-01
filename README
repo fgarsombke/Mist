@@ -1,15 +1,8 @@
-This project is the backend software driving Mist, a learning irrigation controller.
+This project contains many software components of Mist, a learning irrigation controller.
 
 It consists of backend web-service APIs.  A web front-end GUI for testing the APIs.  A simulator for outdoor environments for testing irrigation scheduling algorithms.  A weather station data crawler service.  And algorithms for learning and generating efficient irrigation schedules.
 
 The project also consists of an iOS mobile application & embedded hardware controller and software, which are not part of this Github Repo.
-
-
-It downloads hourly weather reports from NOAA weather stations across the USA.  It computes the daily ETo (reference evapotranspiration) for the geographic area near that weather station.  It then uses location specific parameters provided by the user to compute the ETL (lawn evapotranspiration).
-
-All data is stored in MySQL tables and the computations and data downloads are coordinated using cron jobs.
-
-A web.py webserver hosts a web-service API.  Through the API developers can interact with the users, devices, zones, weather stations, dailyETo calculations, and dailyETL calculations.
 
 
 ZeusET Developer Setup
