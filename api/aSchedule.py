@@ -27,7 +27,7 @@ def getScheduleForDevice(productID):
     conf = DBConfig.DBConfig()
     db = conf.connectToLocalConfigDatabase()    
     cursor = db.cursor()
-    cursor.execute("SELECT * FROM queuedIrrigations WHERE (queuedIrrigations.productID = (%s))", (productID))
+    cursor.execute("SELECT * FROM queuedIrrigations WHERE (queuedIrrigations.productID = (%s)) ORDER by zoneNumber ASC", (productID))
     results = cursor.fetchall()
     return results  
 
@@ -37,19 +37,39 @@ class aSchedule:
     #Expected parameter: productID (integer)
     def GET(self):
         schedule_data = web.input()
-        
+
         if schedule_data.deviceID:
-            schedules = getScheduleForDevice(schedule_data.deviceID) # SQL
-            objects_list = []
+            schedules = getScheduleForDevice(schedule_data.deviceID) #SQL
+            schedule_list = []
+            currzone_list = []
+            currDict = collections.OrderedDict()
+            currentZone = 1
+
+            #iterate through all irrigation events, they are sorted by zone number
             for row in schedules:
+                if row[1] != currentZone: #we are on next zone
+                    #create zone dictionary from current list of events for this zone
+                    currDict['i'] = currzone_list
+                    #add the dictionary to the list of zone dictionarys
+                    schedule_list.append(currDict)
+                    #reset the current zone list
+                    currzone_list = []
+                    currDict = collections.OrderedDict()
+                    #increment the curent zone
+                    currentZone = row[1]
+
                 d = collections.OrderedDict()
                 d['productID'] = row[0]
                 d['zoneNumber'] = row[1]
                 d['startTime'] = row[2]
                 d['duration'] = row[3]
                 d['created'] = row[4]
-                objects_list.append(d)
-            j = json.dumps(objects_list, cls=MyEncoder)
+                currzone_list.append(d)
+
+            #DONE, turn output into a one key dictionary
+            output = collections.OrderedDict()
+            output['z'] = schedule_list
+            j = json.dumps(output, cls=MyEncoder)
             return j
         else:
             return 0
