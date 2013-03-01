@@ -2,7 +2,6 @@
 import re
 import sys
 import MySQLdb
-sys.path.append('/Users/makilian/Mist/db')
 import DBConfig
 
 def main():

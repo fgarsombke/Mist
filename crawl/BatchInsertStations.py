@@ -2,7 +2,6 @@ import sys
 import re
 import MySQLdb
 import csv
-sys.path.append('/Users/makilian/Workspace/ZeusET/db')
 import DBConfig
 
 def insertStationInDatabase(db, stationID, desc, latitude, longitude, elevation):

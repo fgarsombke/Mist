@@ -6,7 +6,6 @@ import base64
 import MySQLdb
 from datetime import datetime
 import time
-sys.path.append('../db')
 from db import DBConfig
 import collections
 import json

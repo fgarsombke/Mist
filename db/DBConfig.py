@@ -1,10 +1,9 @@
 import sys
 import MySQLdb
-sys.path.append('/Users/makilian/Mist/')
 class DBConfig:
 
 	def connectToLocalConfigDatabase(self):
-		config = open("/Users/makilian/Mist/local.config")
+		config = open("local.config")
 		host = config.readline().rstrip()
 		user = config.readline().rstrip()
 		password = config.readline().rstrip()
