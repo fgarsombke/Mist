@@ -12,6 +12,7 @@ from webm.station import station
 from webm.station import addStation
 from webm.zone import zone
 from webm.index import index
+from webm.about import about
 from webm.schedule import addSchedule
 from webm.schedule import schedule
 from webm.weather import weather
@@ -35,7 +36,8 @@ if __name__ == '__main__':
 	urls = (
         #WEB APP URLs
         '/', 'index',
-		'/user', 'user',
+        '/about', 'about',
+        '/user', 'user',
         '/user/add', 'addUser',
         '/user/list', 'list',
 		'/user/logout', 'logout',
