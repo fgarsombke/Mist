@@ -46,6 +46,7 @@ class aSchedule:
 
             #iterate through all irrigation events, they are sorted by zone number
             for row in schedules:
+                print row
                 if row[1] != currentZone: #we are on next zone
                     #create zone dictionary from current list of events for this zone
                     currDict['i'] = currzone_list
@@ -68,6 +69,10 @@ class aSchedule:
                 d['duration'] = row[3]
                 d['created'] = row[4]
                 currzone_list.append(d)
+            #GRAB the last one
+            currDict['i'] = currzone_list
+            #add the dictionary to the list of zone dictionarys
+            schedule_list.append(currDict)
 
             #DONE, turn output into a one key dictionary
             output = collections.OrderedDict()

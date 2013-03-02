@@ -54,7 +54,7 @@ class schedule:
         if schedule_data:
             if schedule_data.deviceID:
                 deviceID = schedule_data.deviceID
-
+        print deviceID
         #if user logged in (session deviceID exists) - get schedule
         session = web.config._session
         if session.deviceID:
