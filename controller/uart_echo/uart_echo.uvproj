@@ -392,11 +392,6 @@
           <GroupName>Source</GroupName>
           <Files>
             <File>
-              <FileName>rit128x96x4.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\drivers\rit128x96x4.c</FilePath>
-            </File>
-            <File>
               <FileName>startup_rvmdk.S</FileName>
               <FileType>2</FileType>
               <FilePath>.\startup_rvmdk.S</FilePath>
@@ -411,15 +406,20 @@
               <FileType>1</FileType>
               <FilePath>.\jsmn.c</FilePath>
             </File>
+            <File>
+              <FileName>rit128x96x4.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\drivers\rit128x96x4.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
           <GroupName>Libraries</GroupName>
           <Files>
             <File>
-              <FileName>driverlib-cm3.lib</FileName>
+              <FileName>driverlib.lib</FileName>
               <FileType>4</FileType>
-              <FilePath>..\..\..\driverlib\rvmdk-cm3\driverlib-cm3.lib</FilePath>
+              <FilePath>..\driverlib\rvmdk\driverlib.lib</FilePath>
             </File>
           </Files>
         </Group>
