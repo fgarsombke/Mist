@@ -1,27 +1,27 @@
 Dependencies for Project 'demo', Target 'demo': (DO NOT MODIFY !)
-F (.\jsmn.c)(0x513281F4)(-c --cpu Cortex-M3 -D__MICROLIB -g -O2 --apcs=interwork --split_sections -I.. -I..\..\.. -I C:\Keil\ARM\RV31\INC -I C:\Keil\ARM\CMSIS\Include -I C:\Keil\ARM\Inc\Luminary -Drvmdk -DPART_LM3S1968 -o "jsmn.o" --omf_browse "jsmn.crf" --depend "jsmn.d")
+F (.\jsmn.c)(0x513291D1)(-c --cpu Cortex-M3 -D__MICROLIB -g -O2 --apcs=interwork --split_sections -I.. -I..\..\.. -I C:\Keil\ARM\RV31\INC -I C:\Keil\ARM\CMSIS\Include -I C:\Keil\ARM\Inc\Luminary -Drvmdk -DPART_LM3S1968 -o "jsmn.o" --omf_browse "jsmn.crf" --depend "jsmn.d")
 I (C:\Keil\ARM\ARMCC\bin\..\include\stdlib.h)(0x4EB18954)
-I (jsmn.h)(0x513281F4)
-F (.\demo.c)(0x513281F4)(-c --cpu Cortex-M3 -D__MICROLIB -g -O2 --apcs=interwork --split_sections -I.. -I..\..\.. -I C:\Keil\ARM\RV31\INC -I C:\Keil\ARM\CMSIS\Include -I C:\Keil\ARM\Inc\Luminary -Drvmdk -DPART_LM3S1968 -o "demo.o" --omf_browse "demo.crf" --depend "demo.d")
-I (..\inc/hw_ints.h)(0x50FF00A0)
-I (..\inc/hw_memmap.h)(0x50FF00A0)
-I (..\inc/hw_types.h)(0x50FF00A0)
-I (..\driverlib/debug.h)(0x50FEFBD4)
-I (..\driverlib/gpio.h)(0x50FEFBD5)
-I (..\driverlib/interrupt.h)(0x50FEFBD5)
-I (..\driverlib/sysctl.h)(0x50FEFBD6)
-I (..\driverlib/uart.h)(0x50FEFBD6)
-I (..\drivers/rit128x96x4.h)(0x50FF0033)
-I (jsmn.h)(0x513281F4)
-F (..\drivers\rit128x96x4.c)(0x50FF0033)(-c --cpu Cortex-M3 -D__MICROLIB -g -O2 --apcs=interwork --split_sections -I.. -I..\..\.. -I C:\Keil\ARM\RV31\INC -I C:\Keil\ARM\CMSIS\Include -I C:\Keil\ARM\Inc\Luminary -Drvmdk -DPART_LM3S1968 -o "rit128x96x4.o" --omf_browse "rit128x96x4.crf" --depend "rit128x96x4.d")
-I (..\inc/hw_ssi.h)(0x50FF00A0)
-I (..\inc/hw_memmap.h)(0x50FF00A0)
-I (..\inc/hw_sysctl.h)(0x50FF00A0)
-I (..\inc/hw_types.h)(0x50FF00A0)
-I (..\driverlib/debug.h)(0x50FEFBD4)
-I (..\driverlib/gpio.h)(0x50FEFBD5)
-I (..\driverlib/ssi.h)(0x50FEFBD6)
-I (..\driverlib/sysctl.h)(0x50FEFBD6)
-I (..\drivers/rit128x96x4.h)(0x50FF0033)
-F (.\startup_rvmdk.S)(0x513281F4)(--cpu Cortex-M3 -g --apcs=interwork --pd "__MICROLIB SETA 1" -I C:\Keil\ARM\RV31\INC -I C:\Keil\ARM\CMSIS\Include -I C:\Keil\ARM\Inc\Luminary --list "startup_rvmdk.lst" --xref -o "startup_rvmdk.o" --depend "startup_rvmdk.d")
+I (jsmn.h)(0x513291D1)
+F (.\demo.c)(0x51329F07)(-c --cpu Cortex-M3 -D__MICROLIB -g -O2 --apcs=interwork --split_sections -I.. -I..\..\.. -I C:\Keil\ARM\RV31\INC -I C:\Keil\ARM\CMSIS\Include -I C:\Keil\ARM\Inc\Luminary -Drvmdk -DPART_LM3S1968 -o "demo.o" --omf_browse "demo.crf" --depend "demo.d")
+I (..\inc/hw_ints.h)(0x513291D1)
+I (..\inc/hw_memmap.h)(0x513291D1)
+I (..\inc/hw_types.h)(0x513291D1)
+I (..\driverlib/debug.h)(0x513291D1)
+I (..\driverlib/gpio.h)(0x513291D1)
+I (..\driverlib/interrupt.h)(0x513291D1)
+I (..\driverlib/sysctl.h)(0x513291D1)
+I (..\driverlib/uart.h)(0x513291D1)
+I (..\drivers/rit128x96x4.h)(0x513291D1)
+I (jsmn.h)(0x513291D1)
+F (..\drivers\rit128x96x4.c)(0x513291D1)(-c --cpu Cortex-M3 -D__MICROLIB -g -O2 --apcs=interwork --split_sections -I.. -I..\..\.. -I C:\Keil\ARM\RV31\INC -I C:\Keil\ARM\CMSIS\Include -I C:\Keil\ARM\Inc\Luminary -Drvmdk -DPART_LM3S1968 -o "rit128x96x4.o" --omf_browse "rit128x96x4.crf" --depend "rit128x96x4.d")
+I (..\inc/hw_ssi.h)(0x513291D1)
+I (..\inc/hw_memmap.h)(0x513291D1)
+I (..\inc/hw_sysctl.h)(0x513291D1)
+I (..\inc/hw_types.h)(0x513291D1)
+I (..\driverlib/debug.h)(0x513291D1)
+I (..\driverlib/gpio.h)(0x513291D1)
+I (..\driverlib/ssi.h)(0x513291D1)
+I (..\driverlib/sysctl.h)(0x513291D1)
+I (..\drivers/rit128x96x4.h)(0x513291D1)
+F (.\startup_rvmdk.S)(0x513291D1)(--cpu Cortex-M3 -g --apcs=interwork --pd "__MICROLIB SETA 1" -I C:\Keil\ARM\RV31\INC -I C:\Keil\ARM\CMSIS\Include -I C:\Keil\ARM\Inc\Luminary --list "startup_rvmdk.lst" --xref -o "startup_rvmdk.o" --depend "startup_rvmdk.d")
 F (..\driverlib\rvmdk\driverlib.lib)(0x50FEFBD6)()

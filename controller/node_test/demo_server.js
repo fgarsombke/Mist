@@ -28,7 +28,7 @@ var server = net.createServer(function(socket) { //'connection' listener
     /*socket.on('data', function(data) {
         console.log('Raw      : ' + data);
         console.log('Converted: ' + posix2date(parseInt(data)));
-        socket.write("{\"z\":[{\"i\":[{\"s\":0,\"e\":2},{\"s\":10,\"e\":20}]},{\"i\":[{\"s\":0,
+        socket.write("{\"z\":[{\"i\":[{\"s\":0,\"e\":2},{\"s\":10,\"e\":20}]},{\"i\":[{\"s\":0,\"e\":3},{\"s\":10,\"e\":21}]}]}");
     });*/
 });
 
