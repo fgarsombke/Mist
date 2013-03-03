@@ -9,3 +9,4 @@ demo.o: ..\driverlib/sysctl.h
 demo.o: ..\driverlib/uart.h
 demo.o: ..\drivers/rit128x96x4.h
 demo.o: jsmn.h
+demo.o: C:\Keil\ARM\ARMCC\bin\..\include\string.h

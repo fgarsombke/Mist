@@ -2,7 +2,7 @@ Dependencies for Project 'demo', Target 'demo': (DO NOT MODIFY !)
 F (.\jsmn.c)(0x513291D1)(-c --cpu Cortex-M3 -D__MICROLIB -g -O2 --apcs=interwork --split_sections -I.. -I..\..\.. -I C:\Keil\ARM\RV31\INC -I C:\Keil\ARM\CMSIS\Include -I C:\Keil\ARM\Inc\Luminary -Drvmdk -DPART_LM3S1968 -o "jsmn.o" --omf_browse "jsmn.crf" --depend "jsmn.d")
 I (C:\Keil\ARM\ARMCC\bin\..\include\stdlib.h)(0x4EB18954)
 I (jsmn.h)(0x513291D1)
-F (.\demo.c)(0x51329F07)(-c --cpu Cortex-M3 -D__MICROLIB -g -O2 --apcs=interwork --split_sections -I.. -I..\..\.. -I C:\Keil\ARM\RV31\INC -I C:\Keil\ARM\CMSIS\Include -I C:\Keil\ARM\Inc\Luminary -Drvmdk -DPART_LM3S1968 -o "demo.o" --omf_browse "demo.crf" --depend "demo.d")
+F (.\demo.c)(0x5132F6C3)(-c --cpu Cortex-M3 -D__MICROLIB -g -O2 --apcs=interwork --split_sections -I.. -I..\..\.. -I C:\Keil\ARM\RV31\INC -I C:\Keil\ARM\CMSIS\Include -I C:\Keil\ARM\Inc\Luminary -Drvmdk -DPART_LM3S1968 -o "demo.o" --omf_browse "demo.crf" --depend "demo.d")
 I (..\inc/hw_ints.h)(0x513291D1)
 I (..\inc/hw_memmap.h)(0x513291D1)
 I (..\inc/hw_types.h)(0x513291D1)
@@ -13,6 +13,7 @@ I (..\driverlib/sysctl.h)(0x513291D1)
 I (..\driverlib/uart.h)(0x513291D1)
 I (..\drivers/rit128x96x4.h)(0x513291D1)
 I (jsmn.h)(0x513291D1)
+I (C:\Keil\ARM\ARMCC\bin\..\include\string.h)(0x4EB18956)
 F (..\drivers\rit128x96x4.c)(0x513291D1)(-c --cpu Cortex-M3 -D__MICROLIB -g -O2 --apcs=interwork --split_sections -I.. -I..\..\.. -I C:\Keil\ARM\RV31\INC -I C:\Keil\ARM\CMSIS\Include -I C:\Keil\ARM\Inc\Luminary -Drvmdk -DPART_LM3S1968 -o "rit128x96x4.o" --omf_browse "rit128x96x4.crf" --depend "rit128x96x4.d")
 I (..\inc/hw_ssi.h)(0x513291D1)
 I (..\inc/hw_memmap.h)(0x513291D1)
