@@ -8,6 +8,7 @@
 #include "driverlib/uart.h"
 #include "drivers/rit128x96x4.h"
 #include "jsmn.h"
+#include "string.h"
 
 #ifdef DEBUG
 void __error__(char *pcFilename, unsigned long ulLine){}
@@ -54,12 +55,11 @@ void UARTIntHandler(void) {
 }
 
 // Prototypes
-void bufferClr(void);
-void parseJSON(void);
-void commandMode(void); 
 void UARTSend(const unsigned char *, unsigned long);
 
 int main(void) {
+    char s[100];
+  
     // setup our clock
     SysCtlClockSet(SYSCTL_SYSDIV_1 | SYSCTL_USE_OSC | SYSCTL_OSC_MAIN | SYSCTL_XTAL_8MHZ);
 
@@ -85,19 +85,23 @@ int main(void) {
     UARTIntEnable(UART0_BASE, UART_INT_RX | UART_INT_RT);
     SysCtlDelay(SysCtlClockGet()/12);
     
-    RIT128x96x4Clear();
-    UARTSend((unsigned char *)"close\r", 6);
-    SysCtlDelay(SysCtlClockGet()/12);
-    UARTSend((unsigned char *)"exit\r", 5);
-    SysCtlDelay(SysCtlClockGet()/12);
-    UARTSend((unsigned char *)"$$$", 3);
-    SysCtlDelay(SysCtlClockGet()/12);
-    UARTSend((unsigned char *)"open\r", 5);
-    SysCtlDelay(SysCtlClockGet()/12);
-    UARTSend((unsigned char *)"exit\r", 5);
-    SysCtlDelay(SysCtlClockGet()/12);
-    
     while(1) {
+      RIT128x96x4Clear();
+      UARTSend((unsigned char *)"close\r", 6);
+      SysCtlDelay(SysCtlClockGet()/12);
+      UARTSend((unsigned char *)"exit\r", 5);
+      SysCtlDelay(SysCtlClockGet()/12);
+      UARTSend((unsigned char *)"$$$", 3);
+      SysCtlDelay(SysCtlClockGet()/12);
+      UARTSend((unsigned char *)"close\r", 6);
+      SysCtlDelay(SysCtlClockGet()/12);
+      UARTSend((unsigned char *)"open\r", 5);
+      SysCtlDelay(SysCtlClockGet());
+      
+      RIT128x96x4Clear();
+      strcpy(s, (const char *)json);
+      RIT128x96x4StringDraw(s, 0, 0, 15);
+      SysCtlDelay(SysCtlClockGet()*3);
     }
 }
 
