@@ -1653,11 +1653,14 @@ jsmnerr_t jsmn_parse(jsmn_parser *parser, const char *js,
 
 
 
+volatile char json[9];
 
 void UARTIntHandler(void) {
     unsigned long ulStatus;
     static unsigned short i = 0;
     static unsigned short j = 0;
+    static unsigned short json_flag = 0;
+    static unsigned short json_idx = 0;
 
     ulStatus = UARTIntStatus(0x4000C000, 1);
     UARTIntClear(0x4000C000, ulStatus);
@@ -1665,11 +1668,26 @@ void UARTIntHandler(void) {
     while(UARTCharsAvail(0x4000C000)) {
         char c[2] = {0x0, 0x0};
         c[0] = UARTCharGetNonBlocking(0x4000C000);
+       
+        if(c[0] == '{') {
+          json_flag = 1;
+          json_idx = 0;
+        }
+     
+        if(json_flag == 1) {
+          json[json_idx] = c[0];
+          json_idx++;
+        }
+        
+        if (c[0] == '}') {
+          json_flag = 0;
+        }
+          
         if(c[0] == '\n') {
           j = (j + 1) % 12; 
           i = 0;
         }
-          
+        
         RIT128x96x4StringDraw(c, i*8, j*8, 15);
         i = (i + 1) % 16; 
     }
@@ -1706,13 +1724,19 @@ int main(void) {
     IntEnable(21);
     UARTIntEnable(0x4000C000, 0x010 | 0x040);
     SysCtlDelay(SysCtlClockGet()/12);
-
+    
+    RIT128x96x4Clear();
+    UARTSend((unsigned char *)"close\r", 6);
+    SysCtlDelay(SysCtlClockGet()/12);
     UARTSend((unsigned char *)"exit\r", 5);
     SysCtlDelay(SysCtlClockGet()/12);
     UARTSend((unsigned char *)"$$$", 3);
     SysCtlDelay(SysCtlClockGet()/12);
-    UARTSend((unsigned char *)"show t t\r", 9);
+    UARTSend((unsigned char *)"open\r", 5);
     SysCtlDelay(SysCtlClockGet()/12);
+    UARTSend((unsigned char *)"exit\r", 5);
+    SysCtlDelay(SysCtlClockGet()/12);
+    
     while(1) {
     }
 }
