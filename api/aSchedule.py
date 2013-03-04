@@ -49,6 +49,7 @@ class aSchedule:
                 if row[1] != currentZone: #we are on next zone
                     #create zone dictionary from current list of events for this zone
                     currDict['i'] = currzone_list
+                    currDict['zoneNumber'] = row[1]
                     #add the dictionary to the list of zone dictionarys
                     schedule_list.append(currDict)
                     #reset the current zone list
@@ -61,10 +62,12 @@ class aSchedule:
                 if row[2]:
                     d['startTime'] = time.mktime(row[2].timetuple())
                 if row[2] and row[3]:
-                    d['endTime'] = time.mktime(row[2].timetupple()) + time.mktime((row[3]*60))
+                    d['endTime'] = time.mktime(row[2].timetuple()) + (row[3]*60)
                 currzone_list.append(d)
-            #GRAB the last one
+           
+           #GRAB the last one
             currDict['i'] = currzone_list
+            currDict['zoneNumber'] = currentZone
             #add the dictionary to the list of zone dictionarys
             schedule_list.append(currDict)
 
