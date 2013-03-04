@@ -2,8 +2,7 @@ import sys
 import re
 import MySQLdb
 import csv
-sys.path.append('/Users/makilian/Workspace/ZeusET/db')
-import DBConfig
+from db import DBConfig
 
 def insertStationInDatabase(db, stationID, desc, latitude, longitude, elevation):
 	cursor = db.cursor()
@@ -13,7 +12,7 @@ def insertStationInDatabase(db, stationID, desc, latitude, longitude, elevation)
 
 def main():
 
-	stationReader = csv.reader(open('TexasWeatherStations.csv', 'rb'), delimiter=' ', quotechar='|')
+  #	stationReader = csv.reader(open('TexasWeatherStations.csv', 'rb'), delimiter=' ', quotechar='|')
 
 	stationReader = open('TexasWeatherStations.rtf').read()
 	lines = stationReader.splitlines()

@@ -12,8 +12,10 @@ from webm.station import station
 from webm.station import addStation
 from webm.zone import zone
 from webm.index import index
+from webm.about import about
 from webm.schedule import addSchedule
 from webm.schedule import schedule
+from webm.toggle import toggle
 from webm.weather import weather
 
 from api.aUser import aUser
@@ -21,59 +23,55 @@ from api.aStation import aStation
 from api.aDevice import aDevice
 from api.aSchedule import aSchedule
 from api.aWeather import aWeather
+from api.aToggle import aToggle
 
-sys.path.append('./db')
 from db import DBConfig
 
 
 if __name__ == '__main__':
 
-	web.config.debug = False
+    web.config.debug = False
 
-	render = web.template.render('templates/')
+    render = web.template.render('templates/')
 
-	urls = (
+    urls = (
         #WEB APP URLs
         '/', 'index',
-		'/user', 'user',
+        '/about', 'about',
+        '/user', 'user',
         '/user/add', 'addUser',
         '/user/list', 'list',
-		'/user/logout', 'logout',
+        '/user/logout', 'logout',
         '/station/add', 'addStation',
-		'/station/list', 'station',
-		'/device', 'device',
+        '/station/list', 'station',
+        '/device', 'device',
         '/device/add', 'addDevice',
-		'/schedule', 'schedule',
-        '/schedule/add', 'addSchedule',	
+        '/schedule', 'schedule',
+        '/schedule/add', 'addSchedule', 
+        '/toggle', 'toggle',
         '/weather', 'weather',
         '/zone', 'zone',
 
         #API URLs
         '/api/user', 'aUser', 
-		'/api/station', 'aStation',
-		'/api/device', 'aDevice',
-		'/api/schedule', 'aSchedule',
-		'/api/weather', 'aWeather'
+        '/api/station', 'aStation',
+        '/api/device', 'aDevice',
+        '/api/schedule', 'aSchedule',
+        '/api/weather', 'aWeather',
+        '/api/toggle', 'aToggle'
         )
 
-	config = open("/Users/makilian/Mist/local.config")
-	host = config.readline().rstrip()
-	username = config.readline().rstrip()
-	password = config.readline().rstrip()
-	database = config.readline().rstrip()
-	
-	app = web.application(urls, globals())
-	
-	db = web.database(dbn='mysql', db=database, user=username, pw=password)
-	store = web.session.DBStore(db, 'sessions')
-	
-	#IS THIS THE RIGHT PLACE TO CREATE THE SESSION? OR SHOULD IT BE IN USER?
-	if web.config.get('_session') is None:
-		session = web.session.Session(app, store, initializer={'count': 0, 'userID':0, 'deviceID':0})
-		session.count = 4
-		web.config._session = session
-	else:
-		session = web.config._session
-		
-	app.run()  
+    config = DBConfig.DBConfig()
+    app = web.application(urls, globals())
+    db = web.database(dbn='mysql', db=config.database, user=config.user, pw=config.password)
+    store = web.session.DBStore(db, 'sessions')
 
+    #IS THIS THE RIGHT PLACE TO CREATE THE SESSION? OR SHOULD IT BE IN USER?
+    if web.config.get('_session') is None:
+        session = web.session.Session(app, store, initializer={'count': 0, 'userID':0, 'deviceID':0})
+        session.count = 4
+        web.config._session = session
+    else:
+        session = web.config._session
+        
+    app.run()

@@ -4,7 +4,6 @@ import sys
 import MySQLdb
 import datetime
 import time
-sys.path.append('../db')
 import DBConfig
 
 def main():

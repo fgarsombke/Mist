@@ -4,7 +4,6 @@ import hashlib
 import uuid
 import base64
 import MySQLdb
-sys.path.append('../db/')
 from db import DBConfig
 import json
 import collections
