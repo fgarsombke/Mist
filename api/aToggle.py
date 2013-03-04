@@ -13,7 +13,7 @@ def getToggleStatus(productID):
     conf = DBConfig.DBConfig()
     db = conf.connectToLocalConfigDatabase()
     cursor = db.cursor()
-    cursor.execute("SELECT * FROM toggleStatus WHERE productID = (%s)", productID)
+    cursor.execute("SELECT * FROM toggle WHERE productID = (%s)", productID)
     results = cursor.lastrowid
     db.commit()
     return results
