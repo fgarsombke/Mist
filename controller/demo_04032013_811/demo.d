@@ -9,3 +9,4 @@ demo.o: ..\driverlib/interrupt.h
 demo.o: ..\driverlib/sysctl.h
 demo.o: ..\driverlib/uart.h
 demo.o: C:\Keil\ARM\ARMCC\bin\..\include\string.h
+demo.o: zone.h

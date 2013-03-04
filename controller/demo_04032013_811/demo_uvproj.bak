@@ -397,11 +397,6 @@
               <FilePath>.\demo.c</FilePath>
             </File>
             <File>
-              <FileName>rit128x96x4.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\drivers\rit128x96x4.c</FilePath>
-            </File>
-            <File>
               <FileName>startup_rvmdk.S</FileName>
               <FileType>2</FileType>
               <FilePath>.\startup_rvmdk.S</FilePath>

@@ -4554,6 +4554,16 @@ extern __declspec(__nothrow) void _membitmovewb(void *  , const void *  , int  ,
  
 
 #line 11 "demo.c"
+#line 1 "zone.h"
+
+void Zone_Init(void);
+
+void Zone_Enable(int zone);
+
+void Zone_Disable(void);
+
+int Zone_Current(void);
+#line 12 "demo.c"
 
 
 
@@ -4637,35 +4647,33 @@ int main(void) {
     SysCtlDelay(SysCtlClockGet()/12);
     
     adhocOff();
+    Zone_Init();
     (*((volatile unsigned long *)0x400073FC)) &= ~(0x0C);
     while(1) {
       UARTSend((unsigned char *)"close\r", 6);
-      SysCtlDelay(SysCtlClockGet()/12);
       UARTSend((unsigned char *)"exit\r", 5);
-      SysCtlDelay(SysCtlClockGet()/12);
       
+      SysCtlDelay(SysCtlClockGet()/12);
       UARTSend((unsigned char *)"$$$", 3);
       SysCtlDelay(SysCtlClockGet()/12);
       UARTSend((unsigned char *)"close\r", 6);
-      SysCtlDelay(SysCtlClockGet()/12);
       
       UARTSend((unsigned char *)"open\r", 5);
-      SysCtlDelay(SysCtlClockGet()/12);
       
       while(flag == 0){}
         
       strcpy(s, data);
       flag = 0;
-      
+      Zone_Disable(); 
       if(!strcmp(s, "(1L, 1)")) {
         (*((volatile unsigned long *)0x400073FC)) |= 0x04;
         (*((volatile unsigned long *)0x400073FC)) &= ~(0x08);
+        Zone_Enable(1);
       } else {
         (*((volatile unsigned long *)0x400073FC)) |= 0x08;
         (*((volatile unsigned long *)0x400073FC)) &= ~(0x04);
+        Zone_Disable();
       }
-      
-      SysCtlDelay(SysCtlClockGet()*3);
     }
 }
 
