@@ -25,7 +25,7 @@
     <ToolsetNumber>0x4</ToolsetNumber>
     <ToolsetName>ARM-ADS</ToolsetName>
     <TargetOption>
-      <CLKADS>8000000</CLKADS>
+      <CLKADS>6000000</CLKADS>
       <OPTTT>
         <gFlags>1</gFlags>
         <BeepAtEnd>1</BeepAtEnd>
@@ -80,7 +80,7 @@
         <Book>
           <Number>0</Number>
           <Title>Data Sheet</Title>
-          <Path>DATASHTS\Luminary\LM3S1968.PDF</Path>
+          <Path>DATASHTS\Luminary\LM3S811.PDF</Path>
         </Book>
         <Book>
           <Number>1</Number>
@@ -97,11 +97,11 @@
         <SimDllName>SARMCM3.DLL</SimDllName>
         <SimDllArguments></SimDllArguments>
         <SimDlgDllName>DLM.DLL</SimDlgDllName>
-        <SimDlgDllArguments>-pLM3S1968</SimDlgDllArguments>
+        <SimDlgDllArguments>-pLM3S811</SimDlgDllArguments>
         <TargetDllName>SARMCM3.DLL</TargetDllName>
         <TargetDllArguments></TargetDllArguments>
         <TargetDlgDllName>TLM.DLL</TargetDlgDllName>
-        <TargetDlgDllArguments>-pLM3S1968</TargetDlgDllArguments>
+        <TargetDlgDllArguments>-pLM3S811</TargetDlgDllArguments>
       </DllOpt>
       <DebugOpt>
         <uSim>0</uSim>
@@ -194,7 +194,7 @@
         <aSer4>0</aSer4>
         <StkLoc>0</StkLoc>
         <TrcWin>0</TrcWin>
-        <newCpu>0</newCpu>
+        <newCpu>3</newCpu>
         <uProt>0</uProt>
       </DebugFlag>
       <Tracepoint>
@@ -217,10 +217,10 @@
       <FileType>1</FileType>
       <tvExp>0</tvExp>
       <Focus>0</Focus>
-      <ColumnNumber>12</ColumnNumber>
+      <ColumnNumber>53</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>4</TopLine>
-      <CurrentLine>13</CurrentLine>
+      <TopLine>1</TopLine>
+      <CurrentLine>14</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\demo.c</PathWithFileName>
       <FilenameWithoutPath>demo.c</FilenameWithoutPath>
@@ -251,7 +251,7 @@
       <Focus>0</Focus>
       <ColumnNumber>32</ColumnNumber>
       <tvExpOptDlg>0</tvExpOptDlg>
-      <TopLine>164</TopLine>
+      <TopLine>165</TopLine>
       <CurrentLine>169</CurrentLine>
       <bDave2>0</bDave2>
       <PathWithFileName>.\startup_rvmdk.S</PathWithFileName>
