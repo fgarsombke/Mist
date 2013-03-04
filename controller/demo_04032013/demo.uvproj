@@ -392,11 +392,6 @@
           <GroupName>source</GroupName>
           <Files>
             <File>
-              <FileName>jsmn.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\jsmn.c</FilePath>
-            </File>
-            <File>
               <FileName>demo.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\demo.c</FilePath>
