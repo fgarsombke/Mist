@@ -9,10 +9,15 @@ using std::ostream;
 
 namespace Mist {
 
+class WeatherDataSource;
+typedef std::unique_ptr<WeatherDataSource> uPtrWeatherDataSource;
+
 class WeatherDataSource {
 public:
+   WeatherDataSource() 
+   {
+   }
 
-   
    WeatherData GetData(GeoLocale locale, pt::time_period period) {
       // TODO: Implement
       //Create URL request to weather API - parameters are lat, long & time.
@@ -24,7 +29,9 @@ public:
    int GetHtml(const string &host_,const string &port_, const string &url_path, ostream &out_, vector<string> &headers, unsigned int timeout) const;
 
 private:
-   
+   // Ref type
+   WeatherDataSource & operator= (const WeatherDataSource & other);
+   WeatherDataSource(const WeatherDataSource& other);
 
 
 };

@@ -7,31 +7,14 @@ using namespace boost::posix_time;
 
 namespace Mist { namespace LawnSim {
 
-struct SimOptions {
-private:
-   std::string controller_;
+class SimOptions;
+typedef std::unique_ptr<SimOptions> uPtrSimOptions;
 
-   ptime start_time_;
-   ptime end_time_;
-
-   GeoLocale geo_locale_;
-
-   unsigned int sim_tick_period_;       // Length of tick in simulated time in milliseconds
-   unsigned int sim_speed_ratio_;       // (simulator speed)/(real time)   
-
-   bool generate_random_;
-
-   std::string config_file_path_;
-
-   SimOptions & operator= (const SimOptions & other);
-   SimOptions(const SimOptions& other);
-
+class SimOptions {
 public:
    SimOptions(int argc, char * argv[]);
 
-
    bool should_generate_random() const { return generate_random_; }
-
 
    // Get functions
    unsigned int sim_tick_period() const { return sim_tick_period_; }
@@ -40,6 +23,25 @@ public:
 
    ptime start_time() const { return start_time_; }
    ptime end_time() const { return end_time_; }
+
+private:
+   // Ref class only
+   SimOptions & operator= (const SimOptions & other);
+   SimOptions(const SimOptions& other);
+
+   GeoLocale geo_locale_;
+
+   std::string controller_;
+
+   ptime start_time_;
+   ptime end_time_;
+
+   unsigned int sim_tick_period_;       // Length of tick in simulated time in milliseconds
+   unsigned int sim_speed_ratio_;       // (simulator speed)/(real time)   
+
+   bool generate_random_;
+
+   std::string config_file_path_;
 };
 
 }}

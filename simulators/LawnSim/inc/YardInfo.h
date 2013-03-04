@@ -24,6 +24,9 @@ public:
    const SprinklersList_t &sprinklers() const 
    { return sprinklers_; }
 
+
+   void DebugPrint(const std::string &fileName) const;
+
 private: 
    friend class LawnGenerator;  
    const GeoLocale locale_;

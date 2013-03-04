@@ -50,39 +50,78 @@ namespace Constants {
 using namespace Constants;
 
 // Convert Celcius temperature to Kelvin
-inline double CToK(double celciusTemp) {
+static inline double CToK(double celciusTemp) 
+{
    return celciusTemp + 273.15;
 }
 
-inline double CalculateAtmPressure(double altitude) {
+static inline double CalculateAtmPressure(double altitude) 
+{
    return stp_atm * exp(gM_over_RL * log(1 - altitude*(.0065/288.15)));
 }
 
 // Psychometric Constant
 //    pressure is in KPa
-inline double GammaFromPressure(double pressure) {
+static inline double GammaFromPressure(double pressure) 
+{
    return pressure*(c_p/(epsilon_weight_ratio*lambda));
 }
 
 // Temperature in Celcius
-inline double SaturationVapourPressure_e_s(double temp) {
+// FAO Equation 3.11
+static inline double SaturationVapourPressure(double temp) 
+{
    return dp_a * exp((dp_b*temp)/(temp + dp_c));
 }
 
+// Mean Saturation Vapour Pressure
+// FAO Equation 3.12
+static inline double MeanSaturationVapourPressure(double minTemp, double maxTemp) 
+{
+   return (SaturationVapourPressure(minTemp) + SaturationVapourPressure(maxTemp))/2;
+}
+
+// Actual Vapour Pressure
+// FAO Equation 3.17
+static inline double ActualVapourPressure(double minTemp, double maxTemp, double minRH, double maxRH)
+{
+   return (minRH*SaturationVapourPressure(minTemp) + maxRH*SaturationVapourPressure(maxTemp))/2;
+}
+
+
+// Actual Vapour Pressure
+// FAO Equation 3.19
+static inline double ActualVapourPressure(double minTemp, double maxTemp, double meanRH)
+{
+   return meanRH*MeanSaturationVapourPressure(minTemp, maxTemp);
+}
+
 // Temperature in Celcius
-inline double delta_slope_e_s(double temp) {   
-   return (4098*SaturationVapourPressure_e_s(temp))/((temp + dp_c)*(temp + dp_c));
+// FAO Equation 3.13
+static inline double SaturationVapourPressureSlope(double temp) 
+{   
+   return (4098*SaturationVapourPressure(temp))/((temp + dp_c)*(temp + dp_c));
+}
+
+static inline double NetRadiation()
+{
+   return 1;
+}
+
+static inline double SoilHFD()
+{
+   return 1;
 }
 
 // Dew point from temperature in celcius and relative humidity
-inline double DewPoint(double temp, double rh) {
+static inline double DewPoint(double temp, double rh) {
    double gam = log(rh) + temp*dp_b/(dp_c + temp);
 
    return dp_c*gam/(dp_b - gam);
 }
 
 
-inline bool IsLeapYear(unsigned int year) {
+static inline bool IsLeapYear(unsigned int year) {
    if (year % 400 == 0) {
       return true;
    } else if (year % 100 == 0) {
@@ -109,7 +148,26 @@ ETCalc::ETCalc(GeoLocale locale) {
 // Wind Speed is in m/s.
 // 
 double ETCalc::CalculateET_o(const ETCalcParameters &ETParams) const {
-   return 0;
+   // Implementation of Eq 6
+   double delta = SaturationVapourPressureSlope(ETParams.avgTemp);
+   double gamma = GammaFromPressure(ETParams.pressure);
+   double R_n = NetRadiation();
+   double G = SoilHFD();
+
+   double u_2 = ETParams.windSpeed;
+   double e_s = MeanSaturationVapourPressure(ETParams.minTemp, ETParams.maxTemp);
+   double e_a = ActualVapourPressure(ETParams.minTemp, ETParams.maxTemp, ETParams.minRH, ETParams.maxRH);
+
+   double num_left = 0.408*delta*(R_n-G);
+   double num_right = gamma*(900/(CToK(ETParams.avgTemp)))*u_2*(e_s - e_a);
+   double den = delta + gamma*(1+0.34*u_2);
+
+   double ET_o = (num_left + num_right)/den;
+
+   // Implementation of Eq 3
+
+
+   return ET_o;
 }
 
 }}

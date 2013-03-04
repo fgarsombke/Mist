@@ -6,15 +6,22 @@
 namespace Mist { namespace FAO_ET {
 
 struct ETCalcParameters {
-   const double windSpeed;    // In m/s
-   const double humidity;     // In fractional form (<1)
-   const double pressure;     // In KPa
+   double windSpeed;    // In m/s
 
-   const pt::ptime intervalStart;
-   const double startTemp;    // In Celcius
+   double maxRH;        // In fractional form (<1)
+   double minRH;
 
-   const pt::ptime intervalEnd;
-   const double endTemp;      // In Celcius
+   double humidity;     
+   double pressure;     // In KPa
+
+   pt::ptime intervalStart;
+   pt::ptime intervalEnd;
+
+   double startTemp;    // In Celcius
+   double minTemp;
+   double avgTemp;
+   double endTemp;      // In Celcius
+   double maxTemp;
 };
 
 

@@ -1,19 +1,24 @@
 #pragma once
 
-#include <boost/date_time.hpp>
+#include "ControllersStd.h"
 #include "ControllerConfig.h"
 
 namespace pt = boost::posix_time;
 using namespace std;
 
+#define UPTR_TYPEDEF(T) typedef std::unique_ptr<T> uPtr_T
+
 namespace Mist { namespace Controllers  {
+
+class Controller;
+typedef std::unique_ptr<Controller> uPtrController;
 
 class Controller {
 public:
-   static unique_ptr<Controller> GetControllerByName(const string &controllerName, const ControllerConfig &config);
+   static uPtrController GetControllerByName(const string &controllerName, const ControllerConfig &config);
 
    // Resets the controller to startTime
-   virtual void Reset(boost::posix_time::ptime startTime) = 0;
+   virtual void Reset(pt::ptime startTime) = 0;
    
    // Indicates to the controller that an interval of time has elapsed.
    //    
@@ -32,9 +37,9 @@ protected:
    {
    }
 
-   const ControllerConfig config () const { return config_; }
-
+   const ControllerConfig config() const { return config_; }
 private:
+   // Reference class only
    Controller &operator=(const Controller &other);
    Controller(const Controller &other);
 

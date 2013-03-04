@@ -2,8 +2,6 @@
 
 #include "main.h"
 
-#include <fstream>
-#include <ostream>
 
 #include <boost/program_options/errors.hpp>
 
@@ -16,7 +14,6 @@
 
 #include "Controller.h"
 
-
 using namespace Mist::LawnSim;
 using namespace std;
 namespace dt = boost::date_time;
@@ -24,37 +21,13 @@ namespace pt = boost::posix_time;
 namespace gt = boost::gregorian;
 
 
-void DebugPrintYardInfo(const YardInfo& y);
-
-#ifdef _DEBUG
-
-void DebugPrintYardInfo(const YardInfo& y) 
-{
-   ofstream dbgFile;
-   dbgFile.open("yardExPerlin.csv");
-
-   bnu::matrix<YardCellInfo> cellInfos = y.yard_cells();
-
-   for(unsigned int i = 0; i < y.yard_length(); ++i) {
-      for(unsigned int j = 0; j < y.yard_width(); ++j) {
-         dbgFile << cellInfos(i,j).rel_height() << ", ";
-      }
-      dbgFile << endl;
-   }
-
-   dbgFile.close();
-}
-
-
-#endif
-
 int main(int argc, char * argv[]) 
 {
    try {
-      // Speed up debugging output
+      // Speed up debugging io
       ios_base::sync_with_stdio(false);
 
-      std::unique_ptr<SimOptions> options;
+      std::unique_ptr<SimOptions> options = nullptr;
       
       try {
          options.reset(new SimOptions(argc, argv));
@@ -63,10 +36,16 @@ int main(int argc, char * argv[])
          return 1;
       }
 
-      auto yardInfo = LawnGenerator().Generate(options->geo_locale(), 1000, 1000);
-      auto controller  = Mist::Controllers::Controller::GetControllerByName("NullController", Mist::Controllers::ControllerConfig());
+      auto yardInfo = LawnGenerator().Generate(options->geo_locale(), 5, 5);
 
-      Simulator sim(yardInfo, controller);
+      Mist::Controllers::ControllerConfig cConfig;
+      cConfig.locale_ = options->geo_locale();
+      cConfig.update_period_ = time_duration(hours(1));
+      cConfig.data_source_ = "exSchedule.json";
+      Mist::Controllers::uPtrController controller = Controller::GetControllerByName("MistFile", cConfig);
+
+      Simulator sim(*yardInfo, controller);
+      yardInfo.release();
 
       pt::ptime start(options->start_time());
       pt::ptime end(options->end_time());

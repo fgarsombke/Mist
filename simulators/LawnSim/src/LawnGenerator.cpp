@@ -24,7 +24,7 @@ unique_ptr<YardInfo> LawnGenerator::Generate(GeoLocale locale, size_t rows, size
    SprinklersList_t sprinklers = SprinklersList_t(4);
 
 
-   return unique_ptr<YardInfo>(new YardInfo(locale, GenerateCells(rows, cols, FillHeightsPerlin), sprinklers));
+   return unique_ptr<YardInfo>(new YardInfo(locale, GenerateCells(rows, cols, FillHeightsDiagonally), sprinklers));
 }
 
 
@@ -52,7 +52,7 @@ void LawnGenerator::FillHeightsPerlin(bnu::matrix<double> &heights) {
    size_t rows = heights.size1();
    size_t cols = heights.size2();
 
-   Perlin::PerlinModified perGen(1, 1, .001, 5, 0);//time(0));
+   Perlin::PerlinModified perGen(10, 1, .01, 5, 0);//time(0));
 
    for (unsigned int i = 0; i < rows; ++i) {
       for (unsigned int j = 0; j < cols; ++j) {
@@ -84,8 +84,8 @@ void LawnGenerator::FillHeightsDiagonally(bnu::matrix<double> &heights) {
    heights(0,0) = 0;
 
    // Do left and top edges next
-   for (size_t i = 1; i < cols; ++i) {
-      heights(0,i) = heights(0, i-1) + dist(rng);
+   for (size_t j = 1; j < cols; ++j) {
+      heights(0,j) = heights(0, j-1) + dist(rng);
    }
    for (size_t i = 1; i < rows; ++i) {
       heights(i,0) = heights(i-1, 0) + dist(rng);

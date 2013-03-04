@@ -47,14 +47,13 @@ inline int SleepForMS(int x)
 
 namespace Mist { namespace LawnSim {
 
-Simulator::Simulator(std::unique_ptr<YardInfo> &yardInfo, unique_ptr<Controllers::Controller> &controller)
-   : yard_(*yardInfo.get()), controller_(std::move(controller))
+Simulator::Simulator(const YardInfo &yardInfo, unique_ptr<Controllers::Controller> &controller)
+   : yard_(yardInfo), controller_(std::move(controller)), 
+     weather_source_(uPtrWeatherDataSource( new WeatherDataSource()))
 {
    // Set start time ahead of end time so the sim won't run
    sim_start_time_ = ptime(boost::gregorian::date(1970,1,2));
    sim_end_time_ = ptime(boost::gregorian::date(1970,1,1));
-
-   yardInfo.release();
 }
 
 
@@ -78,6 +77,7 @@ void Simulator::Reset(ptime simStartTime,
    tick_period_ms_ = simTickPeriod/simSpeedMultiplier;
 
    // Put the yard into it's initial state
+   controller_->Reset(simStartTime);
    yard_.ResetState();
 }
 
@@ -103,7 +103,7 @@ void Simulator::Run()
       // TODO: Precompute WeatherData for the next tick
       // Do the tick work
 
-      WeatherData weatherData = weather_source_.GetData(yard_.locale(), tick_period);
+      WeatherData weatherData = weather_source_->GetData(yard_.locale(), tick_period);
       controller_->ElapseTime(tick_period, sprinklerDurations);
 
       // Let the yard check whether or not the sprinkler durations list was resized
