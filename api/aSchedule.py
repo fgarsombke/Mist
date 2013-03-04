@@ -67,7 +67,7 @@ class aSchedule:
                 currzone_list.append(d)
 
             #GRAB the last one
-            currDict['i'] = currzone_list
+            currDict['times'] = currzone_list
             #add the dictionary to the list of zone dictionarys
             schedule_list.append(currDict)
 
