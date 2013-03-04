@@ -46,7 +46,6 @@ class aSchedule:
 
             #iterate through all irrigation events, they are sorted by zone number
             for row in schedules:
-                print row
                 if row[1] != currentZone: #we are on next zone
                     #create zone dictionary from current list of events for this zone
                     currDict['i'] = currzone_list
