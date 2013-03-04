@@ -54,10 +54,10 @@ SimOptions::SimOptions(int argc, char * argv[]) {
 
    // Accept a few different formatting options
    const std::locale formats[] = {
+      locale(locale::classic(),new bt::time_input_facet("%m/%d/%Y %H:%M:%S")),
       locale(locale::classic(),new bt::time_input_facet("%m/%d/%Y")),
       locale(locale::classic(),new bt::time_input_facet("%m-%d-%Y")),
       locale(locale::classic(),new bt::time_input_facet("%Y-%m-%d %H:%M:%S")),
-      locale(locale::classic(),new bt::time_input_facet("%Y/%m/%d %H:%M:%S")),
       locale(locale::classic(),new bt::time_input_facet("%d.%m.%Y %H:%M:%S")),
    };
    const size_t formats_n = sizeof(formats)/sizeof(formats[0]);

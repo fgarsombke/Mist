@@ -108,7 +108,8 @@ void Simulator::Run()
 
       // Let the yard check whether or not the sprinkler durations list was resized
       yard_.ElapseTime(tick_period, weatherData, sprinklerDurations);
-      
+     
+
       // Compute next tick time
       nextTickTime += tick_period_ms_;
 

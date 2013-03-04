@@ -12,6 +12,8 @@ public:
    {
    }
 
+
+private:
    virtual void Reset(pt::ptime startTime) override;
 
 };

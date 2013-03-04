@@ -15,7 +15,6 @@ class YardInfo
 public:
    const bnu::matrix<YardCellInfo> &yard_cells() const { return yard_cells_; }
 
-
    size_t yard_length() const { return yard_cells_.size1(); }
    size_t yard_width() const { return yard_cells_.size2(); }
 

@@ -7,6 +7,7 @@
 #include <iostream>
 #include <algorithm>
 #include <array>
+#include <forward_list>
 
 #if __linux__ == 1
 
