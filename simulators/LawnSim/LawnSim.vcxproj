@@ -19,8 +19,6 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\inc\WeatherData.h" />
-    <ClInclude Include="..\..\inc\WeatherDataSource.h" />
     <ClInclude Include="inc\Constants.h" />
     <ClInclude Include="inc\DBHook.h" />
     <ClInclude Include="inc\DriftEntry.h" />
@@ -30,7 +28,7 @@
     <ClInclude Include="inc\LawnGenerator.h" />
     <ClInclude Include="inc\LawnSimStd.h" />
     <ClInclude Include="inc\NeighborData.h" />
-    <ClInclude Include="inc\PerlinNoiseGen.h" />
+    <ClInclude Include="inc\PerlinNoiseGenerator.h" />
     <ClInclude Include="inc\SimOptions.h" />
     <ClInclude Include="inc\Simulator.h" />
     <ClInclude Include="inc\Sprinkler.h" />
@@ -56,8 +54,12 @@
     <ClCompile Include="src\Sprinkler.cpp" />
     <ClCompile Include="src\Yard.cpp" />
     <ClCompile Include="src\YardCell.cpp" />
+    <ClCompile Include="src\YardInfo.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\Mist.vcxproj">
+      <Project>{d4c36a70-c59f-4886-a8f7-b54791e17022}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\Controllers\Controllers.vcxproj">
       <Project>{70497e49-3bec-4de0-87c8-f99e066f0a28}</Project>
     </ProjectReference>
@@ -151,6 +153,7 @@
       <PrecompiledHeaderFile>LawnSimStd.h</PrecompiledHeaderFile>
       <AdditionalOptions>-D_SCL_SECURE_NO_WARNINGS %(AdditionalOptions)</AdditionalOptions>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <RuntimeTypeInfo>false</RuntimeTypeInfo>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -195,9 +198,9 @@
       <AdditionalIncludeDirectories>C:\Program Files (x86)\GnuWin32\include;D:\Software\boost;$(ProjectDir)inc;$(ProjectDir)../../inc;$(ProjectDir)../Controllers/inc</AdditionalIncludeDirectories>
       <SDLCheck>false</SDLCheck>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
-      <RuntimeTypeInfo>true</RuntimeTypeInfo>
+      <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <DisableLanguageExtensions>false</DisableLanguageExtensions>
-      <OpenMPSupport>true</OpenMPSupport>
+      <OpenMPSupport>false</OpenMPSupport>
       <PrecompiledHeaderFile>LawnSimStd.h</PrecompiledHeaderFile>
       <AdditionalOptions>-D_SCL_SECURE_NO_WARNINGS %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>

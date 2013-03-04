@@ -18,27 +18,38 @@ public:
 
 protected: 
    MistController(const ControllerConfig &config)
-      : update_period_(config.update_period_), Controller(config)
+      : Controller(config), update_period_(config.update_period_)
    {
-      is_valid_ = false;
+      has_started_ = false;
    }
    
-   void ResetSchedule(MistSchedule &&newSchedule) { current_schedule_ = std::move(newSchedule); }
+   void ResetSchedule(pt::ptime now, MistSchedule &&newSchedule);
+
+   const MistSchedule &current_schedule() const { return current_schedule_; }
+   const pt::time_duration update_period() const { return update_period_; }
+
+   const pt::ptime last_update_time() const { return last_update_time_; }
 
    // Returns true if update period has passed since the last call to Reset
-   bool HasUpdatePeriodPassed(pt::ptime now) const { return last_update_time_ + update_period_ > now; }
+   bool HasUpdatePeriodPassed(pt::ptime now) const 
+   { 
+      return last_update_time_ + update_period_ <= now; 
+   }
 
    // Reads in a new schedule from the specified stream
    template<class strT>
    void ReadInNewSchedule(strT &inSchedule);
 
+   pt::ptime NextUpdateTimeAfter(pt::ptime afterTime) const;
 private:
    const pt::time_duration update_period_;
 
    MistSchedule current_schedule_;
    pt::ptime last_update_time_;
 
-   bool is_valid_;
+   pt::ptime start_time_;
+   bool has_started_;
+
 };
 
 }}

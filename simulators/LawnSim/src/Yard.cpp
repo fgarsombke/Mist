@@ -17,7 +17,8 @@ Yard::Yard(const YardInfo& yardInfo)
 {
    // Zero everything out and
    // Generate a height sorted view of the Yard
-   
+   DebugPrint();
+
    // Generate rain mask
    // TODO: Should this be nonideal?
    rain_mask_ = bnu::scalar_matrix<double>(cells_.size1() - 2, cells_.size2() - 2, 1.0);
@@ -69,7 +70,7 @@ const bnu::matrix<YardCell> Yard::InitCells(const YardInfo& yardInfo)
    // At this point each void cell has a height equal to its next "inner" neighbor
    // We could stop assigning here and that would be enough for the "EdgeWall" case
 
-   #if EdgeWall == 1
+   #if EdgeProject == 1
 
    // We continue by extrapolating slope into the void
 
@@ -181,7 +182,7 @@ void Yard::ResetState() {
 }
 
 
-void Yard::ElapseTime(pt::time_period tickPeriod, const WeatherData &data, std::vector<pt::time_duration> sprinklerDurations) {
+void Yard::ElapseTime(pt::time_period tickPeriod, const WeatherData &data, const std::vector<pt::time_duration> sprinklerDurations) {
    // TODO: Change the api so that sprinklerDurations cannot be accidentally resized
    using namespace bnu;
 

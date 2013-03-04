@@ -41,8 +41,10 @@ int main(int argc, char * argv[])
       Mist::Controllers::ControllerConfig cConfig;
       cConfig.locale_ = options->geo_locale();
       cConfig.update_period_ = time_duration(hours(1));
-      cConfig.data_source_ = "exSchedule.json";
-      Mist::Controllers::uPtrController controller = Controller::GetControllerByName("MistFile", cConfig);
+      cConfig.data_source_ = "www.quattrotap.com";
+      cConfig.id = 1;
+
+      Mist::Controllers::uPtrController controller = Controller::GetControllerByName("MistReal", cConfig);
 
       Simulator sim(*yardInfo, controller);
       yardInfo.release();
