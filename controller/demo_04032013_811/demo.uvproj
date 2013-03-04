@@ -401,6 +401,11 @@
               <FileType>2</FileType>
               <FilePath>.\startup_rvmdk.S</FilePath>
             </File>
+            <File>
+              <FileName>zone.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\zone.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>

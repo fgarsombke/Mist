@@ -8,6 +8,7 @@
 #include "driverlib/sysctl.h"
 #include "driverlib/uart.h"
 #include "string.h"
+#include "zone.h"
 
 #ifdef DEBUG
 void __error__(char *pcFilename, unsigned long ulLine){}
@@ -91,35 +92,33 @@ int main(void) {
     SysCtlDelay(SysCtlClockGet()/12);
     
     adhocOff();
+    Zone_Init();
     GPIO_PORTD_DATA_R &= ~(0x0C);
     while(1) {
       UARTSend((unsigned char *)"close\r", 6);
-      SysCtlDelay(SysCtlClockGet()/12);
       UARTSend((unsigned char *)"exit\r", 5);
-      SysCtlDelay(SysCtlClockGet()/12);
       
+      SysCtlDelay(SysCtlClockGet()/12);
       UARTSend((unsigned char *)"$$$", 3);
       SysCtlDelay(SysCtlClockGet()/12);
       UARTSend((unsigned char *)"close\r", 6);
-      SysCtlDelay(SysCtlClockGet()/12);
       
       UARTSend((unsigned char *)"open\r", 5);
-      SysCtlDelay(SysCtlClockGet()/12);
       
       while(flag == 0){}
         
       strcpy(s, data);
       flag = 0;
-      
+      Zone_Disable(); // initialize all zones to zero
       if(!strcmp(s, "(1L, 1)")) {
         GPIO_PORTD_DATA_R |= 0x04;
         GPIO_PORTD_DATA_R &= ~(0x08);
+        Zone_Enable(1);
       } else {
         GPIO_PORTD_DATA_R |= 0x08;
         GPIO_PORTD_DATA_R &= ~(0x04);
+        Zone_Disable();
       }
-      
-      SysCtlDelay(SysCtlClockGet()*3);
     }
 }
 
