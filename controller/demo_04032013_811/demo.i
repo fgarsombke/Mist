@@ -353,7 +353,7 @@ typedef unsigned char tBoolean;
 #line 217 "..\\inc/hw_types.h"
 
 #line 4 "demo.c"
-#line 1 "..\\inc/lm3s1968.h"
+#line 1 "..\\inc/lm3s811.h"
 
 
 
@@ -401,224 +401,213 @@ typedef unsigned char tBoolean;
 
 
 
-#line 56 "..\\inc/lm3s1968.h"
+#line 56 "..\\inc/lm3s811.h"
 
 
 
 
 
 
-#line 83 "..\\inc/lm3s1968.h"
+#line 81 "..\\inc/lm3s811.h"
 
 
 
 
 
 
-#line 110 "..\\inc/lm3s1968.h"
+#line 106 "..\\inc/lm3s811.h"
 
 
 
 
 
 
-#line 137 "..\\inc/lm3s1968.h"
+#line 131 "..\\inc/lm3s811.h"
 
 
 
 
 
 
-#line 164 "..\\inc/lm3s1968.h"
+#line 156 "..\\inc/lm3s811.h"
 
 
 
 
 
 
-#line 179 "..\\inc/lm3s1968.h"
+#line 171 "..\\inc/lm3s811.h"
 
 
 
 
 
 
-#line 194 "..\\inc/lm3s1968.h"
+#line 190 "..\\inc/lm3s811.h"
 
 
 
 
 
 
-#line 214 "..\\inc/lm3s1968.h"
+#line 209 "..\\inc/lm3s811.h"
 
 
 
 
 
 
-#line 234 "..\\inc/lm3s1968.h"
+#line 224 "..\\inc/lm3s811.h"
 
 
 
 
 
 
-#line 254 "..\\inc/lm3s1968.h"
+#line 237 "..\\inc/lm3s811.h"
 
 
 
 
 
 
-#line 269 "..\\inc/lm3s1968.h"
+#line 262 "..\\inc/lm3s811.h"
 
 
 
 
 
 
-#line 282 "..\\inc/lm3s1968.h"
+#line 316 "..\\inc/lm3s811.h"
 
 
 
 
 
 
-#line 297 "..\\inc/lm3s1968.h"
+#line 370 "..\\inc/lm3s811.h"
 
 
 
 
 
 
-#line 310 "..\\inc/lm3s1968.h"
+#line 394 "..\\inc/lm3s811.h"
 
 
 
 
 
 
-#line 337 "..\\inc/lm3s1968.h"
+#line 418 "..\\inc/lm3s811.h"
 
 
 
 
 
 
-#line 364 "..\\inc/lm3s1968.h"
+#line 442 "..\\inc/lm3s811.h"
 
 
 
 
 
 
-#line 391 "..\\inc/lm3s1968.h"
+#line 475 "..\\inc/lm3s811.h"
 
 
 
 
 
 
-#line 418 "..\\inc/lm3s1968.h"
+#line 487 "..\\inc/lm3s811.h"
 
 
 
 
 
 
-#line 472 "..\\inc/lm3s1968.h"
+#line 502 "..\\inc/lm3s811.h"
 
 
 
 
 
 
-#line 526 "..\\inc/lm3s1968.h"
+#line 538 "..\\inc/lm3s811.h"
 
 
 
 
 
 
-#line 543 "..\\inc/lm3s1968.h"
+#line 593 "..\\inc/lm3s811.h"
 
 
 
 
 
 
-#line 560 "..\\inc/lm3s1968.h"
 
 
 
 
 
 
-#line 584 "..\\inc/lm3s1968.h"
 
 
 
 
 
 
-#line 608 "..\\inc/lm3s1968.h"
 
 
 
 
 
 
-#line 632 "..\\inc/lm3s1968.h"
 
 
 
 
 
 
-#line 656 "..\\inc/lm3s1968.h"
 
 
 
 
 
 
-#line 689 "..\\inc/lm3s1968.h"
 
 
 
 
 
 
-#line 705 "..\\inc/lm3s1968.h"
 
 
 
 
 
 
-#line 722 "..\\inc/lm3s1968.h"
 
 
 
 
 
 
-#line 746 "..\\inc/lm3s1968.h"
 
 
 
 
 
 
-#line 781 "..\\inc/lm3s1968.h"
 
 
 
 
 
 
-#line 844 "..\\inc/lm3s1968.h"
 
 
 
@@ -654,87 +643,9 @@ typedef unsigned char tBoolean;
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                                            
-
-                                            
-
-
-
-
-
-
-
-#line 963 "..\\inc/lm3s1968.h"
+#line 700 "..\\inc/lm3s811.h"
                                             
-#line 980 "..\\inc/lm3s1968.h"
+#line 717 "..\\inc/lm3s811.h"
 
 
 
@@ -823,15 +734,13 @@ typedef unsigned char tBoolean;
                                             
 
                                             
-
-
 
 
 
 
-#line 1080 "..\\inc/lm3s1968.h"
 
 
+#line 817 "..\\inc/lm3s811.h"
 
 
 
@@ -883,29 +792,26 @@ typedef unsigned char tBoolean;
 
 
 
+#line 879 "..\\inc/lm3s811.h"
 
 
 
 
 
 
-#line 1150 "..\\inc/lm3s1968.h"
 
 
 
 
 
 
-#line 1162 "..\\inc/lm3s1968.h"
 
 
 
 
 
-
-
                                             
-#line 1176 "..\\inc/lm3s1968.h"
+#line 903 "..\\inc/lm3s811.h"
                                             
 
 
@@ -974,7 +880,7 @@ typedef unsigned char tBoolean;
 
 
 
-#line 1251 "..\\inc/lm3s1968.h"
+#line 978 "..\\inc/lm3s811.h"
 
 
 
@@ -1008,7 +914,7 @@ typedef unsigned char tBoolean;
 
 
 
-#line 1295 "..\\inc/lm3s1968.h"
+#line 1022 "..\\inc/lm3s811.h"
 
 
 
@@ -1122,21 +1028,21 @@ typedef unsigned char tBoolean;
 
 
 
-#line 1414 "..\\inc/lm3s1968.h"
+#line 1141 "..\\inc/lm3s811.h"
 
 
 
 
 
 
-#line 1426 "..\\inc/lm3s1968.h"
+#line 1153 "..\\inc/lm3s811.h"
 
 
 
 
 
 
-#line 1438 "..\\inc/lm3s1968.h"
+#line 1165 "..\\inc/lm3s811.h"
 
 
 
@@ -1180,7 +1086,7 @@ typedef unsigned char tBoolean;
 
 
 
-#line 1487 "..\\inc/lm3s1968.h"
+#line 1214 "..\\inc/lm3s811.h"
 
 
 
@@ -1227,7 +1133,7 @@ typedef unsigned char tBoolean;
 
 
 
-#line 1539 "..\\inc/lm3s1968.h"
+#line 1266 "..\\inc/lm3s811.h"
 
 
 
@@ -1266,14 +1172,14 @@ typedef unsigned char tBoolean;
 
 
 
-#line 1615 "..\\inc/lm3s1968.h"
+#line 1342 "..\\inc/lm3s811.h"
 
 
 
 
 
 
-#line 1659 "..\\inc/lm3s1968.h"
+#line 1386 "..\\inc/lm3s811.h"
 
 
 
@@ -1303,7 +1209,7 @@ typedef unsigned char tBoolean;
 
 
 
-#line 1694 "..\\inc/lm3s1968.h"
+#line 1421 "..\\inc/lm3s811.h"
 
 
 
@@ -1350,7 +1256,7 @@ typedef unsigned char tBoolean;
 
 
 
-#line 1746 "..\\inc/lm3s1968.h"
+#line 1473 "..\\inc/lm3s811.h"
 
 
 
@@ -1389,14 +1295,14 @@ typedef unsigned char tBoolean;
 
 
 
-#line 1822 "..\\inc/lm3s1968.h"
+#line 1549 "..\\inc/lm3s811.h"
 
 
 
 
 
 
-#line 1866 "..\\inc/lm3s1968.h"
+#line 1593 "..\\inc/lm3s811.h"
 
 
 
@@ -1430,7 +1336,7 @@ typedef unsigned char tBoolean;
 
 
 
-#line 1905 "..\\inc/lm3s1968.h"
+#line 1632 "..\\inc/lm3s811.h"
 
 
 
@@ -1468,17 +1374,6 @@ typedef unsigned char tBoolean;
 
 
                                             
-
-
-
-
-
-
-
-
-
-#line 1957 "..\\inc/lm3s1968.h"
-
 
 
 
@@ -1488,6 +1383,7 @@ typedef unsigned char tBoolean;
 
 
 
+#line 1684 "..\\inc/lm3s811.h"
 
 
 
@@ -1516,24 +1412,24 @@ typedef unsigned char tBoolean;
 
 
 
-#line 2033 "..\\inc/lm3s1968.h"
 
 
 
 
 
 
-#line 2077 "..\\inc/lm3s1968.h"
 
 
 
 
+#line 1760 "..\\inc/lm3s811.h"
 
 
 
 
 
 
+#line 1804 "..\\inc/lm3s811.h"
 
 
 
@@ -1557,7 +1453,6 @@ typedef unsigned char tBoolean;
 
 
 
-#line 2129 "..\\inc/lm3s1968.h"
 
 
 
@@ -1571,92 +1466,6 @@ typedef unsigned char tBoolean;
 
 
 
-
-
-                                            
-
-
-
-
-
-
-
-
-                                            
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-                                            
-
-
-                                            
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
                                             
 
                                             
@@ -1696,9 +1505,9 @@ typedef unsigned char tBoolean;
 
 
                                             
-#line 2275 "..\\inc/lm3s1968.h"
+#line 1887 "..\\inc/lm3s811.h"
                                             
-#line 2283 "..\\inc/lm3s1968.h"
+#line 1895 "..\\inc/lm3s811.h"
 
 
 
@@ -1795,7 +1604,6 @@ typedef unsigned char tBoolean;
 
 
                                             
-
 
 
 
@@ -1922,8 +1730,8 @@ typedef unsigned char tBoolean;
 
 
 
-#line 2550 "..\\inc/lm3s1968.h"
 
+#line 2154 "..\\inc/lm3s811.h"
 
 
 
@@ -1939,8 +1747,8 @@ typedef unsigned char tBoolean;
 
 
 
-#line 2586 "..\\inc/lm3s1968.h"
 
+#line 2190 "..\\inc/lm3s811.h"
 
 
 
@@ -1956,22 +1764,22 @@ typedef unsigned char tBoolean;
 
 
 
-#line 2610 "..\\inc/lm3s1968.h"
 
+#line 2214 "..\\inc/lm3s811.h"
 
 
 
 
 
-#line 2632 "..\\inc/lm3s1968.h"
 
+#line 2236 "..\\inc/lm3s811.h"
 
 
 
 
 
-#line 2670 "..\\inc/lm3s1968.h"
 
+#line 2274 "..\\inc/lm3s811.h"
 
 
 
@@ -1985,22 +1793,22 @@ typedef unsigned char tBoolean;
 
 
 
-#line 2690 "..\\inc/lm3s1968.h"
 
+#line 2294 "..\\inc/lm3s811.h"
 
 
 
 
 
-#line 2704 "..\\inc/lm3s1968.h"
 
+#line 2308 "..\\inc/lm3s811.h"
 
 
 
 
 
-#line 2726 "..\\inc/lm3s1968.h"
 
+#line 2330 "..\\inc/lm3s811.h"
 
 
 
@@ -2014,22 +1822,22 @@ typedef unsigned char tBoolean;
 
 
 
-#line 2746 "..\\inc/lm3s1968.h"
 
+#line 2350 "..\\inc/lm3s811.h"
 
 
 
 
 
-#line 2760 "..\\inc/lm3s1968.h"
 
+#line 2364 "..\\inc/lm3s811.h"
 
 
 
 
 
-#line 2782 "..\\inc/lm3s1968.h"
 
+#line 2386 "..\\inc/lm3s811.h"
 
 
 
@@ -2043,8 +1851,8 @@ typedef unsigned char tBoolean;
 
 
 
-#line 2802 "..\\inc/lm3s1968.h"
 
+#line 2406 "..\\inc/lm3s811.h"
 
 
 
@@ -2076,8 +1884,8 @@ typedef unsigned char tBoolean;
 
 
 
-#line 2840 "..\\inc/lm3s1968.h"
 
+#line 2444 "..\\inc/lm3s811.h"
 
 
 
@@ -2091,22 +1899,16 @@ typedef unsigned char tBoolean;
 
 
 
-#line 2861 "..\\inc/lm3s1968.h"
 
+#line 2465 "..\\inc/lm3s811.h"
 
 
 
 
 
 
-                                            
-
-                                            
 
                                             
-
-
-
 
 
 
@@ -2145,8 +1947,8 @@ typedef unsigned char tBoolean;
 
 
 
+#line 2529 "..\\inc/lm3s811.h"
 
-#line 2933 "..\\inc/lm3s1968.h"
 
 
 
@@ -2165,8 +1967,6 @@ typedef unsigned char tBoolean;
 
 
 
-                                            
-#line 2965 "..\\inc/lm3s1968.h"
 
 
 
@@ -2185,8 +1985,6 @@ typedef unsigned char tBoolean;
 
 
 
-                                            
-#line 2997 "..\\inc/lm3s1968.h"
 
 
 
@@ -2200,7 +1998,9 @@ typedef unsigned char tBoolean;
 
 
 
+                                            
 
+                                            
 
 
 
@@ -2225,13 +2025,16 @@ typedef unsigned char tBoolean;
 
 
 
-#line 3043 "..\\inc/lm3s1968.h"
 
 
+                                            
+                                            
 
 
 
+                                            
 
+                                            
 
 
                                             
@@ -2244,28 +2047,15 @@ typedef unsigned char tBoolean;
 
 
 
-                                            
 
                                             
-
-
-
-
-
-
-
+                                            
 
 
-                                            
 
                                             
-
                                             
-
                                             
-
-
-
 
 
 
@@ -2275,35 +2065,14 @@ typedef unsigned char tBoolean;
                                             
 
                                             
-
-                                            
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
+#line 2655 "..\\inc/lm3s811.h"
 
 
 
 
 
 
+#line 2667 "..\\inc/lm3s811.h"
 
 
 
@@ -2314,38 +2083,28 @@ typedef unsigned char tBoolean;
 
 
 
-
-
-
-
-
-
-
-
-
-
-
-
+                                            
+#line 2687 "..\\inc/lm3s811.h"
 
 
 
 
 
 
+#line 2701 "..\\inc/lm3s811.h"
 
 
 
 
 
 
+#line 2727 "..\\inc/lm3s811.h"
 
 
 
 
 
-                                            
 
-                                            
 
 
 
@@ -2367,6 +2126,7 @@ typedef unsigned char tBoolean;
 
 
 
+#line 2766 "..\\inc/lm3s811.h"
 
 
 
@@ -2382,6 +2142,7 @@ typedef unsigned char tBoolean;
 
 
 
+#line 2789 "..\\inc/lm3s811.h"
 
 
 
@@ -2402,20 +2163,14 @@ typedef unsigned char tBoolean;
 
 
                                             
-
-
 
-
-
                                             
 
                                             
-
 
                                             
 
-
-
+                                            
 
 
 
@@ -2423,200 +2178,78 @@ typedef unsigned char tBoolean;
 
 
 
-                                            
 
 
 
-                                            
-                                            
                                             
-#line 3253 "..\\inc/lm3s1968.h"
-                                            
 
                                             
 
                                             
-#line 3267 "..\\inc/lm3s1968.h"
-
-
 
 
 
 
-#line 3279 "..\\inc/lm3s1968.h"
 
 
 
 
 
 
-
-
-
-
                                             
-#line 3300 "..\\inc/lm3s1968.h"
-
-
-
-
-
-
-#line 3322 "..\\inc/lm3s1968.h"
-
-
-
-
-
-
-#line 3355 "..\\inc/lm3s1968.h"
-
-
 
-
-
-
-#line 3369 "..\\inc/lm3s1968.h"
-
-
-
-
-
-
-
-
-
-
-
-
-
-#line 3394 "..\\inc/lm3s1968.h"
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#line 3426 "..\\inc/lm3s1968.h"
-
-
-
-
-
-
-#line 3440 "..\\inc/lm3s1968.h"
-
-
-
-
-
-
-
-
                                             
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-#line 3535 "..\\inc/lm3s1968.h"
-
-
-
-
-
-
-
-
-
-
-
+                                            
 
+                                            
 
 
 
 
-#line 3625 "..\\inc/lm3s1968.h"
 
 
 
+#line 2862 "..\\inc/lm3s811.h"
 
 
 
-#line 3640 "..\\inc/lm3s1968.h"
 
 
 
+#line 2920 "..\\inc/lm3s811.h"
+                                            
 
+                                            
 
 
-#line 3662 "..\\inc/lm3s1968.h"
 
 
 
 
 
 
-#line 3676 "..\\inc/lm3s1968.h"
 
+#line 2940 "..\\inc/lm3s811.h"
 
 
 
 
 
-#line 3691 "..\\inc/lm3s1968.h"
 
+#line 2953 "..\\inc/lm3s811.h"
 
 
 
 
 
-#line 3713 "..\\inc/lm3s1968.h"
 
+#line 2967 "..\\inc/lm3s811.h"
 
 
 
 
 
-#line 3727 "..\\inc/lm3s1968.h"
 
 
 
@@ -2629,18 +2262,18 @@ typedef unsigned char tBoolean;
 
 
 
+#line 2991 "..\\inc/lm3s811.h"
 
 
 
 
-#line 3759 "..\\inc/lm3s1968.h"
 
 
+#line 3005 "..\\inc/lm3s811.h"
 
 
 
 
-#line 3773 "..\\inc/lm3s1968.h"
 
 
 
@@ -2648,7 +2281,6 @@ typedef unsigned char tBoolean;
 
 
 
-#line 3851 "..\\inc/lm3s1968.h"
 
 
 
@@ -2664,6 +2296,7 @@ typedef unsigned char tBoolean;
 
 
 
+#line 3039 "..\\inc/lm3s811.h"
 
 
 
@@ -2700,161 +2333,153 @@ typedef unsigned char tBoolean;
 
 
 
-#line 3935 "..\\inc/lm3s1968.h"
 
 
 
 
 
 
-#line 3958 "..\\inc/lm3s1968.h"
 
 
 
 
 
 
-#line 3997 "..\\inc/lm3s1968.h"
 
 
 
 
 
 
-#line 4028 "..\\inc/lm3s1968.h"
 
 
 
 
 
 
-#line 4067 "..\\inc/lm3s1968.h"
 
 
 
 
 
 
-#line 4098 "..\\inc/lm3s1968.h"
 
 
 
 
 
 
-#line 4137 "..\\inc/lm3s1968.h"
 
 
 
 
 
 
-#line 4168 "..\\inc/lm3s1968.h"
 
 
 
 
 
 
-#line 4207 "..\\inc/lm3s1968.h"
+#line 3156 "..\\inc/lm3s811.h"
 
 
 
 
 
 
-#line 4238 "..\\inc/lm3s1968.h"
+#line 3195 "..\\inc/lm3s811.h"
 
 
 
 
 
 
-#line 4252 "..\\inc/lm3s1968.h"
+#line 3234 "..\\inc/lm3s811.h"
 
 
 
 
 
 
-#line 4266 "..\\inc/lm3s1968.h"
+#line 3273 "..\\inc/lm3s811.h"
 
 
 
 
 
 
-#line 4280 "..\\inc/lm3s1968.h"
+#line 3312 "..\\inc/lm3s811.h"
 
 
 
 
 
 
-#line 4294 "..\\inc/lm3s1968.h"
+#line 3326 "..\\inc/lm3s811.h"
 
 
 
 
 
 
-#line 4308 "..\\inc/lm3s1968.h"
+#line 3340 "..\\inc/lm3s811.h"
 
 
 
 
 
 
-#line 4322 "..\\inc/lm3s1968.h"
+#line 3354 "..\\inc/lm3s811.h"
 
 
 
 
 
 
-#line 4336 "..\\inc/lm3s1968.h"
+#line 3368 "..\\inc/lm3s811.h"
 
 
 
 
 
 
-#line 4350 "..\\inc/lm3s1968.h"
+#line 3382 "..\\inc/lm3s811.h"
 
 
 
 
 
 
-#line 4364 "..\\inc/lm3s1968.h"
+#line 3396 "..\\inc/lm3s811.h"
 
 
 
 
 
 
-#line 4378 "..\\inc/lm3s1968.h"
+#line 3410 "..\\inc/lm3s811.h"
 
 
 
 
 
 
-#line 4392 "..\\inc/lm3s1968.h"
+#line 3424 "..\\inc/lm3s811.h"
 
 
 
 
 
 
-#line 4405 "..\\inc/lm3s1968.h"
+#line 3437 "..\\inc/lm3s811.h"
 
 
 
 
 
 
-#line 4438 "..\\inc/lm3s1968.h"
+#line 3470 "..\\inc/lm3s811.h"
 
 
 
@@ -2870,7 +2495,7 @@ typedef unsigned char tBoolean;
 
 
 
-#line 4468 "..\\inc/lm3s1968.h"
+#line 3500 "..\\inc/lm3s811.h"
 
 
 
@@ -2900,7 +2525,7 @@ typedef unsigned char tBoolean;
 
 
 
-#line 4503 "..\\inc/lm3s1968.h"
+#line 3535 "..\\inc/lm3s811.h"
 
 
 
@@ -2915,7 +2540,7 @@ typedef unsigned char tBoolean;
 
 
 
-#line 4523 "..\\inc/lm3s1968.h"
+#line 3555 "..\\inc/lm3s811.h"
 
 
 
@@ -2923,7 +2548,7 @@ typedef unsigned char tBoolean;
 
 
 
-#line 4545 "..\\inc/lm3s1968.h"
+#line 3577 "..\\inc/lm3s811.h"
 
 
 
@@ -2931,9 +2556,9 @@ typedef unsigned char tBoolean;
 
 
 
-#line 4558 "..\\inc/lm3s1968.h"
+#line 3590 "..\\inc/lm3s811.h"
                                             
-#line 4566 "..\\inc/lm3s1968.h"
+#line 3598 "..\\inc/lm3s811.h"
                                             
 
 
@@ -3024,7 +2649,7 @@ typedef unsigned char tBoolean;
 
 
 
-#line 4708 "..\\inc/lm3s1968.h"
+#line 3740 "..\\inc/lm3s811.h"
 
 
 
@@ -3042,7 +2667,7 @@ typedef unsigned char tBoolean;
 
 
 
-#line 4737 "..\\inc/lm3s1968.h"
+#line 3769 "..\\inc/lm3s811.h"
 
 
 
@@ -3060,7 +2685,7 @@ typedef unsigned char tBoolean;
 
 
 
-#line 4766 "..\\inc/lm3s1968.h"
+#line 3798 "..\\inc/lm3s811.h"
 
 
 
@@ -3078,23 +2703,23 @@ typedef unsigned char tBoolean;
 
 
 
-#line 4795 "..\\inc/lm3s1968.h"
+#line 3827 "..\\inc/lm3s811.h"
 
 
 
 
 
 
-#line 4807 "..\\inc/lm3s1968.h"
+#line 3839 "..\\inc/lm3s811.h"
                                             
-#line 4818 "..\\inc/lm3s1968.h"
+#line 3850 "..\\inc/lm3s811.h"
 
 
 
 
 
 
-#line 4847 "..\\inc/lm3s1968.h"
+#line 3879 "..\\inc/lm3s811.h"
 
 
 
@@ -3109,7 +2734,7 @@ typedef unsigned char tBoolean;
 
 
 
-#line 4872 "..\\inc/lm3s1968.h"
+#line 3904 "..\\inc/lm3s811.h"
 
 
 
@@ -3131,7 +2756,7 @@ typedef unsigned char tBoolean;
 
 
 
-#line 4901 "..\\inc/lm3s1968.h"
+#line 3933 "..\\inc/lm3s811.h"
 
 
 
@@ -3166,7 +2791,7 @@ typedef unsigned char tBoolean;
 
 
 
-#line 4941 "..\\inc/lm3s1968.h"
+#line 3973 "..\\inc/lm3s811.h"
 
 
 
@@ -3211,7 +2836,7 @@ typedef unsigned char tBoolean;
 
 
 
-#line 4991 "..\\inc/lm3s1968.h"
+#line 4023 "..\\inc/lm3s811.h"
 
 
 
@@ -3250,14 +2875,14 @@ typedef unsigned char tBoolean;
 
 
 
-#line 5067 "..\\inc/lm3s1968.h"
+#line 4099 "..\\inc/lm3s811.h"
 
 
 
 
 
 
-#line 5111 "..\\inc/lm3s1968.h"
+#line 4143 "..\\inc/lm3s811.h"
 
 
 
@@ -3288,14 +2913,14 @@ typedef unsigned char tBoolean;
 
 
 
-#line 5148 "..\\inc/lm3s1968.h"
+#line 4180 "..\\inc/lm3s811.h"
 
 
 
 
 
 
-#line 5181 "..\\inc/lm3s1968.h"
+#line 4213 "..\\inc/lm3s811.h"
 
 
 
@@ -4506,57 +4131,6 @@ extern unsigned long UARTTxIntModeGet(unsigned long ulBase);
 
 
 #line 10 "demo.c"
-#line 1 "..\\drivers/rit128x96x4.h"
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-extern void RIT128x96x4Clear(void);
-extern void RIT128x96x4StringDraw(const char *pcStr,
-                                    unsigned long ulX,
-                                    unsigned long ulY,
-                                    unsigned char ucLevel);
-extern void RIT128x96x4ImageDraw(const unsigned char *pucImage,
-                                   unsigned long ulX,
-                                   unsigned long ulY,
-                                   unsigned long ulWidth,
-                                   unsigned long ulHeight);
-extern void RIT128x96x4Init(unsigned long ulFrequency);
-extern void RIT128x96x4Enable(unsigned long ulFrequency);
-extern void RIT128x96x4Disable(void);
-extern void RIT128x96x4DisplayOn(void);
-extern void RIT128x96x4DisplayOff(void);
-
-#line 11 "demo.c"
 #line 1 "C:\\Keil\\ARM\\ARMCC\\bin\\..\\include\\string.h"
  
  
@@ -4979,6 +4553,16 @@ extern __declspec(__nothrow) void _membitmovewb(void *  , const void *  , int  ,
 
  
 
+#line 11 "demo.c"
+#line 1 "zone.h"
+
+void Zone_Init(void);
+
+void Zone_Enable(int zone);
+
+void Zone_Disable(void);
+
+int Zone_Current(void);
 #line 12 "demo.c"
 
 
@@ -5028,6 +4612,7 @@ void UARTIntHandler(void) {
 }
 
 
+void adhocOff(void);
 void UARTSend(const unsigned char *, unsigned long);
 
 int main(void) {
@@ -5035,17 +4620,13 @@ int main(void) {
   
     
     volatile unsigned long ulLoop;
-    (*((volatile unsigned long *)0x400FE108)) = 0x00000040;
+    (*((volatile unsigned long *)0x400FE108)) = 0x00000008;
     ulLoop = (*((volatile unsigned long *)0x400FE108));
-    (*((volatile unsigned long *)0x40026400)) = 0x04;
-    (*((volatile unsigned long *)0x4002651C)) = 0x04;
+    (*((volatile unsigned long *)0x40007400)) = 0x0D;
+    (*((volatile unsigned long *)0x4000751C)) = 0x0D;
   
     
-    SysCtlClockSet(0x07800000 | 0x00003800 | 0x00000000 | 0x00000380);
-
-    
-    RIT128x96x4Init(1000000);
-    RIT128x96x4Clear();
+    SysCtlClockSet(0x07800000 | 0x00003800 | 0x00000000 | 0x000002C0);
 
     
     SysCtlPeripheralEnable(0x10000001);
@@ -5065,38 +4646,39 @@ int main(void) {
     UARTIntEnable(0x4000C000, 0x010 | 0x040);
     SysCtlDelay(SysCtlClockGet()/12);
     
+    adhocOff();
+    Zone_Init();
+    (*((volatile unsigned long *)0x400073FC)) &= ~(0x0C);
     while(1) {
-      RIT128x96x4Clear();
-      RIT128x96x4StringDraw("CLEAN UP", 0, 0, 15);
       UARTSend((unsigned char *)"close\r", 6);
-      SysCtlDelay(SysCtlClockGet()/12);
       UARTSend((unsigned char *)"exit\r", 5);
-      SysCtlDelay(SysCtlClockGet()/12);
       
-      RIT128x96x4StringDraw("CMD MODE", 0, 8, 15);
+      SysCtlDelay(SysCtlClockGet()/12);
       UARTSend((unsigned char *)"$$$", 3);
       SysCtlDelay(SysCtlClockGet()/12);
       UARTSend((unsigned char *)"close\r", 6);
-      SysCtlDelay(SysCtlClockGet()/12);
       
-      RIT128x96x4StringDraw("OPEN CONNECTION", 0, 16, 15);
       UARTSend((unsigned char *)"open\r", 5);
-      SysCtlDelay(SysCtlClockGet()/12);
       
       while(flag == 0){}
         
       strcpy(s, data);
-      RIT128x96x4StringDraw(s, 0, 24, 15);
       flag = 0;
-      
+      Zone_Disable(); 
       if(!strcmp(s, "(1L, 1)")) {
-        (*((volatile unsigned long *)0x400263FC)) |= 0x04;
+        (*((volatile unsigned long *)0x400073FC)) |= 0x04;
+        (*((volatile unsigned long *)0x400073FC)) &= ~(0x08);
+        Zone_Enable(1);
       } else {
-        (*((volatile unsigned long *)0x400263FC)) &= ~(0x04);
+        (*((volatile unsigned long *)0x400073FC)) |= 0x08;
+        (*((volatile unsigned long *)0x400073FC)) &= ~(0x04);
+        Zone_Disable();
       }
-      
-      SysCtlDelay(SysCtlClockGet()*3);
     }
+}
+
+void adhocOff(void) {
+  (*((volatile unsigned long *)0x400073FC)) &= ~(0x01);
 }
 
 

@@ -13,8 +13,8 @@ def getToggleStatus(productID):
     conf = DBConfig.DBConfig()
     db = conf.connectToLocalConfigDatabase()
     cursor = db.cursor()
-    cursor.execute("SELECT * FROM toggleStatus WHERE productID = (%s)", productID)
-    results = cursor.lastrowid
+    cursor.execute("SELECT * FROM toggle WHERE productID = (%s)", productID)
+    results = cursor.fetchone()
     db.commit()
     return results
 
@@ -36,4 +36,4 @@ class aToggle:
     def POST(self):
         toggle_data = web.input()
         doToggle(toggle_data.productID)
-        return 0
+        return getToggleStatus(toggle_data.productID)

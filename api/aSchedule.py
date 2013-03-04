@@ -42,35 +42,32 @@ class aSchedule:
             schedule_list = []
             currzone_list = []
             currDict = collections.OrderedDict()
+            currDict['zoneNumber'] = 1
             currentZone = 1
 
             #iterate through all irrigation events, they are sorted by zone number
             for row in schedules:
-                print row
-                if row[1] != currentZone: #we are on next zone
+                if row[1] != currentZone: #we are on new zone
                     #create zone dictionary from current list of events for this zone
-                    currDict['i'] = currzone_list
+                    currDict['times'] = currzone_list
                     #add the dictionary to the list of zone dictionarys
                     schedule_list.append(currDict)
                     #reset the current zone list
                     currzone_list = []
                     currDict = collections.OrderedDict()
                     #increment the curent zone
+                    currDict['zoneNumber'] = row[1]
                     currentZone = row[1]
 
                 d = collections.OrderedDict()
-                d['productID'] = row[0]
-                d['zoneNumber'] = row[1]
-
                 if row[2]:
                     d['startTime'] = time.mktime(row[2].timetuple())
                 if row[2] and row[3]:
                     d['endTime'] = time.mktime(row[2].timetuple()) + (row[3]*60)
-                d['duration'] = row[3]
-                d['created'] = row[4]
                 currzone_list.append(d)
+
             #GRAB the last one
-            currDict['i'] = currzone_list
+            currDict['times'] = currzone_list
             #add the dictionary to the list of zone dictionarys
             schedule_list.append(currDict)
 
