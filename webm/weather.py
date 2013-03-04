@@ -6,7 +6,6 @@ import base64
 import MySQLdb
 from datetime import datetime
 import time
-sys.path.append('../db')
 from db import DBConfig
 import urllib2
 import urllib
@@ -22,6 +21,7 @@ class weather:
             query_args = {'latitude':weather_data.latitude, 'longitude':weather_data.longitude, 'time':weather_data.time}
             encoded_args = urllib.urlencode(query_args)
             url = "http://0.0.0.0:8080/api/weather?" + encoded_args
+            print url
             weatherdata = ""
             try:
                 weatherdata = json.loads(urllib2.urlopen(url).read())

@@ -91,6 +91,10 @@ CREATE TABLE IF NOT EXISTS sessions (
     					data text
 					);
 
+CREATE TABLE IF NOT EXISTS toggle (
+                    productID INTEGER NOT NULL,
+                    toggleStatus BOOLEAN DEFAULT TRUE
+                    );
 
 
 
