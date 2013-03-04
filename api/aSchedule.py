@@ -58,15 +58,10 @@ class aSchedule:
                     currentZone = row[1]
 
                 d = collections.OrderedDict()
-                d['productID'] = row[0]
-                d['zoneNumber'] = row[1]
-
                 if row[2]:
                     d['startTime'] = time.mktime(row[2].timetuple())
                 if row[2] and row[3]:
-                    d['endTime'] = time.mktime(row[2].timetuple()) + (row[3]*60)
-                d['duration'] = row[3]
-                d['created'] = row[4]
+                    d['endTime'] = row[2] + row[3]*60
                 currzone_list.append(d)
             #GRAB the last one
             currDict['i'] = currzone_list
