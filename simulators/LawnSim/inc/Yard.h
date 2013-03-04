@@ -32,6 +32,8 @@ public:
    const GeoLocale locale() const { return locale_; }
 
    void DebugPrint() const;
+   void DebugPrintHeights(std::string fileName) const;
+
 private:
    const GeoLocale locale_;
 
@@ -62,7 +64,10 @@ private:
 
    void Absorb();
 
-   void DoGrow();
+   void DoGrow(const WeatherData &data);
+
+   template<class T>
+   static void DebugPrintMatrix(const bnu::matrix<T> &toPrint, std::string fileName);
 
    static const bnu::matrix<YardCell> InitCells(const YardInfo& yardInfo);
    static const bnu::unbounded_array<LawnCoordinate> InitHeightMap(YardInfo const &yardInfo);

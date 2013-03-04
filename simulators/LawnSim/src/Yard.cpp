@@ -2,6 +2,7 @@
 
 #include "Yard.h"
 #include "WeatherData.h"
+#include "ETCalc.h"
 
 #define EdgeProject 1
 
@@ -12,12 +13,11 @@ Yard::Yard(const YardInfo& yardInfo)
    : locale_(yardInfo.locale()), cells_(InitCells(yardInfo)), 
      cells_by_height_(InitHeightMap(yardInfo)),
      sprinklers_(std::move(yardInfo.sprinklers())),
-	 surface_water_(cells_.size1(), cells_.size2(), 0)
+	 surface_water_(cells_.size1(), cells_.size2(), 1)
 {
    // Zero everything out and
    // Generate a height sorted view of the Yard
-
-
+   
    // Generate rain mask
    // TODO: Should this be nonideal?
    rain_mask_ = bnu::scalar_matrix<double>(cells_.size1() - 2, cells_.size2() - 2, 1.0);
@@ -29,172 +29,7 @@ Yard::Yard(const YardInfo& yardInfo)
    }
 }
 
-#if EdgeWall == 1
 
-const bnu::matrix<YardCell> Yard::InitCells(const YardInfo& yardInfo)
-{
-   if (yardInfo.yard_length() == 0 || yardInfo.yard_width() == 0) {
-      throw std::invalid_argument("Yard Length and Width must be nonzero.");
-   }
-
-   // First compute the constant values, mostly simulation parameters
-   bnu::matrix<YardCell> cells = bnu::matrix<YardCell>(yardInfo.yard_length(), yardInfo.yard_width(), YardCell::CreateGrassCell());
-   auto cellInfos = yardInfo.yard_cells();
-
-   // Fill in the drift map
-   //
-   NeighborHeightDiffs_t rh;
-   YardCellInfo myInfo;
-
-   // Check corner cases
-   rh = 0;
-   myInfo = cellInfos(0, 0);
-
-   size_t lstRow = cellInfos.size1() - 1;
-   size_t lstCol = cellInfos.size2() - 1;
-
-   if (cells.size1() == 1) {
-      if (cells.size1() != 2) {
-         // One row, multiple columns
-
-         // Far right cell
-         myInfo = cellInfos(0, lstCol);
-         rh.Left() = cellInfos(0, lstCol - 1).rel_height() - myInfo.rel_height();
-         cells(0, lstCol) = YardCell::CreateGrassCell(myInfo, rh);
-
-         // Far left cell
-         myInfo = cellInfos(0,0);
-         rh.Left() = 0;
-         rh.Right() = cellInfos(0, 1).rel_height() - myInfo.rel_height();
-         cells(0,0) = YardCell::CreateGrassCell(myInfo, rh);
-      } else {
-         // One row, one column
-         cells(0,0) = YardCell::CreateGrassCell(myInfo, rh);
-         return cells;
-      }
-   } else if (cells.size2() == 1) {
-      // Multiple rows, one column
-      rh.Bottom() = cellInfos(1, 0).rel_height() - myInfo.rel_height();
-      cells(0, 0) = YardCell::CreateGrassCell(myInfo, rh);
-
-      myInfo = cellInfos(lstRow,0);
-      rh.Bottom() = 0;
-      rh.Top() = cellInfos(lstRow - 1, 0).rel_height() - myInfo.rel_height();
-
-      cells(lstRow,0) = YardCell::CreateGrassCell(myInfo, rh);
-   } else { 
-      // Matrix is 2x2 or larger
-      // Do corners
-      rh.Right() = cellInfos(0, 1).rel_height() - myInfo.rel_height();
-      rh.BottomRight() = cellInfos(1, 1).rel_height() - myInfo.rel_height();
-      rh.Bottom() = cellInfos(1, 0).rel_height() - myInfo.rel_height();
-      cells(0,0) = YardCell::CreateGrassCell(myInfo, rh);
-      rh = 0;
-      
-      myInfo = cellInfos(0, lstCol);
-      rh.Left() = cellInfos(0, lstCol - 1).rel_height() - myInfo.rel_height();
-      rh.BottomLeft() = cellInfos(1, lstCol - 1).rel_height() - myInfo.rel_height();
-      rh.Bottom() = cellInfos(1, lstCol).rel_height() - myInfo.rel_height();
-      cells(0, lstCol) = YardCell::CreateGrassCell(myInfo, rh);
-      rh = 0;
-      
-      myInfo = cellInfos(lstRow, 0);
-      rh.Top() = cellInfos(lstRow - 1, 0).rel_height() - myInfo.rel_height();
-      rh.TopRight() = cellInfos(lstRow - 1, 1).rel_height() - myInfo.rel_height();
-      rh.Right() = cellInfos(lstRow, 1).rel_height() - myInfo.rel_height();
-      cells(lstRow, 0) = YardCell::CreateGrassCell(myInfo, rh);
-      rh = 0;
-
-      myInfo = cellInfos(lstRow, lstCol);
-      rh.Top() = cellInfos(lstRow - 1, lstCol).rel_height() - myInfo.rel_height();
-      rh.TopLeft() = cellInfos(lstRow - 1, lstCol - 1).rel_height() - myInfo.rel_height();
-      rh.Left() = cellInfos(lstRow, lstCol - 1).rel_height() - myInfo.rel_height();
-      cells(lstRow, lstCol) = YardCell::CreateGrassCell(myInfo, rh);
-      rh = 0;
-   }
-
-   // Now we can skip all the corners
-
-   // Do first row
-   for (size_t col = 1; col < lstCol; ++col) {
-      myInfo = cellInfos(0, col);
-
-      rh.Left() = cellInfos(0, col - 1).rel_height() - myInfo.rel_height();
-      rh.BottomLeft() = cellInfos(1, col - 1).rel_height() - myInfo.rel_height();
-      rh.Bottom() = cellInfos(1, col).rel_height() - myInfo.rel_height();
-      rh.BottomRight() = cellInfos(1, col + 1).rel_height() - myInfo.rel_height();
-      rh.Right() = cellInfos(0, col + 1).rel_height() - myInfo.rel_height();
-
-      cells(0, col) = YardCell::CreateGrassCell(myInfo, rh);
-      rh = 0;
-   }
-
-   // Do First Column
-   for (size_t row = 1; row < lstRow; ++row) {
-      myInfo = cellInfos(row, 0);
-
-      rh.Bottom() = cellInfos(row + 1, 0).rel_height() - myInfo.rel_height();
-      rh.BottomRight() = cellInfos(row + 1, 1).rel_height() - myInfo.rel_height();
-      rh.Right() = cellInfos(row, 1).rel_height() - myInfo.rel_height();
-      rh.TopRight() = cellInfos(row - 1, 1).rel_height() - myInfo.rel_height();
-      rh.Top() = cellInfos(row - 1, 0).rel_height() - myInfo.rel_height();
-
-      cells(row, 0) = YardCell::CreateGrassCell(myInfo, rh);
-      rh = 0;
-   }
-
-   // Do middle chunk
-   for (size_t row = 1; row < lstRow; ++row) {
-      for (size_t col = 1; col < lstCol; ++col) {
-         myInfo = cellInfos(row, col);
-
-         rh.Right() = cellInfos(row, col+1).rel_height() - myInfo.rel_height();
-         rh.TopRight() = cellInfos(row - 1, col + 1).rel_height() - myInfo.rel_height();
-         rh.Top() = cellInfos(row - 1, col).rel_height() - myInfo.rel_height();
-         rh.TopLeft() = cellInfos(row - 1, col - 1).rel_height() - myInfo.rel_height();
-         rh.Left() = cellInfos(row, col - 1).rel_height() - myInfo.rel_height();
-         rh.BottomLeft() = cellInfos(row + 1, col - 1).rel_height() - myInfo.rel_height();
-         rh.Bottom() = cellInfos(row + 1, col).rel_height() - myInfo.rel_height();
-         rh.BottomRight() = cellInfos(row + 1, col + 1).rel_height() - myInfo.rel_height();
-
-         cells(row, col) = YardCell::CreateGrassCell(myInfo, rh);
-         rh = 0;
-      }
-   }
-  
-   // Do Last Column
-   for (size_t row = 1; row < lstRow; ++row) {
-      myInfo = cellInfos(row, lstCol);
-
-      rh.Top() = cellInfos(row - 1, lstCol).rel_height() - myInfo.rel_height();
-      rh.TopLeft() = cellInfos(row - 1, lstCol - 1).rel_height() - myInfo.rel_height();
-      rh.Left() = cellInfos(row, lstCol - 1).rel_height() - myInfo.rel_height();
-      rh.BottomLeft() = cellInfos(row + 1, lstCol - 1).rel_height() - myInfo.rel_height();
-      rh.Bottom() = cellInfos(row + 1, lstCol).rel_height() - myInfo.rel_height();
-
-      cells(row, lstCol) = YardCell::CreateGrassCell(myInfo, rh);
-      rh = 0;
-   }
-
-   // Do last row
-   for (size_t col = 1; col < cellInfos.size2() - 1; ++col) {
-      myInfo = cellInfos(lstRow, col);
-
-      rh.Left() = cellInfos(lstRow, col - 1).rel_height() - myInfo.rel_height();
-      rh.TopLeft() = cellInfos(lstRow - 1, col - 1).rel_height() - myInfo.rel_height();
-      rh.Top() = cellInfos(lstRow - 1, col).rel_height() - myInfo.rel_height();
-      rh.TopRight() = cellInfos(lstRow - 1, col + 1).rel_height() - myInfo.rel_height();
-      rh.Right() = cellInfos(lstRow, col + 1).rel_height() - myInfo.rel_height();
-
-      cells(lstRow, col) = YardCell::CreateGrassCell(myInfo, rh);
-      rh = 0;
-   }
-
-   return cells;
-}
-
-
-#elif EdgeProject == 1
 
 const bnu::matrix<YardCell> Yard::InitCells(const YardInfo& yardInfo)
 {
@@ -234,6 +69,7 @@ const bnu::matrix<YardCell> Yard::InitCells(const YardInfo& yardInfo)
    // At this point each void cell has a height equal to its next "inner" neighbor
    // We could stop assigning here and that would be enough for the "EdgeWall" case
 
+   #if EdgeWall == 1
 
    // We continue by extrapolating slope into the void
 
@@ -267,7 +103,11 @@ const bnu::matrix<YardCell> Yard::InitCells(const YardInfo& yardInfo)
       }
    }
 
-   // TODO: Extrapolate and smooth out corners
+   // To each corner we add the average difference between the inner point and the edges
+   cells(0,0).ChangeHeight((cells(1,0).cell_info().rel_height() + cells(0,1).cell_info().rel_height() - 2*cells(0,0).cell_info().rel_height())/3);
+   cells(0,lstCol).ChangeHeight((cells(1,lstCol).cell_info().rel_height() + cells(0,lstCol-1).cell_info().rel_height() - 2*cells(0,lstCol).cell_info().rel_height())/3);
+   cells(lstRow,0).ChangeHeight((cells(lstRow,1).cell_info().rel_height() + cells(lstRow-1,0).cell_info().rel_height() - 2*cells(lstRow,0).cell_info().rel_height())/3);
+   cells(lstRow,lstCol).ChangeHeight((cells(lstRow-1,lstCol).cell_info().rel_height() + cells(lstRow,lstCol-1).cell_info().rel_height() - 2*cells(lstRow,lstCol).cell_info().rel_height())/3);
 
    // Fill the center of the map with heights but bogus cells
    for (size_t row = 1; row < lstRow; ++row) {
@@ -301,10 +141,12 @@ const bnu::matrix<YardCell> Yard::InitCells(const YardInfo& yardInfo)
       }
    }
 
+   #endif // EdgeWall
+
    return cells;
 }
 
-#endif
+
 
 const bnu::unbounded_array<LawnCoordinate> Yard::InitHeightMap(YardInfo const &yardInfo) {
    bnu::unbounded_array<LawnCoordinate> retVal(yardInfo.yard_length() * yardInfo.yard_width());
@@ -343,7 +185,14 @@ void Yard::ElapseTime(pt::time_period tickPeriod, const WeatherData &data, std::
    // TODO: Change the api so that sprinklerDurations cannot be accidentally resized
    using namespace bnu;
 
+   FAO_ET::ETCalcParameters params;
+
    cout << "ElapseTime: " << tickPeriod << endl;
+
+   
+   //static int ticknum = 0;
+   //DebugPrintMatrix(surface_water_, "SurfaceWaterVals/SurfaceWater" + std::to_string(ticknum++) + ".csv");
+   
 
    double dt = tickPeriod.length().ticks()/((double)tickPeriod.length().ticks_per_second());
 
@@ -369,7 +218,7 @@ void Yard::ElapseTime(pt::time_period tickPeriod, const WeatherData &data, std::
       matrix_range<matrix<double> >(surface_water_, range(pos.Row - 1, pos.Row + 2), range(pos.Col - 1, pos.Col + 2))
          += surface_water_(pos.Row, pos.Col)*cells_(pos.Row, pos.Col).drift_entry().data();
    }
-   
+
    // Shine sunlight
    
    // Apply heat
@@ -378,15 +227,13 @@ void Yard::ElapseTime(pt::time_period tickPeriod, const WeatherData &data, std::
    
    // Blow wind
 
-
    // Grow
-   DoGrow();
+   DoGrow(data);
 }
 
-void Yard::DoGrow() 
+inline void Yard::DoGrow(const WeatherData &data) 
 {
    // Grow the grass in the yard
-   
    for (YardCell &cell : cells_.data()) {
       
    }
@@ -408,8 +255,62 @@ void Yard::DebugPrint() const
    }
 }
 
-#else
+template<class T>
+static void Yard::DebugPrintMatrix(const bnu::matrix<T> &toPrint, std::string fileName)
+{
+   using namespace std;
 
+   ofstream dbgFile;
+
+   const std::string &name = fileName.length() == 0? "Matrix.csv": fileName;
+
+   dbgFile.open(name);
+
+   for(unsigned int i = 0; i < toPrint.size1(); ++i) {
+      for(unsigned int j = 0; j < toPrint.size2() - 1; ++j) {
+         dbgFile << toPrint(i,j) << ", ";
+      }
+
+      dbgFile << toPrint(i,toPrint.size2() - 1) << endl;
+   }
+
+   dbgFile.close();
+}
+
+void Yard::DebugPrintHeights(std::string fileName) const
+{
+   using namespace std;
+
+   ofstream dbgFile;
+
+   const std::string &name = fileName.length() == 0? "Heights.csv": fileName;
+
+   dbgFile.open(name);
+
+   for(unsigned int i = 0; i < cells_.size1(); ++i) {
+      for(unsigned int j = 0; j < cells_.size2() - 1; ++j) {
+         dbgFile << cells_(i,j).cell_info().rel_height() << ", ";
+      }
+
+      dbgFile << cells_(i,cells_.size2() - 1).cell_info().rel_height() << endl;
+   }
+
+   dbgFile.close();
+}
+
+#else
+void Yard::DebugPrint() const
+{
+}
+
+template<class T>
+void Yard::DebugPrintMatrix(const bnu::matrix<T> &toPrint, std::string fileName)
+{
+}
+
+void Yard::DebugPrintHeights(std::string fileName) const
+{
+}
 
 #endif
 

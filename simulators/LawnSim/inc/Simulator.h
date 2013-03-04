@@ -5,29 +5,27 @@
 #include "YardInfo.h"
 #include "Yard.h"
 #include "WeatherDataSource.h"
-
+#include "Controller.h"
 
 using namespace boost::posix_time;
+using namespace Mist::Controllers;
 
 namespace Mist { namespace LawnSim {
 
 class Simulator {
 public:
-   Simulator(std::unique_ptr<YardInfo> &yardInfo, unique_ptr<Controllers::Controller> &controller);
-
+   Simulator(const YardInfo &yardInfo, uPtrController &controller);
 
    void Reset(ptime simStartTime, 
                ptime simEndTime,
                unsigned int simTickPeriod,
-               unsigned int simSpeedMultiplier
-   );
+               unsigned int simSpeedMultiplier);
 
    void Run();
 
    void Stop();
 
    const Yard &yard() const { return yard_; }
-
 
 private:
 
@@ -42,12 +40,12 @@ private:
    /////////////////////////////
    Yard yard_;
    
-   unique_ptr<Controllers::Controller> controller_;
+   uPtrController controller_;
 
 
    unsigned int real_start_time_;      // Last Real world (simulator) start time 
 
-   WeatherDataSource weather_source_;
+   uPtrWeatherDataSource weather_source_;
    
 };
 

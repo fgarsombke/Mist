@@ -20,7 +20,7 @@ static const double L = .02;
 
 // Asmptotic correction constant
 // Divide by 8 for 8 subcells
-static const double C = (MaxDriftAmount/(1.0 + (K*M/(K*M+L))))/8.0;
+static const double C = -(MaxDriftAmount/(1.0 + (K*M/(K*M+L))))/8.0;
 
 // Function Offset
 static const double Offset = M*K/(M*K + L);
@@ -60,10 +60,10 @@ DriftEntry::DriftEntry(NeighborHeightDiffs_t &heightDiffs)
       }
 
       this->data_mutable().data()[i] = cellFlowConstant;
-      total += cellFlowConstant;
+      total -= cellFlowConstant;
    }
 
-   this->Center() = total + 1;
+   this->Center() = total;
 }
 
 #ifdef _DEBUG
