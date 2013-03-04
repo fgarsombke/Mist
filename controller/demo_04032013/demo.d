@@ -2,11 +2,11 @@ demo.o: demo.c
 demo.o: ..\inc/hw_ints.h
 demo.o: ..\inc/hw_memmap.h
 demo.o: ..\inc/hw_types.h
+demo.o: ..\inc/lm3s1968.h
 demo.o: ..\driverlib/debug.h
 demo.o: ..\driverlib/gpio.h
 demo.o: ..\driverlib/interrupt.h
 demo.o: ..\driverlib/sysctl.h
 demo.o: ..\driverlib/uart.h
 demo.o: ..\drivers/rit128x96x4.h
-demo.o: jsmn.h
 demo.o: C:\Keil\ARM\ARMCC\bin\..\include\string.h

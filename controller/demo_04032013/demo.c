@@ -1,27 +1,28 @@
 #include "inc/hw_ints.h"
 #include "inc/hw_memmap.h"
 #include "inc/hw_types.h"
+#include "inc/lm3s1968.h"
 #include "driverlib/debug.h"
 #include "driverlib/gpio.h"
 #include "driverlib/interrupt.h"
 #include "driverlib/sysctl.h"
 #include "driverlib/uart.h"
 #include "drivers/rit128x96x4.h"
-#include "jsmn.h"
 #include "string.h"
 
 #ifdef DEBUG
 void __error__(char *pcFilename, unsigned long ulLine){}
 #endif
 
-volatile char json[9];
+char data[10];
+volatile short flag = 0;
 // The UART interrupt handler.
 void UARTIntHandler(void) {
     unsigned long ulStatus;
-    static unsigned short i = 0;
-    static unsigned short j = 0;
-    static unsigned short json_flag = 0;
-    static unsigned short json_idx = 0;
+//    static unsigned short i = 0;
+//    static unsigned short j = 0;
+    static unsigned short data_flag = 0;
+    static unsigned short data_idx = 0;
 
     ulStatus = UARTIntStatus(UART0_BASE, true);
     UARTIntClear(UART0_BASE, ulStatus);
@@ -30,27 +31,28 @@ void UARTIntHandler(void) {
         char c[2] = {0x0, 0x0};
         c[0] = UARTCharGetNonBlocking(UART0_BASE);
        
-        if(c[0] == '{') {
-          json_flag = 1;
-          json_idx = 0;
+        if(c[0] == '(') {
+          data_flag = 1;
+          data_idx = 0;
         }
      
-        if(json_flag == 1) {
-          json[json_idx] = c[0];
-          json_idx++;
+        if(data_flag == 1) {
+          data[data_idx] = c[0];
+          data_idx++;
         }
         
-        if (c[0] == '}') {
-          json_flag = 0;
+        if (c[0] == ')') {
+          data_flag = 0;
+          flag = 1;
         }
           
-        if(c[0] == '\n') {
-          j = (j + 1) % 12; // 12 lines
-          i = 0;
-        }
-        
-        RIT128x96x4StringDraw(c, i*8, j*8, 15);
-        i = (i + 1) % 16; // 16 characters a line
+//         if(c[0] == '\n') {
+//           j = (j + 1) % 12; // 12 lines
+//           i = 0;
+//         }
+//         
+//         RIT128x96x4StringDraw(c, i*8, j*8, 15);
+//         i = (i + 1) % 16; // 16 characters a line
     }
 }
 
@@ -58,7 +60,14 @@ void UARTIntHandler(void) {
 void UARTSend(const unsigned char *, unsigned long);
 
 int main(void) {
-    char s[100];
+    char s[10];
+  
+    // set up PG2
+    volatile unsigned long ulLoop;
+    SYSCTL_RCGC2_R = SYSCTL_RCGC2_GPIOG;
+    ulLoop = SYSCTL_RCGC2_R;
+    GPIO_PORTG_DIR_R = 0x04;
+    GPIO_PORTG_DEN_R = 0x04;
   
     // setup our clock
     SysCtlClockSet(SYSCTL_SYSDIV_1 | SYSCTL_USE_OSC | SYSCTL_OSC_MAIN | SYSCTL_XTAL_8MHZ);
@@ -87,20 +96,34 @@ int main(void) {
     
     while(1) {
       RIT128x96x4Clear();
+      RIT128x96x4StringDraw("CLEAN UP", 0, 0, 15);
       UARTSend((unsigned char *)"close\r", 6);
       SysCtlDelay(SysCtlClockGet()/12);
       UARTSend((unsigned char *)"exit\r", 5);
       SysCtlDelay(SysCtlClockGet()/12);
+      
+      RIT128x96x4StringDraw("CMD MODE", 0, 8, 15);
       UARTSend((unsigned char *)"$$$", 3);
       SysCtlDelay(SysCtlClockGet()/12);
       UARTSend((unsigned char *)"close\r", 6);
       SysCtlDelay(SysCtlClockGet()/12);
-      UARTSend((unsigned char *)"open\r", 5);
-      SysCtlDelay(SysCtlClockGet());
       
-      RIT128x96x4Clear();
-      strcpy(s, (const char *)json);
-      RIT128x96x4StringDraw(s, 0, 0, 15);
+      RIT128x96x4StringDraw("OPEN CONNECTION", 0, 16, 15);
+      UARTSend((unsigned char *)"open\r", 5);
+      SysCtlDelay(SysCtlClockGet()/12);
+      
+      while(flag == 0){}
+        
+      strcpy(s, data);
+      RIT128x96x4StringDraw(s, 0, 24, 15);
+      flag = 0;
+      
+      if(!strcmp(s, "(1L, 1)")) {
+        GPIO_PORTG_DATA_R |= 0x04;
+      } else {
+        GPIO_PORTG_DATA_R &= ~(0x04);
+      }
+      
       SysCtlDelay(SysCtlClockGet()*3);
     }
 }
