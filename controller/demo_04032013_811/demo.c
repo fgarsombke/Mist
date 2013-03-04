@@ -1,14 +1,14 @@
 #include "inc/hw_ints.h"
 #include "inc/hw_memmap.h"
 #include "inc/hw_types.h"
-#include "inc/lm3s1968.h"
+#include "inc/lm3s811.h"
 #include "driverlib/debug.h"
 #include "driverlib/gpio.h"
 #include "driverlib/interrupt.h"
 #include "driverlib/sysctl.h"
 #include "driverlib/uart.h"
-#include "drivers/rit128x96x4.h"
 #include "string.h"
+#include "zone.h"
 
 #ifdef DEBUG
 void __error__(char *pcFilename, unsigned long ulLine){}
@@ -57,24 +57,21 @@ void UARTIntHandler(void) {
 }
 
 // Prototypes
+void adhocOff(void);
 void UARTSend(const unsigned char *, unsigned long);
 
 int main(void) {
     char s[10];
   
-    // set up PG2
+    // set up PD2&3 LEDs
     volatile unsigned long ulLoop;
-    SYSCTL_RCGC2_R = SYSCTL_RCGC2_GPIOG;
+    SYSCTL_RCGC2_R = SYSCTL_RCGC2_GPIOD;
     ulLoop = SYSCTL_RCGC2_R;
-    GPIO_PORTG_DIR_R = 0x04;
-    GPIO_PORTG_DEN_R = 0x04;
+    GPIO_PORTD_DIR_R = 0x0D;
+    GPIO_PORTD_DEN_R = 0x0D;
   
     // setup our clock
-    SysCtlClockSet(SYSCTL_SYSDIV_1 | SYSCTL_USE_OSC | SYSCTL_OSC_MAIN | SYSCTL_XTAL_8MHZ);
-
-    // screen init
-    RIT128x96x4Init(1000000);
-    RIT128x96x4Clear();
+    SysCtlClockSet(SYSCTL_SYSDIV_1 | SYSCTL_USE_OSC | SYSCTL_OSC_MAIN | SYSCTL_XTAL_6MHZ);
 
     // enable UART0 on PORTA
     SysCtlPeripheralEnable(SYSCTL_PERIPH_UART0);
@@ -94,38 +91,39 @@ int main(void) {
     UARTIntEnable(UART0_BASE, UART_INT_RX | UART_INT_RT);
     SysCtlDelay(SysCtlClockGet()/12);
     
+    adhocOff();
+    Zone_Init();
+    GPIO_PORTD_DATA_R &= ~(0x0C);
     while(1) {
-      RIT128x96x4Clear();
-      RIT128x96x4StringDraw("CLEAN UP", 0, 0, 15);
       UARTSend((unsigned char *)"close\r", 6);
-      SysCtlDelay(SysCtlClockGet()/12);
       UARTSend((unsigned char *)"exit\r", 5);
-      SysCtlDelay(SysCtlClockGet()/12);
       
-      RIT128x96x4StringDraw("CMD MODE", 0, 8, 15);
+      SysCtlDelay(SysCtlClockGet()/12);
       UARTSend((unsigned char *)"$$$", 3);
       SysCtlDelay(SysCtlClockGet()/12);
       UARTSend((unsigned char *)"close\r", 6);
-      SysCtlDelay(SysCtlClockGet()/12);
       
-      RIT128x96x4StringDraw("OPEN CONNECTION", 0, 16, 15);
       UARTSend((unsigned char *)"open\r", 5);
-      SysCtlDelay(SysCtlClockGet()/12);
       
       while(flag == 0){}
         
       strcpy(s, data);
-      RIT128x96x4StringDraw(s, 0, 24, 15);
       flag = 0;
-      
+      Zone_Disable(); // initialize all zones to zero
       if(!strcmp(s, "(1L, 1)")) {
-        GPIO_PORTG_DATA_R |= 0x04;
+        GPIO_PORTD_DATA_R |= 0x04;
+        GPIO_PORTD_DATA_R &= ~(0x08);
+        Zone_Enable(1);
       } else {
-        GPIO_PORTG_DATA_R &= ~(0x04);
+        GPIO_PORTD_DATA_R |= 0x08;
+        GPIO_PORTD_DATA_R &= ~(0x04);
+        Zone_Disable();
       }
-      
-      SysCtlDelay(SysCtlClockGet()*3);
     }
+}
+
+void adhocOff(void) {
+  GPIO_PORTD_DATA_R &= ~(0x01);
 }
 
 // fill the buffer with data to send

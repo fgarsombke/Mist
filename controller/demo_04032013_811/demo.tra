@@ -2,11 +2,11 @@
 ### Preparing for ADS-LD.
 ### Creating ADS-LD Command Line
 ### List of Objects: adding '"demo.o"'
-### List of Objects: adding '"rit128x96x4.o"'
 ### List of Objects: adding '"startup_rvmdk.o"'
+### List of Objects: adding '"zone.o"'
 ### List of Objects: adding '"..\driverlib\rvmdk\driverlib.lib"'
 ### ADS-LD Command completed:
---cpu Cortex-M3 "demo.o" "rit128x96x4.o" "startup_rvmdk.o" "C:\Documents and Settings\Administrator\My Documents\GitHub\Mist\controller\driverlib\rvmdk\driverlib.lib" 
+--cpu Cortex-M3 "demo.o" "startup_rvmdk.o" "zone.o" "C:\Documents and Settings\Administrator\My Documents\GitHub\Mist\controller\driverlib\rvmdk\driverlib.lib" 
 --library_type=microlib --strict --scatter "demo.sct" 
 --entry Reset_Handler --summary_stderr --info summarysizes --map --xref --callgraph --symbols 
 --info sizes --info totals --info unused --info veneers 
@@ -14,7 +14,7 @@
 ### ADS-LD Output File: 'demo.axf'
 ### ADS-LD Command File: 'demo.lnp'
 ### Checking for dirty Components...
-### Creating CmdFile 'demo.lnp', Handle=0x000002AC
+### Creating CmdFile 'demo.lnp', Handle=0x00000360
 ### Writing '.lnp' file
 ### ADS-LD Command file 'demo.lnp' is ready.
 ### ADS-LD: About to start ADS-LD Thread.

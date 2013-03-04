@@ -1,8 +1,8 @@
 This project contains many software components of Mist, a learning irrigation controller.
 
-It consists of backend web-service APIs.  A web front-end GUI for testing the APIs.  A simulator for outdoor environments for testing irrigation scheduling algorithms.  A weather station data crawler service.  And algorithms for learning and generating efficient irrigation schedules.
+It consists of backend web-service APIs. Embedded software for our hardware controller. A web front-end GUI for testing the APIs.  A simulator for outdoor environments for testing irrigation scheduling algorithms.  A weather station data crawler service.  And algorithms for learning and generating efficient irrigation schedules.
 
-The project also consists of an iOS mobile application & embedded hardware controller and software, which are not part of this Github Repo.
+The project also consists of an iOS mobile application & embedded hardware controller, which are currently not included in the GitHub repository.
 
 
 ZeusET Developer Setup
