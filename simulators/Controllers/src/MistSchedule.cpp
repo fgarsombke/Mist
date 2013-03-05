@@ -6,6 +6,8 @@ namespace Mist { namespace Controllers {
 
 namespace MistScheduleInteral{
 
+typedef double json_time_parse_t;
+
 const char* ID_LABEL = "id";
 const char* ZONE_LABEL = "z";
 const char* ZONE_NUM_LABEL = "zoneNumber";
@@ -15,12 +17,11 @@ const char* END_LABEL = "endTime";
 
 }
 
-
 pt::ptime MistSchedule::LongTimeToPTime(uint64_t seconds) 
 {
    const pt::ptime epoch(boost::gregorian::date(1970, 1, 1));
 
-   return epoch + pt::seconds(seconds);
+   return epoch + pt::seconds((long)seconds);
 }
 
 MistSchedule MistSchedule::CreateFromPTree(ptree &scheduleTree)
@@ -34,8 +35,8 @@ MistSchedule MistSchedule::CreateFromPTree(ptree &scheduleTree)
       auto last = info.OnTimes.before_begin();
 
       for (ptree::value_type &t : v.second.get_child(TIMES_ARRAY_LABEL)) {
-         pt::ptime start(LongTimeToPTime(t.second.get<unsigned long int>(START_LABEL)));
-         pt::ptime end(LongTimeToPTime(t.second.get<unsigned long int>(END_LABEL)));
+         pt::ptime start(LongTimeToPTime(t.second.get<json_time_parse_t>(START_LABEL)));
+         pt::ptime end(LongTimeToPTime(t.second.get<json_time_parse_t>(END_LABEL)));
          
          info.OnTimes.insert_after(last,pt::time_period(start, end));
          ++last;
