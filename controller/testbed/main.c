@@ -20,15 +20,19 @@ int main(void) {
     RIT128x96x4Clear();
   
     WiFly_Init();
+    RIT128x96x4StringDraw("TOGGLING LIGHTS", 0, 0, 15);
     while(1) {
-      WiFly_Cmd("lites\r");
-      RIT128x96x4StringDraw("          ", 0, 0, 15);
-      if(i^=1) {
-        RIT128x96x4StringDraw("LIGHTS ON", 0, 0, 15);
-      } else {
-        RIT128x96x4StringDraw("LIGHTS OFF", 0, 0, 15);
+      RIT128x96x4StringDraw("                            ", 0, 8, 15);
+      RIT128x96x4StringDraw("                            ", 0, 8, 15);
+      if(WiFly_Cmd("lites\r", "")) {
+        RIT128x96x4StringDraw("SUCCESS", 0, 8, 15);
+        if(i^=1) {RIT128x96x4StringDraw("LIGHTS ON ", 0, 16, 15);} 
+        else {RIT128x96x4StringDraw("LIGHTS OFF", 0, 16, 15);}
+      } 
+      else {
+        RIT128x96x4StringDraw("FAILURE", 0, 8, 15);
       }
-      SysCtlDelay(SysCtlClockGet()*3);
+      SysCtlDelay(SysCtlClockGet());
     }
 }
 

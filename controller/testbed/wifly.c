@@ -13,6 +13,13 @@
 
 #include "drivers/rit128x96x4.h"
 
+#define TRUE        1
+#define FALSE       0
+#define SUCCESS     1
+#define FAILURE     0
+
+#define MAX_ATTEMPTS 5
+
 #define FIFOSIZE   64       
 #define FIFOSUCCESS 1       
 #define FIFOFAIL    0         
@@ -48,30 +55,43 @@ void WiFly_Init(void) {
     SysCtlDelay(SysCtlClockGet()/12);
 }
 
-void WiFly_Cmd(char * cmd) {
-  static int call_count = 0;
-  char response[25];
-  short r_idx = 0;
-  short status = FIFOSUCCESS;
-  
+// Function sends a command to the module and checks
+// for an expectend response
+int WiFly_Cmd(char * cmd, char * resp) {
+  int status;
+
   WiFly_Flush();
-  SysCtlDelay(SysCtlClockGet()/12);
-  UARTSend("$$$", 3);
-  SysCtlDelay(SysCtlClockGet()/12);
-  while((status == FIFOSUCCESS) && (response[r_idx] != '\n')) {
-    status = RxFifo_Get(&response[r_idx]);
-    r_idx++;
-  }
-  response[r_idx-1] = call_count + 0x30;
-  response[r_idx] = 0x0;
-  RIT128x96x4StringDraw(response, 0, 8, 15);
-  call_count = (call_count + 1) % 10;
-  r_idx = 0;
   
-  UARTSend((unsigned char *)cmd, strlen(cmd));
-  SysCtlDelay(SysCtlClockGet()/12);
-  UARTSend("exit\r", 5);
-  SysCtlDelay(SysCtlClockGet()/12);  
+  status = WiFly_Send("$$$", "CMD");
+  if(status) { 
+    status = WiFly_Send(cmd, resp);
+     if(status) {
+        status = WiFly_Send("exit\r", "EXIT");
+     }
+  }
+  return status;
+}
+
+// Sends a string via UART to the module and will
+// timeout after MAX_ATTEMPTS tries
+int WiFly_Send(char * send, char * resp) {
+  int status = SUCCESS;
+  int attempts = 0;
+  while(attempts < MAX_ATTEMPTS) {
+    SysCtlDelay(SysCtlClockGet()/12);
+    UARTSend((unsigned char*)send, strlen(send));
+    SysCtlDelay(SysCtlClockGet()/12);
+    if(UART_Match(resp)) {
+      break;
+    } 
+    attempts++; 
+  }
+  
+  if(attempts >= (MAX_ATTEMPTS - 1)) {
+    status = FAILURE;
+  }
+  
+  return status;
 }
 
 // Flush the buffer
@@ -80,6 +100,30 @@ void WiFly_Flush(void) {
   while(RxFifo_Get(&c)) {}
 }
 
+// Searchs for a desired string by reading
+// through the recieved characters. This will remove
+// items from the buffer.
+int UART_Match(char * match) {
+  char c; 
+  int idx = 0;
+  int m_len = strlen(match);
+  int fifo_status = FIFOSUCCESS;
+  while((m_len != idx) && (fifo_status == FIFOSUCCESS)) {
+    fifo_status = RxFifo_Get(&c);
+    if(c == match[idx]) {
+      idx++;
+    } else {
+      idx = 0;
+    }
+  }
+  
+  if(m_len == idx) {
+    return TRUE;
+  }
+  else {
+    return FALSE;
+  }
+}
 // fill the buffer with data to send
 void UARTSend(const unsigned char *pucBuffer, unsigned long ulCount) {
     while(ulCount--) {
