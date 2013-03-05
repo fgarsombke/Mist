@@ -7,7 +7,7 @@
 
   <Targets>
     <Target>
-      <TargetName>demo</TargetName>
+      <TargetName>mist_test</TargetName>
       <ToolsetNumber>0x4</ToolsetNumber>
       <ToolsetName>ARM-ADS</ToolsetName>
       <TargetOption>
@@ -44,7 +44,7 @@
             <InvalidFlash>1</InvalidFlash>
           </TargetStatus>
           <OutputDirectory>.\</OutputDirectory>
-          <OutputName>demo</OutputName>
+          <OutputName>mist_test</OutputName>
           <CreateExecutable>1</CreateExecutable>
           <CreateLib>0</CreateLib>
           <CreateHexFile>0</CreateHexFile>
@@ -75,7 +75,7 @@
           <AfterMake>
             <RunUserProg1>1</RunUserProg1>
             <RunUserProg2>0</RunUserProg2>
-            <UserProg1Name>fromelf --bin --output .\demo.bin .\demo.axf</UserProg1Name>
+            <UserProg1Name>fromelf --bin --output .\mist_test.bin .\mist_test.axf</UserProg1Name>
             <UserProg2Name></UserProg2Name>
             <UserProg1Dos16Mode>0</UserProg1Dos16Mode>
             <UserProg2Dos16Mode>0</UserProg2Dos16Mode>
@@ -343,7 +343,7 @@
             <PlainCh>0</PlainCh>
             <Ropi>0</Ropi>
             <Rwpi>0</Rwpi>
-            <wLevel>2</wLevel>
+            <wLevel>0</wLevel>
             <uThumb>0</uThumb>
             <uSurpInc>0</uSurpInc>
             <VariousControls>
@@ -378,7 +378,7 @@
             <useFile>0</useFile>
             <TextAddressRange>0x00000000</TextAddressRange>
             <DataAddressRange>0x20000000</DataAddressRange>
-            <ScatterFile>demo.sct</ScatterFile>
+            <ScatterFile>mist_test.sct</ScatterFile>
             <IncludeLibs></IncludeLibs>
             <IncludeLibsPath></IncludeLibsPath>
             <Misc>--entry Reset_Handler</Misc>
@@ -392,24 +392,39 @@
           <GroupName>source</GroupName>
           <Files>
             <File>
-              <FileName>demo.c</FileName>
+              <FileName>zone.c</FileName>
               <FileType>1</FileType>
-              <FilePath>.\demo.c</FilePath>
+              <FilePath>.\zone.c</FilePath>
             </File>
             <File>
-              <FileName>rit128x96x4.c</FileName>
+              <FileName>main.c</FileName>
               <FileType>1</FileType>
-              <FilePath>..\drivers\rit128x96x4.c</FilePath>
+              <FilePath>.\main.c</FilePath>
             </File>
             <File>
               <FileName>startup_rvmdk.S</FileName>
               <FileType>2</FileType>
               <FilePath>.\startup_rvmdk.S</FilePath>
             </File>
+            <File>
+              <FileName>wifly.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\wifly.c</FilePath>
+            </File>
+            <File>
+              <FileName>FIFO.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\FIFO.h</FilePath>
+            </File>
+            <File>
+              <FileName>rit128x96x4.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>..\drivers\rit128x96x4.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
-          <GroupName>libs</GroupName>
+          <GroupName>lib</GroupName>
           <Files>
             <File>
               <FileName>driverlib.lib</FileName>

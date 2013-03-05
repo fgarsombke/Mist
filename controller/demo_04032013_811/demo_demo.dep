@@ -1,5 +1,5 @@
 Dependencies for Project 'demo', Target 'demo': (DO NOT MODIFY !)
-F (.\demo.c)(0x513525A4)(-c --cpu Cortex-M3 -D__MICROLIB -g -O2 --apcs=interwork --split_sections -I.. -I..\..\.. -I C:\Keil\ARM\RV31\INC -I C:\Keil\ARM\CMSIS\Include -I C:\Keil\ARM\Inc\Luminary -Drvmdk -DPART_LM3S1968 -o "demo.o" --omf_browse "demo.crf" --depend "demo.d")
+F (.\demo.c)(0x513550AC)(-c --cpu Cortex-M3 -D__MICROLIB -g -O2 --apcs=interwork --split_sections -I.. -I..\..\.. -I C:\Keil\ARM\RV31\INC -I C:\Keil\ARM\CMSIS\Include -I C:\Keil\ARM\Inc\Luminary -Drvmdk -DPART_LM3S1968 -o "demo.o" --omf_browse "demo.crf" --depend "demo.d")
 I (..\inc/hw_ints.h)(0x513291D1)
 I (..\inc/hw_memmap.h)(0x513291D1)
 I (..\inc/hw_types.h)(0x513291D1)
@@ -12,7 +12,7 @@ I (..\driverlib/uart.h)(0x513291D1)
 I (C:\Keil\ARM\ARMCC\bin\..\include\string.h)(0x4EB18956)
 I (zone.h)(0x51344529)
 F (.\startup_rvmdk.S)(0x51343B02)(--cpu Cortex-M3 -g --apcs=interwork --pd "__MICROLIB SETA 1" -I C:\Keil\ARM\RV31\INC -I C:\Keil\ARM\CMSIS\Include -I C:\Keil\ARM\Inc\Luminary --list "startup_rvmdk.lst" --xref -o "startup_rvmdk.o" --depend "startup_rvmdk.d")
-F (.\zone.c)(0x51351144)(-c --cpu Cortex-M3 -D__MICROLIB -g -O2 --apcs=interwork --split_sections -I.. -I..\..\.. -I C:\Keil\ARM\RV31\INC -I C:\Keil\ARM\CMSIS\Include -I C:\Keil\ARM\Inc\Luminary -Drvmdk -DPART_LM3S1968 -o "zone.o" --omf_browse "zone.crf" --depend "zone.d")
+F (.\zone.c)(0x513550AC)(-c --cpu Cortex-M3 -D__MICROLIB -g -O2 --apcs=interwork --split_sections -I.. -I..\..\.. -I C:\Keil\ARM\RV31\INC -I C:\Keil\ARM\CMSIS\Include -I C:\Keil\ARM\Inc\Luminary -Drvmdk -DPART_LM3S1968 -o "zone.o" --omf_browse "zone.crf" --depend "zone.d")
 I (zone.h)(0x51344529)
 I (..\inc/lm3s811.h)(0x513291D1)
 I (..\inc/hw_memmap.h)(0x513291D1)
