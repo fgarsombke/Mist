@@ -17,7 +17,7 @@ Yard::Yard(const YardInfo& yardInfo)
 {
    // Zero everything out and
    // Generate a height sorted view of the Yard
-   DebugPrint();
+   
 
    // Generate rain mask
    // TODO: Should this be nonideal?

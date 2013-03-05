@@ -64,7 +64,7 @@ int HTMLSource::GetHtml(const std::string &urlPath,
       string hackLine;
       getline(request_stream, hackLine);
 
-      if (hackLine != "2bf\r") {
+      if (hackLine != "349\r") {
          out << hackLine;
       }
 

@@ -67,7 +67,7 @@ pt::ptime MistController::NextUpdateTimeAfter(pt::ptime afterTime) const
 {
    double updateMillis = (double)update_period().total_milliseconds();
 
-   double overDiff = ceil(((double)(afterTime - last_update_time()).total_milliseconds())/updateMillis);
+   unsigned int overDiff = (unsigned int)(((afterTime - last_update_time()).total_milliseconds())/updateMillis + 1);
 
    return last_update_time() + pt::millisec((int64_t)(overDiff*updateMillis));
 }
@@ -86,11 +86,6 @@ void MistRealController::ElapseTime(pt::time_period interval,
    while (subElapseStart < elapseEnd) {
       ptime nextUpdate = NextUpdateTimeAfter(subElapseStart);
       subElapseEnd = min(nextUpdate, elapseEnd);
-
-      std::cout << "Last Update: " << last_update_time() << endl;
-      std::cout << "nextUpdate: " << nextUpdate << endl;
-
-
 
       if (MistController::HasUpdatePeriodPassed(subElapseEnd)) {
          ScheduleSource::schedule_ret_t ss;
