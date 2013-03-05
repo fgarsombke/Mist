@@ -4612,43 +4612,41 @@ void UARTIntHandler(void) {
 }
 
 
-void adhocOff(void);
+void WiFly_Init(void);
+void WiFly_Adhoc_On(void);
+void WiFly_Adhoc_Off(void);
+void WiFly_Reset(void);
 void UARTSend(const unsigned char *, unsigned long);
 
 int main(void) {
     char s[10];
   
-    
     volatile unsigned long ulLoop;
-    (*((volatile unsigned long *)0x400FE108)) = 0x00000008;
+    (*((volatile unsigned long *)0x400FE108)) |= 0x00000008;
     ulLoop = (*((volatile unsigned long *)0x400FE108));
-    (*((volatile unsigned long *)0x40007400)) = 0x0D;
-    (*((volatile unsigned long *)0x4000751C)) = 0x0D;
+    WiFly_Init();
+    (*((volatile unsigned long *)0x40007400)) |= 0x2C;
+    (*((volatile unsigned long *)0x4000751C)) |= 0x2C;
   
     
     SysCtlClockSet(0x07800000 | 0x00003800 | 0x00000000 | 0x000002C0);
-
     
     SysCtlPeripheralEnable(0x10000001);
     SysCtlPeripheralEnable(0x20000001);
-
     
     IntMasterEnable();
-
     
     GPIOPinTypeUART(0x40004000, 0x00000001 | 0x00000002);
-
     
     UARTConfigSetExpClk(0x4000C000, SysCtlClockGet(), 9600, (0x00000060 | 0x00000000 | 0x00000000));
-
     
     IntEnable(21);
     UARTIntEnable(0x4000C000, 0x010 | 0x040);
     SysCtlDelay(SysCtlClockGet()/12);
     
-    adhocOff();
     Zone_Init();
-    (*((volatile unsigned long *)0x400073FC)) &= ~(0x0C);
+    WiFly_Adhoc_Off();
+    (*((volatile unsigned long *)0x400073FC)) &= ~(0x2C);
     while(1) {
       UARTSend((unsigned char *)"close\r", 6);
       UARTSend((unsigned char *)"exit\r", 5);
@@ -4660,16 +4658,16 @@ int main(void) {
       
       UARTSend((unsigned char *)"open\r", 5);
       
-      while(flag == 0){}
-        
+      while(flag == 0) {}
+
       strcpy(s, data);
       flag = 0;
-      Zone_Disable(); 
+      
       if(!strcmp(s, "(1L, 1)")) {
         (*((volatile unsigned long *)0x400073FC)) |= 0x04;
         (*((volatile unsigned long *)0x400073FC)) &= ~(0x08);
         Zone_Enable(1);
-      } else {
+      } else if(!strcmp(s, "(1L, 0)")) {
         (*((volatile unsigned long *)0x400073FC)) |= 0x08;
         (*((volatile unsigned long *)0x400073FC)) &= ~(0x04);
         Zone_Disable();
@@ -4677,8 +4675,28 @@ int main(void) {
     }
 }
 
-void adhocOff(void) {
+void WiFly_Init(void) {
+    volatile unsigned long ulLoop;
+    (*((volatile unsigned long *)0x400FE108)) |= 0x00000008;
+    ulLoop = (*((volatile unsigned long *)0x400FE108));
+    (*((volatile unsigned long *)0x40007400)) |= 0x11;
+    (*((volatile unsigned long *)0x4000751C)) |= 0x11;
+    WiFly_Reset();
+    WiFly_Adhoc_Off();
+}
+
+void WiFly_Adhoc_On(void) {
+  (*((volatile unsigned long *)0x400073FC)) |= 0x01;
+}
+
+void WiFly_Adhoc_Off(void) {
   (*((volatile unsigned long *)0x400073FC)) &= ~(0x01);
+}
+
+void WiFly_Reset(void) {
+  (*((volatile unsigned long *)0x400073FC)) &= ~(0x10);
+  SysCtlDelay(SysCtlClockGet()/12);
+  (*((volatile unsigned long *)0x400073FC)) |= 0x10;
 }
 
 

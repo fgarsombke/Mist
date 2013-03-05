@@ -11,6 +11,11 @@ Section Cross References
     demo.o(i.UARTIntHandler) refers to demo.o(.bss) for .bss
     demo.o(i.UARTIntHandler) refers to demo.o(.data) for .data
     demo.o(i.UARTSend) refers to uart.o(i.UARTCharPutNonBlocking) for UARTCharPutNonBlocking
+    demo.o(i.WiFly_Init) refers to demo.o(i.WiFly_Reset) for WiFly_Reset
+    demo.o(i.WiFly_Init) refers to demo.o(i.WiFly_Adhoc_Off) for WiFly_Adhoc_Off
+    demo.o(i.WiFly_Reset) refers to sysctl.o(i.SysCtlClockGet) for SysCtlClockGet
+    demo.o(i.WiFly_Reset) refers to sysctl.o(.emb_text) for SysCtlDelay
+    demo.o(i.main) refers to demo.o(i.WiFly_Init) for WiFly_Init
     demo.o(i.main) refers to sysctl.o(i.SysCtlClockSet) for SysCtlClockSet
     demo.o(i.main) refers to sysctl.o(i.SysCtlPeripheralEnable) for SysCtlPeripheralEnable
     demo.o(i.main) refers to interrupt.o(i.IntMasterEnable) for IntMasterEnable
@@ -20,12 +25,12 @@ Section Cross References
     demo.o(i.main) refers to interrupt.o(i.IntEnable) for IntEnable
     demo.o(i.main) refers to uart.o(i.UARTIntEnable) for UARTIntEnable
     demo.o(i.main) refers to sysctl.o(.emb_text) for SysCtlDelay
-    demo.o(i.main) refers to demo.o(i.adhocOff) for adhocOff
     demo.o(i.main) refers to zone.o(i.Zone_Init) for Zone_Init
+    demo.o(i.main) refers to demo.o(i.WiFly_Adhoc_Off) for WiFly_Adhoc_Off
     demo.o(i.main) refers to demo.o(i.UARTSend) for UARTSend
     demo.o(i.main) refers to strcpy.o(.text) for strcpy
-    demo.o(i.main) refers to zone.o(i.Zone_Disable) for Zone_Disable
     demo.o(i.main) refers to strcmp.o(.text) for strcmp
+    demo.o(i.main) refers to zone.o(i.Zone_Disable) for Zone_Disable
     demo.o(i.main) refers to zone.o(i.Zone_Enable) for Zone_Enable
     demo.o(i.main) refers to demo.o(.data) for .data
     demo.o(i.main) refers to demo.o(.bss) for .bss
@@ -44,6 +49,8 @@ Section Cross References
     zone.o(i.Zone_Init) refers to sysctl.o(i.SysCtlClockGet) for SysCtlClockGet
     zone.o(i.Zone_Init) refers to ssi.o(i.SSIConfigSetExpClk) for SSIConfigSetExpClk
     zone.o(i.Zone_Init) refers to ssi.o(i.SSIEnable) for SSIEnable
+    zone.o(i.Zone_Init) refers to ssi.o(i.SSIBusy) for SSIBusy
+    zone.o(i.Zone_Init) refers to ssi.o(i.SSIDataPut) for SSIDataPut
     gpio.o(i.GPIOPinConfigure) refers to gpio.o(.constdata) for .constdata
     gpio.o(i.GPIOPinTypeADC) refers to gpio.o(i.GPIODirModeSet) for GPIODirModeSet
     gpio.o(i.GPIOPinTypeADC) refers to gpio.o(i.GPIOPadConfigSet) for GPIOPadConfigSet
@@ -136,6 +143,7 @@ Section Cross References
 
 Removing Unused input sections from the image.
 
+    Removing demo.o(i.WiFly_Adhoc_On), (16 bytes).
     Removing startup_rvmdk.o(HEAP), (0 bytes).
     Removing startup_rvmdk.o(.text), (0 bytes).
     Removing zone.o(i.Zone_Current), (12 bytes).
@@ -267,7 +275,7 @@ Removing Unused input sections from the image.
     Removing uart.o(i.UARTTxIntModeGet), (8 bytes).
     Removing uart.o(i.UARTTxIntModeSet), (12 bytes).
 
-130 unused section(s) (total 3716 bytes) removed from the image.
+131 unused section(s) (total 3732 bytes) removed from the image.
 
 ==============================================================================
 
@@ -278,12 +286,12 @@ Image Symbol Table
     Symbol Name                              Value     Ov Type        Size  Object(Section)
 
     RESET                                    0x00000000   Section      252  startup_rvmdk.o(RESET)
-    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry5.o ABSOLUTE
     ../clib/microlib/init/entry.s            0x00000000   Number         0  entry2.o ABSOLUTE
-    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry7a.o ABSOLUTE
-    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry.o ABSOLUTE
-    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry8.o ABSOLUTE
     ../clib/microlib/init/entry.s            0x00000000   Number         0  entry7b.o ABSOLUTE
+    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry7a.o ABSOLUTE
+    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry8.o ABSOLUTE
+    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry.o ABSOLUTE
+    ../clib/microlib/init/entry.s            0x00000000   Number         0  entry5.o ABSOLUTE
     ../clib/microlib/string/strcmp.c         0x00000000   Number         0  strcmp.o ABSOLUTE
     ../clib/microlib/string/strcpy.c         0x00000000   Number         0  strcpy.o ABSOLUTE
     cpu.c                                    0x00000000   Number         0  cpu.o ABSOLUTE
@@ -338,21 +346,23 @@ Image Symbol Table
     i.UARTIntHandler                         0x00000760   Section        0  demo.o(i.UARTIntHandler)
     i.UARTIntStatus                          0x000007cc   Section        0  uart.o(i.UARTIntStatus)
     i.UARTSend                               0x000007d8   Section        0  demo.o(i.UARTSend)
-    i.Zone_Disable                           0x000007f8   Section        0  zone.o(i.Zone_Disable)
-    i.Zone_Enable                            0x00000818   Section        0  zone.o(i.Zone_Enable)
-    i.Zone_Init                              0x0000083c   Section        0  zone.o(i.Zone_Init)
-    i.__scatterload_copy                     0x000008b0   Section       14  handlers.o(i.__scatterload_copy)
-    i.__scatterload_null                     0x000008be   Section        2  handlers.o(i.__scatterload_null)
-    i.__scatterload_zeroinit                 0x000008c0   Section       14  handlers.o(i.__scatterload_zeroinit)
-    i.adhocOff                               0x000008d0   Section        0  demo.o(i.adhocOff)
-    i.main                                   0x000008e0   Section        0  demo.o(i.main)
-    .constdata                               0x00000a44   Section      156  sysctl.o(.constdata)
-    g_pulDCRegs                              0x00000a44   Data          16  sysctl.o(.constdata)
-    g_pulSRCRRegs                            0x00000a54   Data          12  sysctl.o(.constdata)
-    g_pulRCGCRegs                            0x00000a60   Data          12  sysctl.o(.constdata)
-    g_pulSCGCRegs                            0x00000a6c   Data          12  sysctl.o(.constdata)
-    g_pulDCGCRegs                            0x00000a78   Data          12  sysctl.o(.constdata)
-    g_pulXtals                               0x00000a84   Data          92  sysctl.o(.constdata)
+    i.WiFly_Adhoc_Off                        0x000007f8   Section        0  demo.o(i.WiFly_Adhoc_Off)
+    i.WiFly_Init                             0x00000808   Section        0  demo.o(i.WiFly_Init)
+    i.WiFly_Reset                            0x00000844   Section        0  demo.o(i.WiFly_Reset)
+    i.Zone_Disable                           0x0000086c   Section        0  zone.o(i.Zone_Disable)
+    i.Zone_Enable                            0x0000088c   Section        0  zone.o(i.Zone_Enable)
+    i.Zone_Init                              0x000008b0   Section        0  zone.o(i.Zone_Init)
+    i.__scatterload_copy                     0x00000938   Section       14  handlers.o(i.__scatterload_copy)
+    i.__scatterload_null                     0x00000946   Section        2  handlers.o(i.__scatterload_null)
+    i.__scatterload_zeroinit                 0x00000948   Section       14  handlers.o(i.__scatterload_zeroinit)
+    i.main                                   0x00000958   Section        0  demo.o(i.main)
+    .constdata                               0x00000ae0   Section      156  sysctl.o(.constdata)
+    g_pulDCRegs                              0x00000ae0   Data          16  sysctl.o(.constdata)
+    g_pulSRCRRegs                            0x00000af0   Data          12  sysctl.o(.constdata)
+    g_pulRCGCRegs                            0x00000afc   Data          12  sysctl.o(.constdata)
+    g_pulSCGCRegs                            0x00000b08   Data          12  sysctl.o(.constdata)
+    g_pulDCGCRegs                            0x00000b14   Data          12  sysctl.o(.constdata)
+    g_pulXtals                               0x00000b20   Data          92  sysctl.o(.constdata)
     .data                                    0x20000000   Section        6  demo.o(.data)
     data_flag                                0x20000002   Data           2  demo.o(.data)
     data_idx                                 0x20000004   Data           2  demo.o(.data)
@@ -408,16 +418,18 @@ Image Symbol Table
     UARTIntHandler                           0x00000761   Thumb Code    96  demo.o(i.UARTIntHandler)
     UARTIntStatus                            0x000007cd   Thumb Code    10  uart.o(i.UARTIntStatus)
     UARTSend                                 0x000007d9   Thumb Code    26  demo.o(i.UARTSend)
-    Zone_Disable                             0x000007f9   Thumb Code    26  zone.o(i.Zone_Disable)
-    Zone_Enable                              0x00000819   Thumb Code    32  zone.o(i.Zone_Enable)
-    Zone_Init                                0x0000083d   Thumb Code   100  zone.o(i.Zone_Init)
-    __scatterload_copy                       0x000008b1   Thumb Code    14  handlers.o(i.__scatterload_copy)
-    __scatterload_null                       0x000008bf   Thumb Code     2  handlers.o(i.__scatterload_null)
-    __scatterload_zeroinit                   0x000008c1   Thumb Code    14  handlers.o(i.__scatterload_zeroinit)
-    adhocOff                                 0x000008d1   Thumb Code    12  demo.o(i.adhocOff)
-    main                                     0x000008e1   Thumb Code   280  demo.o(i.main)
-    Region$$Table$$Base                      0x00000ae0   Number         0  anon$$obj.o(Region$$Table)
-    Region$$Table$$Limit                     0x00000b00   Number         0  anon$$obj.o(Region$$Table)
+    WiFly_Adhoc_Off                          0x000007f9   Thumb Code    12  demo.o(i.WiFly_Adhoc_Off)
+    WiFly_Init                               0x00000809   Thumb Code    46  demo.o(i.WiFly_Init)
+    WiFly_Reset                              0x00000845   Thumb Code    36  demo.o(i.WiFly_Reset)
+    Zone_Disable                             0x0000086d   Thumb Code    26  zone.o(i.Zone_Disable)
+    Zone_Enable                              0x0000088d   Thumb Code    32  zone.o(i.Zone_Enable)
+    Zone_Init                                0x000008b1   Thumb Code   118  zone.o(i.Zone_Init)
+    __scatterload_copy                       0x00000939   Thumb Code    14  handlers.o(i.__scatterload_copy)
+    __scatterload_null                       0x00000947   Thumb Code     2  handlers.o(i.__scatterload_null)
+    __scatterload_zeroinit                   0x00000949   Thumb Code    14  handlers.o(i.__scatterload_zeroinit)
+    main                                     0x00000959   Thumb Code   308  demo.o(i.main)
+    Region$$Table$$Base                      0x00000b7c   Number         0  anon$$obj.o(Region$$Table)
+    Region$$Table$$Limit                     0x00000b9c   Number         0  anon$$obj.o(Region$$Table)
     flag                                     0x20000000   Data           2  demo.o(.data)
     data                                     0x20000008   Data          10  demo.o(.bss)
     __initial_sp                             0x20000118   Data           0  startup_rvmdk.o(STACK)
@@ -430,73 +442,75 @@ Memory Map of the image
 
   Image Entry point : 0x000000f1
 
-  Load Region LR_IROM (Base: 0x00000000, Size: 0x00000b08, Max: 0x00040000, ABSOLUTE)
+  Load Region LR_IROM (Base: 0x00000000, Size: 0x00000ba4, Max: 0x00040000, ABSOLUTE)
 
-    Execution Region ER_IROM (Base: 0x00000000, Size: 0x00000b00, Max: 0x00040000, ABSOLUTE)
+    Execution Region ER_IROM (Base: 0x00000000, Size: 0x00000b9c, Max: 0x00040000, ABSOLUTE)
 
     Base Addr    Size         Type   Attr      Idx    E Section Name        Object
 
-    0x00000000   0x000000fc   Code   RO           68  * RESET               startup_rvmdk.o
-    0x000000fc   0x00000000   Code   RO         1069  * .ARM.Collect$$$$00000000  mc_w.l(entry.o)
-    0x000000fc   0x00000004   Code   RO         1076    .ARM.Collect$$$$00000001  mc_w.l(entry2.o)
-    0x00000100   0x00000004   Code   RO         1079    .ARM.Collect$$$$00000004  mc_w.l(entry5.o)
-    0x00000104   0x00000000   Code   RO         1081    .ARM.Collect$$$$00000008  mc_w.l(entry7b.o)
-    0x00000104   0x00000008   Code   RO         1082    .ARM.Collect$$$$00000009  mc_w.l(entry8.o)
-    0x0000010c   0x00000004   Code   RO         1077    .ARM.Collect$$$$00002712  mc_w.l(entry2.o)
-    0x00000110   0x00000006   Code   RO          543    .emb_text           driverlib.lib(sysctl.o)
+    0x00000000   0x000000fc   Code   RO           85  * RESET               startup_rvmdk.o
+    0x000000fc   0x00000000   Code   RO         1086  * .ARM.Collect$$$$00000000  mc_w.l(entry.o)
+    0x000000fc   0x00000004   Code   RO         1093    .ARM.Collect$$$$00000001  mc_w.l(entry2.o)
+    0x00000100   0x00000004   Code   RO         1096    .ARM.Collect$$$$00000004  mc_w.l(entry5.o)
+    0x00000104   0x00000000   Code   RO         1098    .ARM.Collect$$$$00000008  mc_w.l(entry7b.o)
+    0x00000104   0x00000008   Code   RO         1099    .ARM.Collect$$$$00000009  mc_w.l(entry8.o)
+    0x0000010c   0x00000004   Code   RO         1094    .ARM.Collect$$$$00002712  mc_w.l(entry2.o)
+    0x00000110   0x00000006   Code   RO          560    .emb_text           driverlib.lib(sysctl.o)
     0x00000116   0x00000002   PAD
-    0x00000118   0x0000001a   Code   RO         1059    .emb_text           driverlib.lib(cpu.o)
-    0x00000132   0x0000001c   Code   RO         1072    .text               mc_w.l(strcmp.o)
-    0x0000014e   0x00000012   Code   RO         1074    .text               mc_w.l(strcpy.o)
-    0x00000160   0x00000024   Code   RO         1083    .text               mc_w.l(init.o)
-    0x00000184   0x00000028   Code   RO          112    i.GPIODirModeSet    driverlib.lib(gpio.o)
-    0x000001ac   0x000000b0   Code   RO          117    i.GPIOPadConfigSet  driverlib.lib(gpio.o)
-    0x0000025c   0x0000001c   Code   RO          136    i.GPIOPinTypeSSI    driverlib.lib(gpio.o)
-    0x00000278   0x0000001c   Code   RO          138    i.GPIOPinTypeUART   driverlib.lib(gpio.o)
-    0x00000294   0x00000068   Code   RO          342    i.IntEnable         driverlib.lib(interrupt.o)
-    0x000002fc   0x0000000a   Code   RO          344    i.IntMasterEnable   driverlib.lib(interrupt.o)
-    0x00000306   0x00000008   Code   RO          432    i.SSIBusy           driverlib.lib(ssi.o)
-    0x0000030e   0x0000004c   Code   RO          433    i.SSIConfigSetExpClk  driverlib.lib(ssi.o)
-    0x0000035a   0x0000000c   Code   RO          438    i.SSIDataPut        driverlib.lib(ssi.o)
-    0x00000366   0x0000000a   Code   RO          440    i.SSIDisable        driverlib.lib(ssi.o)
-    0x00000370   0x0000000a   Code   RO          441    i.SSIEnable         driverlib.lib(ssi.o)
+    0x00000118   0x0000001a   Code   RO         1076    .emb_text           driverlib.lib(cpu.o)
+    0x00000132   0x0000001c   Code   RO         1089    .text               mc_w.l(strcmp.o)
+    0x0000014e   0x00000012   Code   RO         1091    .text               mc_w.l(strcpy.o)
+    0x00000160   0x00000024   Code   RO         1100    .text               mc_w.l(init.o)
+    0x00000184   0x00000028   Code   RO          129    i.GPIODirModeSet    driverlib.lib(gpio.o)
+    0x000001ac   0x000000b0   Code   RO          134    i.GPIOPadConfigSet  driverlib.lib(gpio.o)
+    0x0000025c   0x0000001c   Code   RO          153    i.GPIOPinTypeSSI    driverlib.lib(gpio.o)
+    0x00000278   0x0000001c   Code   RO          155    i.GPIOPinTypeUART   driverlib.lib(gpio.o)
+    0x00000294   0x00000068   Code   RO          359    i.IntEnable         driverlib.lib(interrupt.o)
+    0x000002fc   0x0000000a   Code   RO          361    i.IntMasterEnable   driverlib.lib(interrupt.o)
+    0x00000306   0x00000008   Code   RO          449    i.SSIBusy           driverlib.lib(ssi.o)
+    0x0000030e   0x0000004c   Code   RO          450    i.SSIConfigSetExpClk  driverlib.lib(ssi.o)
+    0x0000035a   0x0000000c   Code   RO          455    i.SSIDataPut        driverlib.lib(ssi.o)
+    0x00000366   0x0000000a   Code   RO          457    i.SSIDisable        driverlib.lib(ssi.o)
+    0x00000370   0x0000000a   Code   RO          458    i.SSIEnable         driverlib.lib(ssi.o)
     0x0000037a   0x00000002   PAD
-    0x0000037c   0x000001e4   Code   RO          548    i.SysCtlClockGet    driverlib.lib(sysctl.o)
-    0x00000560   0x00000138   Code   RO          549    i.SysCtlClockSet    driverlib.lib(sysctl.o)
-    0x00000698   0x00000020   Code   RO          573    i.SysCtlPeripheralEnable  driverlib.lib(sysctl.o)
-    0x000006b8   0x00000010   Code   RO          811    i.UARTCharGetNonBlocking  driverlib.lib(uart.o)
-    0x000006c8   0x00000012   Code   RO          813    i.UARTCharPutNonBlocking  driverlib.lib(uart.o)
-    0x000006da   0x0000000a   Code   RO          814    i.UARTCharsAvail    driverlib.lib(uart.o)
-    0x000006e4   0x0000006e   Code   RO          816    i.UARTConfigSetExpClk  driverlib.lib(uart.o)
-    0x00000752   0x00000004   Code   RO          829    i.UARTIntClear      driverlib.lib(uart.o)
-    0x00000756   0x00000008   Code   RO          831    i.UARTIntEnable     driverlib.lib(uart.o)
+    0x0000037c   0x000001e4   Code   RO          565    i.SysCtlClockGet    driverlib.lib(sysctl.o)
+    0x00000560   0x00000138   Code   RO          566    i.SysCtlClockSet    driverlib.lib(sysctl.o)
+    0x00000698   0x00000020   Code   RO          590    i.SysCtlPeripheralEnable  driverlib.lib(sysctl.o)
+    0x000006b8   0x00000010   Code   RO          828    i.UARTCharGetNonBlocking  driverlib.lib(uart.o)
+    0x000006c8   0x00000012   Code   RO          830    i.UARTCharPutNonBlocking  driverlib.lib(uart.o)
+    0x000006da   0x0000000a   Code   RO          831    i.UARTCharsAvail    driverlib.lib(uart.o)
+    0x000006e4   0x0000006e   Code   RO          833    i.UARTConfigSetExpClk  driverlib.lib(uart.o)
+    0x00000752   0x00000004   Code   RO          846    i.UARTIntClear      driverlib.lib(uart.o)
+    0x00000756   0x00000008   Code   RO          848    i.UARTIntEnable     driverlib.lib(uart.o)
     0x0000075e   0x00000002   PAD
     0x00000760   0x0000006c   Code   RO            1    i.UARTIntHandler    demo.o
-    0x000007cc   0x0000000a   Code   RO          833    i.UARTIntStatus     driverlib.lib(uart.o)
+    0x000007cc   0x0000000a   Code   RO          850    i.UARTIntStatus     driverlib.lib(uart.o)
     0x000007d6   0x00000002   PAD
     0x000007d8   0x00000020   Code   RO            2    i.UARTSend          demo.o
-    0x000007f8   0x00000020   Code   RO           74    i.Zone_Disable      zone.o
-    0x00000818   0x00000024   Code   RO           75    i.Zone_Enable       zone.o
-    0x0000083c   0x00000074   Code   RO           76    i.Zone_Init         zone.o
-    0x000008b0   0x0000000e   Code   RO         1087    i.__scatterload_copy  mc_w.l(handlers.o)
-    0x000008be   0x00000002   Code   RO         1088    i.__scatterload_null  mc_w.l(handlers.o)
-    0x000008c0   0x0000000e   Code   RO         1089    i.__scatterload_zeroinit  mc_w.l(handlers.o)
-    0x000008ce   0x00000002   PAD
-    0x000008d0   0x00000010   Code   RO            3    i.adhocOff          demo.o
-    0x000008e0   0x00000164   Code   RO            4    i.main              demo.o
-    0x00000a44   0x0000009c   Data   RO          586    .constdata          driverlib.lib(sysctl.o)
-    0x00000ae0   0x00000020   Data   RO         1085    Region$$Table       anon$$obj.o
+    0x000007f8   0x00000010   Code   RO            3    i.WiFly_Adhoc_Off   demo.o
+    0x00000808   0x0000003c   Code   RO            5    i.WiFly_Init        demo.o
+    0x00000844   0x00000028   Code   RO            6    i.WiFly_Reset       demo.o
+    0x0000086c   0x00000020   Code   RO           91    i.Zone_Disable      zone.o
+    0x0000088c   0x00000024   Code   RO           92    i.Zone_Enable       zone.o
+    0x000008b0   0x00000088   Code   RO           93    i.Zone_Init         zone.o
+    0x00000938   0x0000000e   Code   RO         1104    i.__scatterload_copy  mc_w.l(handlers.o)
+    0x00000946   0x00000002   Code   RO         1105    i.__scatterload_null  mc_w.l(handlers.o)
+    0x00000948   0x0000000e   Code   RO         1106    i.__scatterload_zeroinit  mc_w.l(handlers.o)
+    0x00000956   0x00000002   PAD
+    0x00000958   0x00000188   Code   RO            7    i.main              demo.o
+    0x00000ae0   0x0000009c   Data   RO          603    .constdata          driverlib.lib(sysctl.o)
+    0x00000b7c   0x00000020   Data   RO         1102    Region$$Table       anon$$obj.o
 
 
     Execution Region RW_IRAM (Base: 0x20000000, Size: 0x00000118, Max: 0x00010000, ABSOLUTE)
 
     Base Addr    Size         Type   Attr      Idx    E Section Name        Object
 
-    0x20000000   0x00000006   Data   RW            6    .data               demo.o
+    0x20000000   0x00000006   Data   RW            9    .data               demo.o
     0x20000006   0x00000002   PAD
-    0x20000008   0x0000000a   Zero   RW            5    .bss                demo.o
+    0x20000008   0x0000000a   Zero   RW            8    .bss                demo.o
     0x20000012   0x00000006   PAD
-    0x20000018   0x00000100   Zero   RW           66    STACK               startup_rvmdk.o
+    0x20000018   0x00000100   Zero   RW           83    STACK               startup_rvmdk.o
 
 
 ==============================================================================
@@ -506,12 +520,12 @@ Image component sizes
 
       Code (inc. data)   RO Data    RW Data    ZI Data      Debug   Object Name
 
-       512         98          0          6         10       4392   demo.o
+       648        124          0          6         10       5288   demo.o
        252        242          0          0        256        276   startup_rvmdk.o
-       184         26          0          0          0       1361   zone.o
+       204         28          0          0          0       1373   zone.o
 
     ----------------------------------------------------------------------
-       948        366         32          8        272       6029   Object Totals
+      1104        394         32          8        272       6937   Object Totals
          0          0         32          0          0          0   (incl. Generated)
          0          0          0          2          6          0   (incl. Padding)
 
@@ -556,15 +570,15 @@ Image component sizes
 
       Code (inc. data)   RO Data    RW Data    ZI Data      Debug   
 
-      2628        458        188          8        272      22369   Grand Totals
-      2628        458        188          8        272      22369   ELF Image Totals
-      2628        458        188          8          0          0   ROM Totals
+      2784        486        188          8        272      23173   Grand Totals
+      2784        486        188          8        272      23173   ELF Image Totals
+      2784        486        188          8          0          0   ROM Totals
 
 ==============================================================================
 
-    Total RO  Size (Code + RO Data)                 2816 (   2.75kB)
+    Total RO  Size (Code + RO Data)                 2972 (   2.90kB)
     Total RW  Size (RW Data + ZI Data)               280 (   0.27kB)
-    Total ROM Size (Code + RO Data + RW Data)       2824 (   2.76kB)
+    Total ROM Size (Code + RO Data + RW Data)       2980 (   2.91kB)
 
 ==============================================================================
 

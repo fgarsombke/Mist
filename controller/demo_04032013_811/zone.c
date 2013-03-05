@@ -45,6 +45,10 @@ void Zone_Init(void)
             GPIO_STRENGTH_8MA, GPIO_PIN_TYPE_STD_WPU);
 
     SSIEnable(SSI0_BASE);
+  
+    while(SSIBusy(SSI0_BASE)) {}
+
+    SSIDataPut(SSI0_BASE, ZONE_NONE);
 }
 
 void Zone_Enable(int zone)
