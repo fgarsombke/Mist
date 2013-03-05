@@ -57,43 +57,40 @@ void UARTIntHandler(void) {
 }
 
 // Prototypes
-void adhocOff(void);
+void WiFly_Init(void);
+void WiFly_Adhoc_On(void);
+void WiFly_Adhoc_Off(void);
+void WiFly_Reset(void);
 void UARTSend(const unsigned char *, unsigned long);
 
 int main(void) {
     char s[10];
   
-    // set up PD2&3 LEDs
     volatile unsigned long ulLoop;
-    SYSCTL_RCGC2_R = SYSCTL_RCGC2_GPIOD;
+    SYSCTL_RCGC2_R |= SYSCTL_RCGC2_GPIOD;
     ulLoop = SYSCTL_RCGC2_R;
-    GPIO_PORTD_DIR_R = 0x0D;
-    GPIO_PORTD_DEN_R = 0x0D;
+    WiFly_Init();
+    GPIO_PORTD_DIR_R |= 0x2C;
+    GPIO_PORTD_DEN_R |= 0x2C;
   
     // setup our clock
     SysCtlClockSet(SYSCTL_SYSDIV_1 | SYSCTL_USE_OSC | SYSCTL_OSC_MAIN | SYSCTL_XTAL_6MHZ);
-
     // enable UART0 on PORTA
     SysCtlPeripheralEnable(SYSCTL_PERIPH_UART0);
     SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);
-
     // enable Interupts
     IntMasterEnable();
-
     // set pins to UART
     GPIOPinTypeUART(GPIO_PORTA_BASE, GPIO_PIN_0 | GPIO_PIN_1);
-
     // configure UART0 9600 8-n-1
     UARTConfigSetExpClk(UART0_BASE, SysCtlClockGet(), 9600, (UART_CONFIG_WLEN_8 | UART_CONFIG_STOP_ONE | UART_CONFIG_PAR_NONE));
-
     // enable UART0 RX/TX interrupts
     IntEnable(INT_UART0);
     UARTIntEnable(UART0_BASE, UART_INT_RX | UART_INT_RT);
     SysCtlDelay(SysCtlClockGet()/12);
     
-    adhocOff();
     Zone_Init();
-    GPIO_PORTD_DATA_R &= ~(0x0C);
+    GPIO_PORTD_DATA_R &= ~(0x2C);
     while(1) {
       UARTSend((unsigned char *)"close\r", 6);
       UARTSend((unsigned char *)"exit\r", 5);
@@ -105,16 +102,16 @@ int main(void) {
       
       UARTSend((unsigned char *)"open\r", 5);
       
-      while(flag == 0){}
-        
+      while(flag == 0) {}
+
       strcpy(s, data);
       flag = 0;
-      Zone_Disable(); // initialize all zones to zero
+      
       if(!strcmp(s, "(1L, 1)")) {
         GPIO_PORTD_DATA_R |= 0x04;
         GPIO_PORTD_DATA_R &= ~(0x08);
         Zone_Enable(1);
-      } else {
+      } else if(!strcmp(s, "(1L, 0)")) {
         GPIO_PORTD_DATA_R |= 0x08;
         GPIO_PORTD_DATA_R &= ~(0x04);
         Zone_Disable();
@@ -122,8 +119,28 @@ int main(void) {
     }
 }
 
-void adhocOff(void) {
+void WiFly_Init(void) {
+    volatile unsigned long ulLoop;
+    SYSCTL_RCGC2_R |= SYSCTL_RCGC2_GPIOD;
+    ulLoop = SYSCTL_RCGC2_R;
+    GPIO_PORTD_DIR_R |= 0x11;
+    GPIO_PORTD_DEN_R |= 0x11;
+    WiFly_Reset();
+    WiFly_Adhoc_Off();
+}
+
+void WiFly_Adhoc_On(void) {
+  GPIO_PORTD_DATA_R |= 0x01;
+}
+
+void WiFly_Adhoc_Off(void) {
   GPIO_PORTD_DATA_R &= ~(0x01);
+}
+
+void WiFly_Reset(void) {
+  GPIO_PORTD_DATA_R &= ~(0x10);
+  SysCtlDelay(SysCtlClockGet()/12);
+  GPIO_PORTD_DATA_R |= 0x10;
 }
 
 // fill the buffer with data to send

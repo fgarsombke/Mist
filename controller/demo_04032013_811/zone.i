@@ -5298,6 +5298,10 @@ void Zone_Init(void)
             0x00000004, 0x0000000A);
 
     SSIEnable(0x40008000);
+  
+    while(SSIBusy(0x40008000)) {}
+
+    SSIDataPut(0x40008000, ZONE_NONE);
 }
 
 void Zone_Enable(int zone)
