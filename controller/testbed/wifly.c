@@ -9,9 +9,11 @@
 #include "driverlib/uart.h"
 #include "fifo.h"
 #include "string.h"
+#include "stdlib.h"
 #include "wifly.h"
 
 #include "drivers/rit128x96x4.h"
+#include "rgb_led.h"
 
 #define TRUE        1
 #define FALSE       0
@@ -32,7 +34,7 @@ void UARTIntHandler(void) {
     UARTIntClear(UART0_BASE, ulStatus);
 
     while(UARTCharsAvail(UART0_BASE)) {
-        RxFifo_Put(UARTCharGetNonBlocking(UART0_BASE));
+      RxFifo_Put(UARTCharGetNonBlocking(UART0_BASE));
     }
 }
 
@@ -55,21 +57,21 @@ void WiFly_Init(void) {
     SysCtlDelay(SysCtlClockGet()/12);
 }
 
+
 // Function sends a command to the module and checks
 // for an expectend response
-int WiFly_Cmd(char * cmd, char * resp) {
+int WiFly_Send_Cmd(char * cmd, char * resp) {
   int status;
+  int cmd_status = FAILURE;
 
   WiFly_Flush();
   
   status = WiFly_Send("$$$", "CMD");
   if(status) { 
-    status = WiFly_Send(cmd, resp);
-     if(status) {
-        status = WiFly_Send("exit\r", "EXIT");
-     }
+    cmd_status = WiFly_Send(cmd, resp);
   }
-  return status;
+  status = WiFly_Send("exit\r", "EXIT");
+  return (status & cmd_status);
 }
 
 // Sends a string via UART to the module and will
@@ -79,7 +81,7 @@ int WiFly_Send(char * send, char * resp) {
   int attempts = 0;
   while(attempts < MAX_ATTEMPTS) {
     SysCtlDelay(SysCtlClockGet()/12);
-    UARTSend((unsigned char*)send, strlen(send));
+    UART_Send((unsigned char*)send, strlen(send));
     SysCtlDelay(SysCtlClockGet()/12);
     if(UART_Match(resp)) {
       break;
@@ -98,6 +100,23 @@ int WiFly_Send(char * send, char * resp) {
 void WiFly_Flush(void) {
   char c;
   while(RxFifo_Get(&c)) {}
+}
+
+unsigned long WiFly_Time(void) {
+  int i, status;
+  char time[11];
+  status = WiFly_Send("$$$", "CMD");
+  if(status) { 
+    status = WiFly_Send("show t t", "RTC=");
+    if(!status) {
+      return 0;
+    }
+  } else {return 0;}
+  
+  for(i = 0; i < 10; i++) {
+    RxFifo_Get(&time[i]);
+  } time[10] = 0x0;
+  return strtol(time, NULL, 10);
 }
 
 // Searchs for a desired string by reading
@@ -125,7 +144,7 @@ int UART_Match(char * match) {
   }
 }
 // fill the buffer with data to send
-void UARTSend(const unsigned char *pucBuffer, unsigned long ulCount) {
+void UART_Send(const unsigned char *pucBuffer, unsigned long ulCount) {
     while(ulCount--) {
         UARTCharPutNonBlocking(UART0_BASE, *pucBuffer++);
     }
