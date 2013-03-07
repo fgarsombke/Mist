@@ -63,8 +63,6 @@ void YardCell::UnIsolate(NeighborHeightDiffs_t heightDiffs) {
 // Debug Methods
 #ifdef _DEBUG
 
-
-
 const DriftEntry YardCell::drift_entry() const { 
    if (cell_type_ == YardCellType_t::Grass) {
       return drift_entry_; 

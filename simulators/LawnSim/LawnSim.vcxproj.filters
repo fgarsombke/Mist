@@ -36,9 +36,6 @@
     <ClInclude Include="inc\LawnGenerator.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="inc\PerlinNoiseGen.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="inc\SimOptions.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -72,17 +69,14 @@
     <ClInclude Include="inc\NeighborData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\inc\WeatherData.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="..\..\inc\WeatherDataSource.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="inc\LawnCoordinate.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="inc\InvalidOperationException.h">
       <Filter>Header Files\Exceptions</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\PerlinNoiseGenerator.h">
+      <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -123,6 +117,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\LawnCoordinate.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\YardInfo.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

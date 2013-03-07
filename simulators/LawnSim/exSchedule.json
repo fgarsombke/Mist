@@ -1,27 +1,55 @@
 {
-    "id": "D6E3873D-EFDA-41F8-9FC4-16698E81D2C1",
     "z": [
         {
-            "i": [
+            "zoneNumber": 1,
+            "times": [
                 {
-                    "s": 0,
-                    "e": 2
+                    "startTime": 1362385800,
+                    "endTime": 1362387600
                 },
                 {
-                    "s": 10,
-                    "e": 20
+                    "startTime": 1362364620,
+                    "endTime": 1362367020
                 }
             ]
         },
         {
-            "i": [
+            "zoneNumber": 2,
+            "times": [
                 {
-                    "s": 0,
-                    "e": 3
+                    "startTime": 1362389400,
+                    "endTime": 1362393000
                 },
                 {
-                    "s": 10,
-                    "e": 21
+                    "startTime": 1362376800,
+                    "endTime": 1362406800
+                }
+            ]
+        },
+        {
+            "zoneNumber": 3,
+            "times": [
+                {
+                    "startTime": 1362389400,
+                    "endTime": 1362392100
+                }
+            ]
+        },
+        {
+            "zoneNumber": 7,
+            "times": [
+                {
+                    "startTime": 1362385800,
+                    "endTime": 1362390300
+                }
+            ]
+        },
+        {
+            "zoneNumber": 8,
+            "times": [
+                {
+                    "startTime": 1362385800,
+                    "endTime": 1362389700
                 }
             ]
         }
