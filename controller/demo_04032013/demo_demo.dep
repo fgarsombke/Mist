@@ -1,5 +1,5 @@
 Dependencies for Project 'demo', Target 'demo': (DO NOT MODIFY !)
-F (.\demo.c)(0x51342733)(-c --cpu Cortex-M3 -D__MICROLIB -g -O2 --apcs=interwork --split_sections -I.. -I..\..\.. -I C:\Keil\ARM\RV31\INC -I C:\Keil\ARM\CMSIS\Include -I C:\Keil\ARM\Inc\Luminary -Drvmdk -DPART_LM3S1968 -o "demo.o" --omf_browse "demo.crf" --depend "demo.d")
+F (.\demo.c)(0x51342844)(-c --cpu Cortex-M3 -D__MICROLIB -g -O2 --apcs=interwork --split_sections -I.. -I..\..\.. -I C:\Keil\ARM\RV31\INC -I C:\Keil\ARM\CMSIS\Include -I C:\Keil\ARM\Inc\Luminary -Drvmdk -DPART_LM3S1968 -o "demo.o" --omf_browse "demo.crf" --depend "demo.d")
 I (..\inc/hw_ints.h)(0x513291D1)
 I (..\inc/hw_memmap.h)(0x513291D1)
 I (..\inc/hw_types.h)(0x513291D1)

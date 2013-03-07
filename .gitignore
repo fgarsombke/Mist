@@ -6,7 +6,19 @@
 *.exe
 *.o
 *.so
+
+# Keil Files#
+###################
 *.axf
+*.crf
+*.d
+*.i
+*.lnp
+*.bin
+*.plg
+*.tra
+*.uvopt*
+*.uvgui*
 
 # Packages #
 ############

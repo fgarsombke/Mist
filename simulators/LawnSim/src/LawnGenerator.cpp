@@ -21,7 +21,7 @@ unique_ptr<YardInfo> LawnGenerator::Generate(GeoLocale locale, size_t rows, size
    }
 
    // Place 4 sprinklers at each corner
-   SprinklersList_t sprinklers = SprinklersList_t(4);
+   SprinklersList_t sprinklers = SprinklersList_t(8);
 
 
    return unique_ptr<YardInfo>(new YardInfo(locale, GenerateCells(rows, cols, FillHeightsDiagonally), sprinklers));

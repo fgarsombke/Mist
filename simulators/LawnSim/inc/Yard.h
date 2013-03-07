@@ -24,7 +24,7 @@ public:
 
    const bnu::matrix<YardCell> &cells() const { return cells_; }
 
-   void ElapseTime(pt::time_period tickPeriod, const WeatherData &data, std::vector<pt::time_duration> sprinklerDurations);
+   void ElapseTime(pt::time_period tickPeriod, const WeatherData &data, const std::vector<pt::time_duration> sprinklerDurations);
 
    void ResetState();
 

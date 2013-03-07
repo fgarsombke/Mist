@@ -1,6 +1,8 @@
 #pragma once
 #include "ControllersStd.h"
 
+#include "MistStd.h"
+
 namespace Mist { namespace Controllers {
 
 class ControllerConfig {
@@ -11,6 +13,8 @@ public:
    pt::time_duration update_period_;
 
    std::string data_source_;
+
+   product_id_t id;
 };
 
 

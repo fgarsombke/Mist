@@ -1,0 +1,49 @@
+Dependencies for Project 'mist_test', Target 'mist_test': (DO NOT MODIFY !)
+F (.\zone.c)(0x51357733)(-c --cpu Cortex-M3 -D__MICROLIB -g -O2 --apcs=interwork --split_sections -I.. -I..\..\.. -I C:\Keil\ARM\RV31\INC -I C:\Keil\ARM\CMSIS\Include -I C:\Keil\ARM\Inc\Luminary -Drvmdk -DPART_LM3S1968 -o "zone.o" --omf_browse "zone.crf" --depend "zone.d")
+I (zone.h)(0x51357731)
+I (..\inc/lm3s811.h)(0x513291D1)
+I (..\inc/hw_memmap.h)(0x513291D1)
+I (..\inc/hw_types.h)(0x513291D1)
+I (..\driverlib/pin_map.h)(0x513291D1)
+I (..\driverlib/debug.h)(0x513291D1)
+I (..\driverlib/sysctl.h)(0x513291D1)
+I (..\driverlib/ssi.h)(0x513291D1)
+I (..\driverlib/gpio.h)(0x513291D1)
+F (.\main.c)(0x5136754D)(-c --cpu Cortex-M3 -D__MICROLIB -g -O2 --apcs=interwork --split_sections -I.. -I..\..\.. -I C:\Keil\ARM\RV31\INC -I C:\Keil\ARM\CMSIS\Include -I C:\Keil\ARM\Inc\Luminary -Drvmdk -DPART_LM3S1968 -o "main.o" --omf_browse "main.crf" --depend "main.d")
+I (..\inc/hw_ints.h)(0x513291D1)
+I (..\inc/hw_memmap.h)(0x513291D1)
+I (..\inc/hw_types.h)(0x513291D1)
+I (..\inc/lm3s1968.h)(0x513291D1)
+I (..\driverlib/debug.h)(0x513291D1)
+I (..\driverlib/gpio.h)(0x513291D1)
+I (..\driverlib/interrupt.h)(0x513291D1)
+I (..\driverlib/sysctl.h)(0x513291D1)
+I (..\drivers/rit128x96x4.h)(0x513291D1)
+I (wifly.h)(0x513674D7)
+F (.\startup_rvmdk.S)(0x5135903C)(--cpu Cortex-M3 -g --apcs=interwork --pd "__MICROLIB SETA 1" -I C:\Keil\ARM\RV31\INC -I C:\Keil\ARM\CMSIS\Include -I C:\Keil\ARM\Inc\Luminary --list "startup_rvmdk.lst" --xref -o "startup_rvmdk.o" --depend "startup_rvmdk.d")
+F (.\wifly.c)(0x513678E6)(-c --cpu Cortex-M3 -D__MICROLIB -g -O2 --apcs=interwork --split_sections -I.. -I..\..\.. -I C:\Keil\ARM\RV31\INC -I C:\Keil\ARM\CMSIS\Include -I C:\Keil\ARM\Inc\Luminary -Drvmdk -DPART_LM3S1968 -o "wifly.o" --omf_browse "wifly.crf" --depend "wifly.d")
+I (..\inc/hw_ints.h)(0x513291D1)
+I (..\inc/hw_memmap.h)(0x513291D1)
+I (..\inc/hw_types.h)(0x513291D1)
+I (..\inc/lm3s1968.h)(0x513291D1)
+I (..\driverlib/debug.h)(0x513291D1)
+I (..\driverlib/gpio.h)(0x513291D1)
+I (..\driverlib/interrupt.h)(0x513291D1)
+I (..\driverlib/sysctl.h)(0x513291D1)
+I (..\driverlib/uart.h)(0x513291D1)
+I (fifo.h)(0x51358FDE)
+I (C:\Keil\ARM\ARMCC\bin\..\include\string.h)(0x4EB18956)
+I (wifly.h)(0x513674D7)
+I (..\drivers/rit128x96x4.h)(0x513291D1)
+F (.\FIFO.h)(0x51358FDE)()
+F (..\drivers\rit128x96x4.c)(0x513291D1)(-c --cpu Cortex-M3 -D__MICROLIB -g -O2 --apcs=interwork --split_sections -I.. -I..\..\.. -I C:\Keil\ARM\RV31\INC -I C:\Keil\ARM\CMSIS\Include -I C:\Keil\ARM\Inc\Luminary -Drvmdk -DPART_LM3S1968 -o "rit128x96x4.o" --omf_browse "rit128x96x4.crf" --depend "rit128x96x4.d")
+I (..\inc/hw_ssi.h)(0x513291D1)
+I (..\inc/hw_memmap.h)(0x513291D1)
+I (..\inc/hw_sysctl.h)(0x513291D1)
+I (..\inc/hw_types.h)(0x513291D1)
+I (..\driverlib/debug.h)(0x513291D1)
+I (..\driverlib/gpio.h)(0x513291D1)
+I (..\driverlib/ssi.h)(0x513291D1)
+I (..\driverlib/sysctl.h)(0x513291D1)
+I (..\drivers/rit128x96x4.h)(0x513291D1)
+F (..\driverlib\rvmdk\driverlib.lib)(0x50FEFBD6)()

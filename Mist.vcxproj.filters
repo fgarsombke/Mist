@@ -27,9 +27,24 @@
     <ClInclude Include="inc\MistStd.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="inc\HTMLSource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\ScheduleSource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\WeatherDataSource.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\HtmlSource.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MistStd.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\ScheduleSource.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
