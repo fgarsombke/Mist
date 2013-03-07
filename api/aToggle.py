@@ -36,4 +36,7 @@ class aToggle:
     def POST(self):
         toggle_data = web.input()
         doToggle(toggle_data.productID)
-        return getToggleStatus(toggle_data.productID)
+        j = getToggleStatus(toggle_data.productID)
+        j2 = str(j).replace('(', '{')
+        j2 = j2.replace(')', '}')
+        return j2

@@ -4,7 +4,7 @@ import sys
 import MySQLdb
 import datetime
 import time
-import DBConfig
+from db import DBConfig
 
 def main():
 	conf = DBConfig.DBConfig()
