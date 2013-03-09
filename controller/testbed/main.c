@@ -10,6 +10,8 @@
 #include "wifly.h"
 #include "rgb_led.h"
 
+#define NULL 0x0
+
 #ifdef DEBUG
 void __error__(char *pcFilename, unsigned long ulLine){}
 #endif
@@ -25,7 +27,7 @@ int main0(void) {
     while(1) {
       RIT128x96x4StringDraw("                            ", 0, 8, 15);
       RIT128x96x4StringDraw("                            ", 0, 8, 15);
-      if(WiFly_Send_Cmd("lites\r", "")) {
+      if(WiFly_Send_Cmd("lites\r", NULL)) {
         RIT128x96x4StringDraw("SUCCESS", 0, 8, 15);
         RGB_On(GREEN); RGB_Off(RED);
         if(i^=1) {RIT128x96x4StringDraw("LIGHTS ON ", 0, 16, 15); RGB_On(BLUE);} 
@@ -75,8 +77,14 @@ int main1(void) {
 }
 
 int main(void){
-  WiFly_Init();
-  WiFly_Time();
-  return 0;
+    char buf[20];
+    unsigned long rtc;
+    RIT128x96x4Init(1000000);
+    RIT128x96x4Clear();
+    WiFly_Init();
+    rtc = WiFly_Time();
+    snprintf(buf, "%lu", rtc);
+    RIT128x96x4StringDraw(buf, 0, 8, 15);
+    return 0;
 }
 

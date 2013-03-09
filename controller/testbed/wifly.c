@@ -54,6 +54,7 @@ void WiFly_Init(void) {
     UARTIntEnable(UART0_BASE, UART_INT_RX | UART_INT_RT);
   
     RxFifo_Init();
+    WiFly_Send("exit\r", NULL);
     SysCtlDelay(SysCtlClockGet()/12);
 }
 
@@ -83,7 +84,7 @@ int WiFly_Send(char * send, char * resp) {
     SysCtlDelay(SysCtlClockGet()/12);
     UART_Send((unsigned char*)send, strlen(send));
     SysCtlDelay(SysCtlClockGet()/12);
-    if(UART_Match(resp)) {
+    if(UART_Match(resp) || (resp == NULL)) {
       break;
     } 
     attempts++; 
@@ -107,7 +108,7 @@ unsigned long WiFly_Time(void) {
   char time[11];
   status = WiFly_Send("$$$", "CMD");
   if(status) { 
-    status = WiFly_Send("show t t", "RTC=");
+    status = WiFly_Send("show t t\r", "RTC=");
     if(!status) {
       return 0;
     }
@@ -116,7 +117,8 @@ unsigned long WiFly_Time(void) {
   for(i = 0; i < 10; i++) {
     RxFifo_Get(&time[i]);
   } time[10] = 0x0;
-  return strtol(time, NULL, 10);
+  RIT128x96x4StringDraw(time, 0, 8, 15);
+  return strtol(time, NULL, 11);
 }
 
 // Searchs for a desired string by reading
