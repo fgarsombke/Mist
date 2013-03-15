@@ -11,7 +11,6 @@ public:
    DelugeController(const ControllerConfig &config)
       : Controller(config)
    {
-      
    }
 
    virtual void Reset(boost::posix_time::ptime startTime) override 
