@@ -60,13 +60,20 @@ static inline double CalculateAtmPressure(double altitude)
    return stp_atm * exp(gM_over_RL * log(1 - altitude*(.0065/288.15)));
 }
 
+// Pressure from Altitude
+// FAO Equation 3.7
+static inline double PressureFromAltitude(double altitude) 
+{
+   return 101.3*pow((293-0.0065*altitude)/293, 5.26);
+}
+
 // Psychometric Constant
 //    pressure is in KPa
+// FAO Equation 3.8
 static inline double GammaFromPressure(double pressure) 
 {
    return pressure*(c_p/(epsilon_weight_ratio*lambda));
 }
-
 // Temperature in Celcius
 // FAO Equation 3.11
 static inline double SaturationVapourPressure(double temp) 
@@ -74,11 +81,27 @@ static inline double SaturationVapourPressure(double temp)
    return dp_a * exp((dp_b*temp)/(temp + dp_c));
 }
 
+// Temperature in Celcius
+// FAO Equation 3.9 
+static inline double MeanTemperature(double minTemp, double maxTemp)
+{
+   return (maxTemp - minTemp)/2;
+}
+
+
+
 // Mean Saturation Vapour Pressure
 // FAO Equation 3.12
 static inline double MeanSaturationVapourPressure(double minTemp, double maxTemp) 
 {
    return (SaturationVapourPressure(minTemp) + SaturationVapourPressure(maxTemp))/2;
+}
+
+// Temperature in Celcius
+// FAO Equation 3.13
+static inline double SaturationVapourPressureSlope(double temp) 
+{   
+   return (4098*SaturationVapourPressure(temp))/((temp + dp_c)*(temp + dp_c));
 }
 
 // Actual Vapour Pressure
@@ -94,13 +117,6 @@ static inline double ActualVapourPressure(double minTemp, double maxTemp, double
 static inline double ActualVapourPressure(double minTemp, double maxTemp, double meanRH)
 {
    return meanRH*MeanSaturationVapourPressure(minTemp, maxTemp);
-}
-
-// Temperature in Celcius
-// FAO Equation 3.13
-static inline double SaturationVapourPressureSlope(double temp) 
-{   
-   return (4098*SaturationVapourPressure(temp))/((temp + dp_c)*(temp + dp_c));
 }
 
 static inline double NetRadiation()
@@ -148,7 +164,7 @@ ETCalc::ETCalc(GeoLocale locale) {
 // Wind Speed is in m/s.
 // 
 double ETCalc::CalculateET_o(const ETCalcParameters &ETParams) const {
-   // Implementation of Eq 6
+   // Implementation of Eq 2.6
    double delta = SaturationVapourPressureSlope(ETParams.avgTemp);
    double gamma = GammaFromPressure(ETParams.pressure);
    double R_n = NetRadiation();
@@ -164,7 +180,7 @@ double ETCalc::CalculateET_o(const ETCalcParameters &ETParams) const {
 
    double ET_o = (num_left + num_right)/den;
 
-   // Implementation of Eq 3
+   // Implementation of Eq 2.3
 
 
    return ET_o;

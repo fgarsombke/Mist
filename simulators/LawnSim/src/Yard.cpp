@@ -190,7 +190,6 @@ void Yard::ElapseTime(pt::time_period tickPeriod, const WeatherData &data, const
 
    cout << "ElapseTime: " << tickPeriod << endl;
 
-   
    //static int ticknum = 0;
    //DebugPrintMatrix(surface_water_, "SurfaceWaterVals/SurfaceWater" + std::to_string(ticknum++) + ".csv");
    
@@ -228,15 +227,18 @@ void Yard::ElapseTime(pt::time_period tickPeriod, const WeatherData &data, const
    
    // Blow wind
 
+   // Calculate ET_0
+
+
    // Grow
-   DoGrow(data);
+   DoGrow(0);
 }
 
-inline void Yard::DoGrow(const WeatherData &data) 
+inline void Yard::DoGrow(const double ET_0) 
 {
    // Grow the grass in the yard
    for (YardCell &cell : cells_.data()) {
-      
+      // Calculate ETo metric
    }
 
 }

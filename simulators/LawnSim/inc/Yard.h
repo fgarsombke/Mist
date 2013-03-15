@@ -64,7 +64,7 @@ private:
 
    void Absorb();
 
-   void DoGrow(const WeatherData &data);
+   void DoGrow(const double ET_0);
 
    template<class T>
    static void DebugPrintMatrix(const bnu::matrix<T> &toPrint, std::string fileName);
