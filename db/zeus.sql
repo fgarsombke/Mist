@@ -70,15 +70,17 @@ CREATE TABLE IF NOT EXISTS dailyETLperZone (
 						);
 
 CREATE TABLE IF NOT EXISTS queuedIrrigations (
-						    productID INTEGER NOT NULL,
+						    vectorID INTEGER NOT NULL,
+                            productID INTEGER NOT NULL,
 						    zoneNumber INTEGER NOT NULL,
-						    startTime DATETIME NOT NULL,  
+						    startTime DATETIME NOT NULL,
 						    duration INTEGER NOT NULL,
 						    created DATETIME NOT NULL
 						);
 
 CREATE TABLE IF NOT EXISTS executedIrrigations (
-						    productID INTEGER NOT NULL,
+                            vectorID INTEGER NOT NULL,
+                            productID INTEGER NOT NULL,
 						    zoneNumber INTEGER NOT NULL,
 						    startTime DATETIME NOT NULL,
 						    duration INTEGER NOT NULL,
@@ -96,5 +98,22 @@ CREATE TABLE IF NOT EXISTS toggle (
                     toggleStatus BOOLEAN DEFAULT TRUE
                     );
 
+CREATE TABLE IF NOT EXISTS learning (
+                            vectorID UNIQUE INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                            deviceID INTEGER NOT NULL,
+                            zoneNumber INTEGER NOT NULL,
+                            ETo FLOAT NOT NULL,
+                            score INTEGER NOT NULL
+                            created DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+                            );
 
+CREATE TABLE IF NOT EXISTS vectors (
+                            vectorID INTEGER NOT NULL,
+                            columnNumber INTEGER NOT NULL,
+                            value FLOAT NOT NULL
+                            );
 
+CREATE TABLE IF NOT EXISTS feedback (
+                            created TIMESTAMP,
+                            value INTEGER NOT NULL
+                            );

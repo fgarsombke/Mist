@@ -11,13 +11,21 @@ import collections
 import json
 from jsonencode import MyEncoder
 
-def queueIrrigation(productID, zoneNumber, startTime, duration, date):
+class IrrigationEvent:
+    def __init__(self, productID, zoneNumber, startTime, duration, date):
+        self.productID = productID
+        self.zoneNumber = zoneNumber
+        self.startTime = startTime
+        self.duration = duration
+        self.date = date
+
+def queueIrrigation(event):
     conf = DBConfig.DBConfig()
     db = conf.connectToLocalConfigDatabase()    
     cursor = db.cursor()
-    startTime = date + " " + startTime #NEED TO FIX THIS FORMATTING
+    startTime = event.date + " " + event.startTime
     timestamp = datetime.now() 
-    cursor.execute("INSERT INTO queuedIrrigations (productID, zoneNumber, startTime, duration, created) VALUES (%s, %s, %s, %s, %s)", (productID, zoneNumber, startTime, duration, timestamp))
+    cursor.execute("INSERT INTO queuedIrrigations (productID, zoneNumber, startTime, duration, created) VALUES (%s, %s, %s, %s, %s)", (event.productID, event.zoneNumber, startTime, event.duration, timestamp))
     results = cursor.lastrowid
     db.commit()
     return results
@@ -85,10 +93,6 @@ class aSchedule:
         schedule_data = web.input() 
 
         if schedule_data:
-            productID = schedule_data.productID
-            zoneNumber = schedule_data.zoneNumber
-            startTime = schedule_data.startTime
-            date = schedule_data.date
-            duration = schedule_data.duration
-            success = queueIrrigation(productID, zoneNumber, startTime, duration, date) 
+            event = IrrigationEvent(schedule_Data.productID, schedule_data.zoneNumber, schedule_data.startTime, schedule_data.date, schedule_data.duration)
+            success = queueIrrigation(event)
             return success
