@@ -24,6 +24,7 @@ from api.aDevice import aDevice
 from api.aSchedule import aSchedule
 from api.aWeather import aWeather
 from api.aToggle import aToggle
+from api.aFeedback import aFeedback
 
 from db import DBConfig
 
@@ -58,7 +59,8 @@ if __name__ == '__main__':
         '/api/device', 'aDevice',
         '/api/schedule', 'aSchedule',
         '/api/weather', 'aWeather',
-        '/api/toggle', 'aToggle'
+        '/api/toggle', 'aToggle',
+        '/api/feedback', 'aFeedback'
         )
 
     config = DBConfig.DBConfig()
