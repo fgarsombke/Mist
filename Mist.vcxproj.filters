@@ -21,9 +21,6 @@
     <ClInclude Include="inc\WeatherData.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="inc\WeatherDataSource.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="inc\MistStd.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -33,18 +30,27 @@
     <ClInclude Include="inc\ScheduleSource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="inc\MistDataSource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\MistSchedule.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\WeatherDataSource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="src\WeatherDataSource.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\HtmlSource.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\MistStd.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\ScheduleSource.cpp">
+    <ClCompile Include="src\MistDataSource.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\MistSchedule.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

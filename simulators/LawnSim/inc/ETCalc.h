@@ -6,21 +6,27 @@
 namespace Mist { namespace FAO_ET {
 
 struct ETCalcParameters {
+   ETCalcParameters()
+      : interval(pt::ptime(), pt::ptime())
+   {
+   }
+
+   GeoLocale locale;
+   
    double windSpeed;    // In m/s
 
    double maxRH;        // In fractional form (<1)
    double minRH;
 
-   double humidity;     
+   double humidity;     // Fractional 
    double pressure;     // In KPa
 
-   pt::ptime intervalStart;
-   pt::ptime intervalEnd;
+   pt::time_period interval;
 
    double startTemp;    // In Celcius
    double minTemp;
    double avgTemp;
-   double endTemp;      // In Celcius
+   double endTemp;     
    double maxTemp;
 };
 

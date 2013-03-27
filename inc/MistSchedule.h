@@ -1,19 +1,19 @@
 #pragma once
-#include "ControllersStd.h"
+#include "MistStd.h"
 
 
-namespace Mist { namespace Controllers {
+namespace Mist {
 
 const int ZONE_OFFSET = 1;
 
 
 namespace MistScheduleInteral {
-extern const char* ID_LABEL;
-extern const char* ZONE_LABEL;
-extern const char* ZONE_NUM_LABEL;
-extern const char* TIMES_ARRAY_LABEL;
-extern const char* START_LABEL;
-extern const char* END_LABEL;
+   extern const char* ID_LABEL;
+   extern const char* ZONE_LABEL;
+   extern const char* ZONE_NUM_LABEL;
+   extern const char* TIMES_ARRAY_LABEL;
+   extern const char* START_LABEL;
+   extern const char* END_LABEL;
 }
 
 class ZoneInfo 
@@ -21,6 +21,10 @@ class ZoneInfo
 public:
    std::forward_list<pt::time_period> OnTimes;
 };
+
+namespace MistScheduleInteral{
+   typedef double json_time_parse_t;
+}
 
 using namespace MistScheduleInteral;
 
@@ -30,7 +34,7 @@ public:
    template<class strT>
    static MistSchedule CreateFromJson(strT &inSchedule)
    {
-      ptree scheduleTree;
+      boost::property_tree::ptree scheduleTree;
 
       bJP::read_json(inSchedule, scheduleTree);
 
@@ -41,7 +45,7 @@ public:
    {
    }
 
-   MistSchedule(uuid scheduleId)
+   explicit MistSchedule(uuid scheduleId)
       : schedule_id_(scheduleId)
    {
    }
@@ -60,7 +64,6 @@ public:
    //   return *this;
    //}
 
-
    const uuid id() const { return schedule_id_; }
 
    std::vector<ZoneInfo> &zone_data() { return zone_data_; }
@@ -68,7 +71,7 @@ public:
    // Read the schedule in 
    bool operator==(const MistSchedule &other) {return schedule_id_ == other.schedule_id_;}
 
-   static pt::ptime LongTimeToPTime(uint64_t ms);
+   static pt::ptime LongTimeToPTime(json_time_parse_t ms);
 private:
    uuid schedule_id_;
 
@@ -79,8 +82,8 @@ private:
    {
    }
 
-   static MistSchedule CreateFromPTree(ptree &scheduleTree);
+   static MistSchedule CreateFromPTree(boost::property_tree::ptree &scheduleTree);
 };
 
 
-}}
+}

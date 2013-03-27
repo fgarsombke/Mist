@@ -26,7 +26,7 @@ inline unsigned int GetSystemTimeMS()
 {
    struct timespec ts;
    if(clock_gettime(CLOCK_MONOTONIC,&ts) != 0) {
-		throw std::logic_error("clock_gettime failed.");//error
+      throw std::logic_error("clock_gettime failed.");//error
    }
    
    return ts.tv_sec*1000 + ts.tv_nsec/1000000;
@@ -45,11 +45,30 @@ inline int SleepForMS(int x)
 
 #endif
 
+
+#if _DEBUG
+
+void DbgPrintDurations(const std::vector<time_duration> &durations) 
+{
+   cout << "Sprinkler Durations:" << endl;
+   for (auto t : durations) {
+      cout << "\t" << t.total_seconds() << endl;
+   }
+   cout << endl;
+}
+
+#else
+
+#define DbgPrintDurations(X) //Nothing
+
+#endif
+
 namespace Mist { namespace LawnSim {
 
-Simulator::Simulator(const YardInfo &yardInfo, unique_ptr<Controllers::Controller> &controller)
-   : yard_(yardInfo), controller_(std::move(controller)), 
-     weather_source_(uPtrWeatherDataSource( new WeatherDataSource()))
+Simulator::Simulator(const YardInfo &yardInfo, 
+                     uPtrController &controller, 
+                     sPtrWeatherDataSource weatherSource)
+   : yard_(yardInfo), controller_(std::move(controller)), weather_source_(weatherSource)
 {
    // Set start time ahead of end time so the sim won't run
    sim_start_time_ = ptime(boost::gregorian::date(1970,1,2));
@@ -103,12 +122,14 @@ void Simulator::Run()
       // TODO: Precompute WeatherData for the next tick
       // Do the tick work
 
-      WeatherData weatherData = weather_source_->GetData(yard_.locale(), tick_period);
+      WeatherData weatherData = weather_source_->GetWeatherData(yard_.locale(), tick_period);
       controller_->ElapseTime(tick_period, sprinklerDurations);
+
+      // Debug Print Durations
+      DbgPrintDurations(sprinklerDurations);
 
       // Let the yard check whether or not the sprinkler durations list was resized
       yard_.ElapseTime(tick_period, weatherData, sprinklerDurations);
-     
 
       // Compute next tick time
       nextTickTime += tick_period_ms_;
@@ -132,8 +153,6 @@ void Simulator::Run()
    }
   
 }
-
-
 
 void Simulator::Stop() 
 {
