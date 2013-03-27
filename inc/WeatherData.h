@@ -1,6 +1,5 @@
 #pragma once
 #include "MistStd.h"
-#include <boost/optional.hpp>
 
 namespace Mist { 
 
@@ -36,9 +35,8 @@ private:
    boost::optional<double> end_temp_;
    boost::optional<double> avg_temp_;
 
-   // first := direction in degrees from north
-   // second := magnitude in meters per second
-   boost::optional<std::pair<double, double> > wind_velocity_;
+   // magnitude in meters per second
+   boost::optional<double> wind_velocity_;
 
    // As a fraction (not percentage)
    boost::optional<double> avg_humidity_;

@@ -8,7 +8,6 @@
 
 namespace Mist { namespace LawnSim {
 
-   
 Yard::Yard(const YardInfo& yardInfo)
    : locale_(yardInfo.locale()), cells_(InitCells(yardInfo)), 
      cells_by_height_(InitHeightMap(yardInfo)),
@@ -18,7 +17,6 @@ Yard::Yard(const YardInfo& yardInfo)
    // Zero everything out and
    // Generate a height sorted view of the Yard
    
-
    // Generate rain mask
    // TODO: Should this be nonideal?
    rain_mask_ = bnu::scalar_matrix<double>(cells_.size1() - 2, cells_.size2() - 2, 1.0);
@@ -29,8 +27,6 @@ Yard::Yard(const YardInfo& yardInfo)
       mask = SprinklerMask_t(cells_.size1() - 2, cells_.size2() - 2);
    }
 }
-
-
 
 const bnu::matrix<YardCell> Yard::InitCells(const YardInfo& yardInfo)
 {
@@ -65,7 +61,6 @@ const bnu::matrix<YardCell> Yard::InitCells(const YardInfo& yardInfo)
       cells(i + 1, 0)      = YardCell::CreateVoid(cellInfos(i, 0).rel_height());
       cells(i + 1, lstCol) = YardCell::CreateVoid(cellInfos(i, lstInrCol).rel_height());
    }
-
 
    // At this point each void cell has a height equal to its next "inner" neighbor
    // We could stop assigning here and that would be enough for the "EdgeWall" case
@@ -117,7 +112,6 @@ const bnu::matrix<YardCell> Yard::InitCells(const YardInfo& yardInfo)
       }
    }
 
-
    // Fill in the actual drift map
    //
    NeighborHeightDiffs_t rh;
@@ -147,9 +141,8 @@ const bnu::matrix<YardCell> Yard::InitCells(const YardInfo& yardInfo)
    return cells;
 }
 
-
-
-const bnu::unbounded_array<LawnCoordinate> Yard::InitHeightMap(YardInfo const &yardInfo) {
+const bnu::unbounded_array<LawnCoordinate> Yard::InitHeightMap(YardInfo const &yardInfo) 
+{
    bnu::unbounded_array<LawnCoordinate> retVal(yardInfo.yard_length() * yardInfo.yard_width());
 
    // Need to add one since we're precomputing for the whole yard, not just the grass.
@@ -171,7 +164,8 @@ const bnu::unbounded_array<LawnCoordinate> Yard::InitHeightMap(YardInfo const &y
    return retVal;
 }
 
-void Yard::ResetState() {
+void Yard::ResetState() 
+{
    // Initialize each cell to its default state
    for (YardCell &cell : cells_.data()) {
       cell.ResetState();
@@ -182,7 +176,8 @@ void Yard::ResetState() {
 }
 
 
-void Yard::ElapseTime(pt::time_period tickPeriod, const WeatherData &data, const std::vector<pt::time_duration> sprinklerDurations) {
+void Yard::ElapseTime(pt::time_period tickPeriod, const WeatherData &data, const std::vector<pt::time_duration> sprinklerDurations) 
+{
    // TODO: Change the api so that sprinklerDurations cannot be accidentally resized
    using namespace bnu;
 
@@ -193,7 +188,6 @@ void Yard::ElapseTime(pt::time_period tickPeriod, const WeatherData &data, const
    //static int ticknum = 0;
    //DebugPrintMatrix(surface_water_, "SurfaceWaterVals/SurfaceWater" + std::to_string(ticknum++) + ".csv");
    
-
    double dt = tickPeriod.length().ticks()/((double)tickPeriod.length().ticks_per_second());
 
    // Add sprinkler water to the surface
@@ -240,7 +234,6 @@ inline void Yard::DoGrow(const double ET_0)
    for (YardCell &cell : cells_.data()) {
       // Calculate ETo metric
    }
-
 }
 
 #ifdef _DEBUG
@@ -317,9 +310,5 @@ void Yard::DebugPrintHeights(std::string fileName) const
 
 #endif
 
-
-
-
-}
-}
+}}
 

@@ -15,10 +15,15 @@ typedef std::unique_ptr<Controller> uPtrController;
 
 class Controller {
 public:
-   static uPtrController GetControllerByName(const string &controllerName, const ControllerConfig &config);
+   static uPtrController GetControllerByName(const string &controllerName, ControllerConfig &&config);
+
+   Controller() {}
 
    // Resets the controller to startTime
-   virtual void Reset(pt::ptime startTime) = 0;
+   virtual void Reset(pt::ptime startTime)
+   {
+      // Do nothing by default
+   }
    
    // Indicates to the controller that an interval of time has elapsed.
    //    
@@ -30,21 +35,11 @@ public:
    virtual void ElapseTime(pt::time_period interval, 
                            std::vector<pt::time_duration> &sprinklerOnDurations) = 0;
 
-protected:
-   // Creates a controller based on config
-   Controller(const ControllerConfig &config)
-      :config_(config)
-   {
-   }
-
-   const ControllerConfig config() const { return config_; }
+  virtual ~Controller() { }
 private:
    // Reference class only
    Controller &operator=(const Controller &other);
    Controller(const Controller &other);
-
-
-   const ControllerConfig config_;   
 };
 
 }}

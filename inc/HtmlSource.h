@@ -14,7 +14,6 @@ public:
    {
    }
 
-
    int GetHtml(const std::string & urlPath, 
                std::ostream &out, 
                std::vector<std::string> &headers,

@@ -4,7 +4,6 @@
 
 #include "YardInfo.h"
 #include "Yard.h"
-#include "WeatherDataSource.h"
 #include "Controller.h"
 
 using namespace boost::posix_time;
@@ -14,7 +13,9 @@ namespace Mist { namespace LawnSim {
 
 class Simulator {
 public:
-   Simulator(const YardInfo &yardInfo, uPtrController &controller);
+   Simulator(const YardInfo &yardInfo, 
+             uPtrController &controller,
+             sPtrWeatherDataSource weatherSource);
 
    void Reset(ptime simStartTime, 
                ptime simEndTime,
@@ -41,12 +42,10 @@ private:
    Yard yard_;
    
    uPtrController controller_;
-
+   sPtrWeatherDataSource weather_source_;
 
    unsigned int real_start_time_;      // Last Real world (simulator) start time 
 
-   uPtrWeatherDataSource weather_source_;
-   
 };
 
 }}

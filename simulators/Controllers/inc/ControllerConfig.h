@@ -8,14 +8,11 @@ namespace Mist { namespace Controllers {
 class ControllerConfig {
 public:
    // Configuration that is available to the controller in real life 
-   boost::optional<GeoLocale> locale_;
+   GeoLocale Locale;
 
-   pt::time_duration update_period_;
-
-   std::string data_source_;
-
-   product_id_t id;
+   pt::time_duration UpdatePeriod;
+   sPtrScheduleSource ScheduleSource;
+   product_id_t Id;
 };
-
 
 }}

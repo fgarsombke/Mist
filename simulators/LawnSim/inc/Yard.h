@@ -20,7 +20,7 @@ typedef bnu::unbounded_array<SprinklerMask_t> SprinklerMaskList_t;
 
 class Yard {
 public:
-   Yard(const YardInfo& yardInfo);
+   explicit Yard(const YardInfo& yardInfo);
 
    const bnu::matrix<YardCell> &cells() const { return cells_; }
 

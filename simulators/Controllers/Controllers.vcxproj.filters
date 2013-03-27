@@ -30,19 +30,13 @@
     <ClInclude Include="inc\MistController.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="inc\MistFileController.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="inc\MistRealController.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="inc\ControllersStd.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="inc\MistSchedule.h">
+    <ClInclude Include="..\..\inc\MistStd.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\..\inc\MistStd.h">
+    <ClInclude Include="inc\MistUpdatingController.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
@@ -60,9 +54,6 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\Controller.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="src\MistSchedule.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\ControllersStd.cpp">
