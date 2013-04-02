@@ -9,8 +9,9 @@
 #include "drivers/rit128x96x4.h"
 #include "wifly.h"
 #include "rgb_led.h"
-
-#define NULL 0x0
+#include "stdlib.h"
+#include "string.h"
+#include "stdio.h"
 
 #ifdef DEBUG
 void __error__(char *pcFilename, unsigned long ulLine){}
@@ -41,7 +42,7 @@ int main0(void) {
     }
 } 
 
-int main1(void) {
+int main(void) {
     RIT128x96x4Init(1000000);
     RIT128x96x4Clear();
   
@@ -76,15 +77,11 @@ int main1(void) {
     }
 }
 
-int main(void){
-    char buf[20];
-    unsigned long rtc;
+int main2(void){
     RIT128x96x4Init(1000000);
     RIT128x96x4Clear();
     WiFly_Init();
-    rtc = WiFly_Time();
-    snprintf(buf, "%lu", rtc);
-    RIT128x96x4StringDraw(buf, 0, 8, 15);
+    WiFly_Time();
     return 0;
 }
 
