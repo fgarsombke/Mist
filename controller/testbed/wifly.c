@@ -103,6 +103,9 @@ void WiFly_Flush(void) {
   while(RxFifo_Get(&c)) {}
 }
 
+// Gets RTC time from the WiFly
+// Issues occur when NIST server harcoded
+// to the module becomes unavailable
 unsigned long WiFly_Time(void) {
   int i, status;
   char time[11];
@@ -117,9 +120,30 @@ unsigned long WiFly_Time(void) {
   for(i = 0; i < 10; i++) {
     RxFifo_Get(&time[i]);
   } time[10] = 0x0;
-  RIT128x96x4StringDraw(time, 0, 8, 15);
+
   return strtol(time, NULL, 11);
 }
+
+// // Function used to get a new NIST time server
+// int WiFly_NIST() {
+//   int status;
+//   int i = 0;
+//   char ip[16] = "000.000.000.000";
+//   status=WiFly_Send_Cmd("lookup ime.nist.gov\r", "ime.nist.gov=");
+//   if(status) {
+//     do {
+//       char c;
+//       Rx_Fifo_Get(&c);
+//       ip[i] = c; 
+//       i++;
+//     } while(c != '\n');
+//     ip[i] = 0x0;
+//     // need some string concatonation here
+//     //status = WiFly_Send_Cmd("time addr\r", "ime.nist.gov=");
+//   }
+//   return status;
+// }
+  
 
 // Searchs for a desired string by reading
 // through the recieved characters. This will remove
