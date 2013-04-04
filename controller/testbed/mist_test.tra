@@ -6,9 +6,10 @@
 ### List of Objects: adding '"startup_rvmdk.o"'
 ### List of Objects: adding '"wifly.o"'
 ### List of Objects: adding '"rit128x96x4.o"'
+### List of Objects: adding '"rgb_led.o"'
 ### List of Objects: adding '"..\driverlib\rvmdk\driverlib.lib"'
 ### ADS-LD Command completed:
---cpu Cortex-M3 "zone.o" "main.o" "startup_rvmdk.o" "wifly.o" "rit128x96x4.o" "C:\Documents and Settings\Administrator\My Documents\GitHub\Mist\controller\driverlib\rvmdk\driverlib.lib" 
+--cpu Cortex-M3 "zone.o" "main.o" "startup_rvmdk.o" "wifly.o" "rit128x96x4.o" "rgb_led.o" "C:\Documents and Settings\Administrator\My Documents\GitHub\Mist\controller\driverlib\rvmdk\driverlib.lib" 
 --library_type=microlib --strict --scatter "mist_test.sct" 
 --entry Reset_Handler --summary_stderr --info summarysizes --map --xref --callgraph --symbols 
 --info sizes --info totals --info unused --info veneers 
@@ -16,7 +17,7 @@
 ### ADS-LD Output File: 'mist_test.axf'
 ### ADS-LD Command File: 'mist_test.lnp'
 ### Checking for dirty Components...
-### Creating CmdFile 'mist_test.lnp', Handle=0x00000870
+### Creating CmdFile 'mist_test.lnp', Handle=0x00000378
 ### Writing '.lnp' file
 ### ADS-LD Command file 'mist_test.lnp' is ready.
 ### ADS-LD: About to start ADS-LD Thread.
