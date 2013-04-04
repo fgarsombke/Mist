@@ -34,8 +34,7 @@ def getWeatherData(station, time):
     db = conf.connectToLocalConfigDatabase()
     cursor = db.cursor()
 
-    #PARAMETERIZE TIME INTERVAL!!!
-
+    #TODO: PARAMETERIZE TIME INTERVAL!!!
     sqlString = """SELECT * FROM hourlyClimateData WHERE climateStationID = '%s' AND hourlyClimateData.date > DATE_SUB(now(), INTERVAL 1 DAY)""" % (station)
     cursor.execute(sqlString)
     results = cursor.fetchall() 
@@ -98,6 +97,7 @@ def getWeatherData(station, time):
 
 
 class aWeather:
+    #TODO - make it work the way Michael wants
     #GET API FOR WEATHER
     #RETURN weather data object: expetected parameter: latitude, longitude, time
     def GET(self):
