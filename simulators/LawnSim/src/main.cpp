@@ -37,6 +37,7 @@ int main(int argc, char * argv[])
 
       auto yardInfo = LawnGenerator().Generate(options->geo_locale(), 650, 650);
 
+
       // Use Mist Data for everything
       Mist::sPtrMistDataSource mistDataSource = Mist::MistDataSource::GetDefaultDataSource();
 
