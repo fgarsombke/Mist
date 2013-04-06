@@ -15,18 +15,22 @@ def storeFeedback(deviceID, feedback):
     db = conf.connectToLocalConfigDatabase()
     cursor = db.cursor()
 
+    #TODO: Need to associate with a vectorID - how?
+
     for fbTuple in feedback:
-        cursor.execute("INSERT INTO feedback (vectorID, deviceID, created, value) VALUES (%s, %s, %s, %S)", (vectorID, deviceID, fbTuple.created, fbTuple.value)
+        cursor.execute("INSERT INTO feedback (vectorID, deviceID, created, value) VALUES (%s, %s, %s, %S)", (vectorID, deviceID, fbTuple.created, fbTuple.value))
+
     db.commit()
+    return 0
 
 class aFeedback:
     def GET(self):
         feedback_data = web.input()
         return 0
 
-    #POST API for WeatherData
     def POST(self):
         feedback_data = web.input()
-        feedbackArray = feedback_data.jsonArray
+        feedbackArray = json.loads(feedback_data.jsonArray)
+
         storeFeedback(deviceID, feedbackArray)
         return 0
