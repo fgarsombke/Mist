@@ -99,12 +99,12 @@ CREATE TABLE IF NOT EXISTS toggle (
                     );
 
 CREATE TABLE IF NOT EXISTS learning (
-                            vectorID UNIQUE INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY,
+                            vectorID INTEGER UNIQUE NOT NULL AUTO_INCREMENT PRIMARY KEY,
                             deviceID INTEGER NOT NULL,
                             zoneNumber INTEGER NOT NULL,
                             ETo FLOAT NOT NULL,
-                            score INTEGER NOT NULL
-                            created DATETIME NOT NULL DEFAULT CURRENT_TIMESTAMP
+                            score INTEGER NOT NULL,
+                            created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
                             );
 
 CREATE TABLE IF NOT EXISTS vectors (
