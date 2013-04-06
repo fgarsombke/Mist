@@ -24,6 +24,7 @@ def queueIrrigation(event):
     db = conf.connectToLocalConfigDatabase()    
     cursor = db.cursor()
     startTime = event.date + " " + event.startTime
+    print startTime
     timestamp = datetime.now() 
     cursor.execute("INSERT INTO queuedIrrigations (productID, zoneNumber, startTime, duration, created) VALUES (%s, %s, %s, %s, %s)", (event.productID, event.zoneNumber, startTime, event.duration, timestamp))
     results = cursor.lastrowid
@@ -93,6 +94,6 @@ class aSchedule:
         schedule_data = web.input() 
 
         if schedule_data:
-            event = IrrigationEvent(schedule_Data.productID, schedule_data.zoneNumber, schedule_data.startTime, schedule_data.date, schedule_data.duration)
+            event = IrrigationEvent(schedule_data.productID, schedule_data.zoneNumber, schedule_data.startTime, schedule_data.duration, schedule_data.date)
             success = queueIrrigation(event)
             return success
