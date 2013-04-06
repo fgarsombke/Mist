@@ -18,11 +18,16 @@
 #include <boost/iterator/zip_iterator.hpp>
 #include <boost/tuple/tuple.hpp>
 #include <boost/math/special_functions/fpclassify.hpp>
+#include <boost/program_options/errors.hpp>
 
 namespace pt = boost::posix_time;
 namespace dt = boost::date_time;
 namespace bnu = boost::numeric::ublas;
 
 // My Headers
+#include "MistStd.h"
 #include "Constants.h"
 #include "GeoLocale.h"
+
+typedef double ET_float_t;
+typedef ET_float_t water_mm_t;

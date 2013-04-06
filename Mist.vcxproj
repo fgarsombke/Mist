@@ -107,7 +107,8 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>C:\Program Files (x86)\GnuWin32\include;D:\Software\boost;$(ProjectDir)/inc</AdditionalIncludeDirectories>
       <PrecompiledHeaderFile>MistStd.h</PrecompiledHeaderFile>
-      <AdditionalOptions>-D_SCL_SECURE_NO_WARNINGS %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>-D_SCL_SECURE_NO_WARNINGS -Zm110 %(AdditionalOptions)</AdditionalOptions>
+      <DisableLanguageExtensions>false</DisableLanguageExtensions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -156,6 +157,8 @@
   <ItemGroup>
     <ClInclude Include="inc\GeoLocale.h" />
     <ClInclude Include="inc\HTMLSource.h" />
+    <ClInclude Include="inc\MistDataSource.h" />
+    <ClInclude Include="inc\MistSchedule.h" />
     <ClInclude Include="inc\MistStd.h" />
     <ClInclude Include="inc\ScheduleSource.h" />
     <ClInclude Include="inc\WeatherData.h" />
@@ -163,11 +166,11 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\HtmlSource.cpp" />
+    <ClCompile Include="src\MistDataSource.cpp" />
+    <ClCompile Include="src\MistSchedule.cpp" />
     <ClCompile Include="src\MistStd.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
     </ClCompile>
-    <ClCompile Include="src\ScheduleSource.cpp" />
-    <ClCompile Include="src\WeatherDataSource.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -5,27 +5,26 @@
 #include "NullController.h"
 #include "DelugeController.h"
 #include "MistController.h"
-#include "MistFileController.h"
-#include "MistRealController.h"
+#include "MistUpdatingController.h"
 
 namespace Mist { namespace Controllers {
 
-uPtrController Controller::GetControllerByName(const string &controllerName, const ControllerConfig &config)
+uPtrController Controller::GetControllerByName(const string &controllerName, ControllerConfig &&config)
 {
-   uPtrController ret;
+   Controller *retPtr = nullptr;
 
    if (controllerName == "Default" ||
        controllerName == "Null") {
-      ret = uPtrController(new NullController(config));
+      retPtr = new NullController();
    } else if (controllerName == "Deluge" ) {
-      ret = uPtrController(new DelugeController(config));
+      retPtr = new DelugeController();
+   } else if (controllerName == "Mist") { 
+      retPtr = new MistController(std::forward<ControllerConfig>(config));
    } else if (controllerName == "MistReal") {
-      ret = uPtrController(new MistRealController(config));
-   } else if (controllerName == "MistFile") { 
-      ret = uPtrController(new MistFileController(config));
-   }
+      retPtr = new MistUpdatingController(std::forward<ControllerConfig>(config));
+   } 
 
-   return ret;
+   return uPtrController(retPtr);
 }
 
 

@@ -6,11 +6,6 @@ namespace Mist { namespace Controllers {
 // The NullController never waters the grass
 class NullController : public Controller {
 public:
-   NullController(const ControllerConfig &config)
-      : Controller(config)
-   { 
-   }
-
    virtual void Reset(boost::posix_time::ptime startTime) override 
    {
       // Do nothing, never water
@@ -24,7 +19,6 @@ public:
          dur = pt::seconds(0);
       }
    }
-
 };
 
 }}

@@ -3,14 +3,13 @@
 #include "main.h"
 
 
-#include <boost/program_options/errors.hpp>
-
 #include "GeoLocale.h"
 #include "YardInfo.h"
 #include "Yard.h"
 #include "SimOptions.h"
 #include "Simulator.h"
 #include "LawnGenerator.h"
+#include "MistDataSource.h"
 
 #include "Controller.h"
 
@@ -36,17 +35,22 @@ int main(int argc, char * argv[])
          return 1;
       }
 
-      auto yardInfo = LawnGenerator().Generate(options->geo_locale(), 5, 5);
+      auto yardInfo = LawnGenerator().Generate(options->geo_locale(), 650, 650);
 
+
+      // Use Mist Data for everything
+      Mist::sPtrMistDataSource mistDataSource = Mist::MistDataSource::GetDefaultDataSource();
+
+      // Build controller configuration
       Mist::Controllers::ControllerConfig cConfig;
-      cConfig.locale_ = options->geo_locale();
-      cConfig.update_period_ = time_duration(hours(1));
-      cConfig.data_source_ = "www.quattrotap.com";
-      cConfig.id = 1;
+      cConfig.Locale = options->geo_locale();
+      cConfig.UpdatePeriod = time_duration(hours(1));
+      cConfig.Id = 1;
+      cConfig.ScheduleSource = mistDataSource;
 
-      Mist::Controllers::uPtrController controller = Controller::GetControllerByName("MistReal", cConfig);
+      Mist::Controllers::uPtrController controller = Controller::GetControllerByName("MistReal", std::move(cConfig));
 
-      Simulator sim(*yardInfo, controller);
+      Simulator sim(*yardInfo, controller, mistDataSource);
       yardInfo.release();
 
       pt::ptime start(options->start_time());
