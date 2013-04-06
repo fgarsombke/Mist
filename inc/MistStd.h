@@ -7,6 +7,19 @@
 #include <iostream>
 #include <algorithm>
 #include <array>
+#include <forward_list>
+
+#if __linux__ == 1
+
+#include <uuid/uuid.h>
+
+#else 
+#ifdef _MSC_VER
+
+#define __attribute__(_) 
+
+#endif
+#endif
 
 // Boost Headers
 #include <boost/date_time/posix_time/posix_time.hpp>
@@ -14,16 +27,28 @@
 #include <boost/tuple/tuple.hpp>
 #include <boost/uuid/uuid.hpp>
 #include <boost/asio.hpp>
+#include <boost/property_tree/ptree.hpp>
+#include <boost/property_tree/json_parser.hpp>
+#include <boost/uuid/string_generator.hpp>
+#include <boost/optional.hpp>
 
 namespace pt = boost::posix_time;
 namespace dt = boost::date_time;
+namespace bJP = boost::property_tree::json_parser;
+namespace bUUID = boost::uuids;
 
+typedef boost::uuids::uuid uuid;
 extern const char* EmptyUUIDString;
 
 namespace Mist {
    typedef boost::uuids::uuid uuid;
    typedef size_t product_id_t;
 }
+
+#include "GeoLocale.h"
+#include "ScheduleSource.h"
+#include "WeatherData.h"
+#include "WeatherDataSource.h"
 
 #if defined(_MSC_VER)
   #define JL_SIZE_T_SPECIFIER    "%Iu"

@@ -170,9 +170,7 @@
     <ClInclude Include="inc\ControllersStd.h" />
     <ClInclude Include="inc\DelugeController.h" />
     <ClInclude Include="inc\MistController.h" />
-    <ClInclude Include="inc\MistFileController.h" />
-    <ClInclude Include="inc\MistRealController.h" />
-    <ClInclude Include="inc\MistSchedule.h" />
+    <ClInclude Include="inc\MistUpdatingController.h" />
     <ClInclude Include="inc\NullController.h" />
   </ItemGroup>
   <ItemGroup>
@@ -183,7 +181,6 @@
     </ClCompile>
     <ClCompile Include="src\DelugeController.cpp" />
     <ClCompile Include="src\MistController.cpp" />
-    <ClCompile Include="src\MistSchedule.cpp" />
     <ClCompile Include="src\NullController.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

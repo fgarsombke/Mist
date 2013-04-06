@@ -1,14 +1,13 @@
 #include "ControllersStd.h"
 
 #include "MistController.h"
-#include "MistFileController.h"
-#include "MistRealController.h"
+#include "MistUpdatingController.h"
 
 namespace Mist { namespace Controllers {
 
 void MistController::Reset(pt::ptime startTime)
 {
-   ResetSchedule(MistSchedule::LongTimeToPTime(0), MistSchedule());
+   ResetSchedule(startTime, schedule_source_->GetSchedule(id_, -1));
 }
 
 void MistController::ResetSchedule(pt::ptime updateTime, MistSchedule &&newSchedule) 
@@ -30,12 +29,16 @@ void MistController::ElapseTime(pt::time_period interval,
       while(!zone.OnTimes.empty()) {
          const time_period currOnTime = zone.OnTimes.front();
          
+         // Fall through to removing the OnTime if the scheduled
+         //    on period is completely before the interval in question.
          if (currOnTime.end() > interval.begin()) {
+            // Move onto the next zone if the OnTime comes after the 
+            //    interval in question.
             if (currOnTime.begin() < interval.end()) {
-               if (currOnTime.end() < interval.end()) {
-                  sprinklerOnDurations[i] += currOnTime.length();
-               } else {
-                  sprinklerOnDurations[i] += currOnTime.intersection(interval).length();
+               // Fall through to remove the current on time if it is completely
+               //    inside the interval in question.
+               sprinklerOnDurations[i] += currOnTime.intersection(interval).length();
+               if (currOnTime.end() >= interval.end()) {
                   break;
                }
             } else {
@@ -43,21 +46,11 @@ void MistController::ElapseTime(pt::time_period interval,
                break;
             }
          } 
-
+         
+         // Remove the current on time
          zone.OnTimes.pop_front();
       }
    }
-}
-
-// File Controller specific code
-/////////////////////////////////////////////////////////////////////////////////////
-
-void MistFileController::Reset(pt::ptime startTime)
-{
-   // The File Controller just reads it's data source in on reset.
-   // It doesn't update otherwise.
-   std::ifstream scheduleStream(config().data_source_);
-   MistController::ResetSchedule(startTime, MistSchedule::CreateFromJson(scheduleStream));
 }
 
 // Real Controller specific code
@@ -72,8 +65,7 @@ pt::ptime MistController::NextUpdateTimeAfter(pt::ptime afterTime) const
    return last_update_time() + pt::millisec((int64_t)(overDiff*updateMillis));
 }
 
-// TODO: Fix this
-void MistRealController::ElapseTime(pt::time_period interval, 
+void MistUpdatingController::ElapseTime(pt::time_period interval, 
                         std::vector<pt::time_duration> &sprinklerOnDurations)
 {
    using namespace pt;
@@ -88,9 +80,7 @@ void MistRealController::ElapseTime(pt::time_period interval,
       subElapseEnd = min(nextUpdate, elapseEnd);
 
       if (MistController::HasUpdatePeriodPassed(subElapseEnd)) {
-         ScheduleSource::schedule_ret_t ss;
-         source_->GetSchedule(ss, 2000);
-         ResetSchedule(nextUpdate, MistSchedule::CreateFromJson(ss));
+         ResetSchedule(nextUpdate, schedule_source().GetSchedule(id(), 2000));
       }
 
       MistController::ElapseTime(time_period(subElapseStart, subElapseEnd), sprinklerOnDurations);

@@ -1,31 +1,27 @@
-#include "ControllersStd.h"
-
+#include "MistStd.h"
 #include "MistSchedule.h"
 
-namespace Mist { namespace Controllers {
+namespace Mist {
 
 namespace MistScheduleInteral{
-
-typedef double json_time_parse_t;
-
-const char* ID_LABEL = "id";
-const char* ZONE_LABEL = "z";
-const char* ZONE_NUM_LABEL = "zoneNumber";
-const char* TIMES_ARRAY_LABEL = "times";
-const char* START_LABEL = "startTime";
-const char* END_LABEL = "endTime";
-
+   const char* ID_LABEL = "id";
+   const char* ZONE_LABEL = "z";
+   const char* ZONE_NUM_LABEL = "zoneNumber";
+   const char* TIMES_ARRAY_LABEL = "times";
+   const char* START_LABEL = "startTime";
+   const char* END_LABEL = "endTime";
 }
 
-pt::ptime MistSchedule::LongTimeToPTime(uint64_t seconds) 
+pt::ptime MistSchedule::LongTimeToPTime(json_time_parse_t seconds) 
 {
    const pt::ptime epoch(boost::gregorian::date(1970, 1, 1));
 
    return epoch + pt::seconds((long)seconds);
 }
 
-MistSchedule MistSchedule::CreateFromPTree(ptree &scheduleTree)
+MistSchedule MistSchedule::CreateFromPTree(boost::property_tree::ptree &scheduleTree)
 {
+   using boost::property_tree::ptree;
    std::string idStr = scheduleTree.get<std::string>(ID_LABEL, EmptyUUIDString);
    std::vector<ZoneInfo> infos(8, ZoneInfo());
 
@@ -49,4 +45,4 @@ MistSchedule MistSchedule::CreateFromPTree(ptree &scheduleTree)
 }
 
 
-}}
+}

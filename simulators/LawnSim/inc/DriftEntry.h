@@ -13,7 +13,7 @@ public:
    {
    }
 
-   DriftEntry(NeighborHeightDiffs_t &heightDiffs);
+   explicit DriftEntry(NeighborHeightDiffs_t &heightDiffs);
 };
 
 

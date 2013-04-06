@@ -23,6 +23,8 @@
     <ClInclude Include="inc\DBHook.h" />
     <ClInclude Include="inc\DriftEntry.h" />
     <ClInclude Include="inc\ETCalc.h" />
+    <ClInclude Include="inc\ETCalcParameters.h" />
+    <ClInclude Include="inc\ETCalcParametersBuilder.h" />
     <ClInclude Include="inc\InvalidOperationException.h" />
     <ClInclude Include="inc\LawnCoordinate.h" />
     <ClInclude Include="inc\LawnGenerator.h" />
@@ -41,6 +43,7 @@
     <ClCompile Include="src\Constants.cpp" />
     <ClCompile Include="src\DriftEntry.cpp" />
     <ClCompile Include="src\ETCalc.cpp" />
+    <ClCompile Include="src\ETCalcParametersBuilder.cpp" />
     <ClCompile Include="src\LawnCoordinate.cpp" />
     <ClCompile Include="src\LawnGenerator.cpp" />
     <ClCompile Include="src\main.cpp" />
@@ -151,7 +154,7 @@
       <AdditionalIncludeDirectories>C:\Program Files (x86)\GnuWin32\include;D:\Software\boost;$(ProjectDir)inc;$(ProjectDir)../../inc;$(ProjectDir)../Controllers/inc</AdditionalIncludeDirectories>
       <SDLCheck>false</SDLCheck>
       <PrecompiledHeaderFile>LawnSimStd.h</PrecompiledHeaderFile>
-      <AdditionalOptions>-D_SCL_SECURE_NO_WARNINGS %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>-D_SCL_SECURE_NO_WARNINGS -Zm126 %(AdditionalOptions)</AdditionalOptions>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
     </ClCompile>
@@ -202,7 +205,7 @@
       <DisableLanguageExtensions>false</DisableLanguageExtensions>
       <OpenMPSupport>false</OpenMPSupport>
       <PrecompiledHeaderFile>LawnSimStd.h</PrecompiledHeaderFile>
-      <AdditionalOptions>-D_SCL_SECURE_NO_WARNINGS %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>-D_SCL_SECURE_NO_WARNINGS -Zm126 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>

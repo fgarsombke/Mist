@@ -4,8 +4,7 @@
 
 #include "YardInfo.h"
 
-namespace Mist {
-namespace LawnSim {
+namespace Mist { namespace LawnSim {
 
 typedef void (*FillHeightFunc_t)(bnu::matrix<double> &heights);
 
@@ -28,5 +27,4 @@ private:
 
 };
 
-}
-}
+}}

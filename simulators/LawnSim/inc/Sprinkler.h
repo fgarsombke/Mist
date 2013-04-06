@@ -19,7 +19,7 @@ public:
    {
    }
 
-   Sprinkler(double wateringRate)
+   explicit Sprinkler(double wateringRate)
       : watering_rate_(wateringRate)
    {
    }

@@ -3,22 +3,22 @@
 #include "Yard.h"
 #include "WeatherData.h"
 #include "ETCalc.h"
+#include "ETCalcParametersBuilder.h"
 
 #define EdgeProject 1
 
 namespace Mist { namespace LawnSim {
 
-   
 Yard::Yard(const YardInfo& yardInfo)
    : locale_(yardInfo.locale()), cells_(InitCells(yardInfo)), 
      cells_by_height_(InitHeightMap(yardInfo)),
      sprinklers_(std::move(yardInfo.sprinklers())),
-	 surface_water_(cells_.size1(), cells_.size2(), 1)
+	 surface_water_(cells_.size1(), cells_.size2(), 1),
+    et_calc_(locale_)
 {
    // Zero everything out and
    // Generate a height sorted view of the Yard
    
-
    // Generate rain mask
    // TODO: Should this be nonideal?
    rain_mask_ = bnu::scalar_matrix<double>(cells_.size1() - 2, cells_.size2() - 2, 1.0);
@@ -29,8 +29,6 @@ Yard::Yard(const YardInfo& yardInfo)
       mask = SprinklerMask_t(cells_.size1() - 2, cells_.size2() - 2);
    }
 }
-
-
 
 const bnu::matrix<YardCell> Yard::InitCells(const YardInfo& yardInfo)
 {
@@ -65,7 +63,6 @@ const bnu::matrix<YardCell> Yard::InitCells(const YardInfo& yardInfo)
       cells(i + 1, 0)      = YardCell::CreateVoid(cellInfos(i, 0).rel_height());
       cells(i + 1, lstCol) = YardCell::CreateVoid(cellInfos(i, lstInrCol).rel_height());
    }
-
 
    // At this point each void cell has a height equal to its next "inner" neighbor
    // We could stop assigning here and that would be enough for the "EdgeWall" case
@@ -117,7 +114,6 @@ const bnu::matrix<YardCell> Yard::InitCells(const YardInfo& yardInfo)
       }
    }
 
-
    // Fill in the actual drift map
    //
    NeighborHeightDiffs_t rh;
@@ -147,9 +143,8 @@ const bnu::matrix<YardCell> Yard::InitCells(const YardInfo& yardInfo)
    return cells;
 }
 
-
-
-const bnu::unbounded_array<LawnCoordinate> Yard::InitHeightMap(YardInfo const &yardInfo) {
+const bnu::unbounded_array<LawnCoordinate> Yard::InitHeightMap(YardInfo const &yardInfo) 
+{
    bnu::unbounded_array<LawnCoordinate> retVal(yardInfo.yard_length() * yardInfo.yard_width());
 
    // Need to add one since we're precomputing for the whole yard, not just the grass.
@@ -171,7 +166,8 @@ const bnu::unbounded_array<LawnCoordinate> Yard::InitHeightMap(YardInfo const &y
    return retVal;
 }
 
-void Yard::ResetState() {
+void Yard::ResetState() 
+{
    // Initialize each cell to its default state
    for (YardCell &cell : cells_.data()) {
       cell.ResetState();
@@ -182,24 +178,23 @@ void Yard::ResetState() {
 }
 
 
-void Yard::ElapseTime(pt::time_period tickPeriod, const WeatherData &data, const std::vector<pt::time_duration> sprinklerDurations) {
+void Yard::ElapseTime(pt::time_period tickPeriod, const WeatherData &data, const std::vector<pt::time_duration> sprinklerDurations) 
+{
    // TODO: Change the api so that sprinklerDurations cannot be accidentally resized
    using namespace bnu;
-
-   FAO_ET::ETCalcParameters params;
+   using namespace Mist;
 
    cout << "ElapseTime: " << tickPeriod << endl;
 
    //static int ticknum = 0;
    //DebugPrintMatrix(surface_water_, "SurfaceWaterVals/SurfaceWater" + std::to_string(ticknum++) + ".csv");
    
-
    double dt = tickPeriod.length().ticks()/((double)tickPeriod.length().ticks_per_second());
 
    // Add sprinkler water to the surface
    for (size_t i = 0; i < sprinkler_masks_.size(); ++i) {
       pt::time_duration dt_s = sprinklerDurations[i];
-      noalias(matrix_range<matrix<double> >(surface_water_, 
+      noalias(matrix_range<matrix<water_mm_t> >(surface_water_, 
                                              range(1, surface_water_.size1() - 1), 
                                              range(1, surface_water_.size2() - 1)))
          += ((dt_s.ticks()/((double)dt_s.ticks_per_second())) * sprinkler_masks_[i]);
@@ -207,40 +202,49 @@ void Yard::ElapseTime(pt::time_period tickPeriod, const WeatherData &data, const
 
    // Add rain water to the surface
    if (data.rainfall().is_initialized()) {
-      noalias(matrix_range<matrix<double> >(surface_water_, 
+      noalias(matrix_range<matrix<water_mm_t> >(surface_water_, 
                                              range(1, surface_water_.size1() - 1), 
                                              range(1, surface_water_.size2() - 1)))
          += (data.rainfall().get() * rain_mask_);
    }
    
-   //Redistribute the water over the surface
+   // Redistribute the water over the surface
    for (LawnCoordinate pos : cells_by_height_) {
-      matrix_range<matrix<double> >(surface_water_, range(pos.Row - 1, pos.Row + 2), range(pos.Col - 1, pos.Col + 2))
+      matrix_range<matrix<water_mm_t> >(surface_water_, range(pos.Row - 1, pos.Row + 2), range(pos.Col - 1, pos.Col + 2))
          += surface_water_(pos.Row, pos.Col)*cells_(pos.Row, pos.Col).drift_entry().data();
    }
 
-   // Shine sunlight
-   
-   // Apply heat
-   
-   // Apply humidity
-   
-   // Blow wind
-
    // Calculate ET_0
-
+   FAO_ET::ETCalcParametersBuilder baseETBuilder(tickPeriod);
 
    // Grow
-   DoGrow(0);
+   // TODO: Parallelize
+   DoGrow(baseETBuilder.Build(), 0, cells_.data().size());
 }
 
-inline void Yard::DoGrow(const double ET_0) 
+inline void Yard::DoGrow(FAO_ET::ETParam_t ET_0, size_t startCell, size_t endCell)
 {
-   // Grow the grass in the yard
-   for (YardCell &cell : cells_.data()) {
-      // Calculate ETo metric
-   }
+   using namespace FAO_ET;
+   
 
+   ETCalcParameters cellETParams = ET_0;
+   ET_float_t cellET;
+
+   // Grow the grass in the yard
+   while (startCell < endCell) {  
+      // Shine sunlight
+   
+      // Apply heat
+   
+      // Apply humidity
+   
+      // Blow wind
+
+      // Calculate ETo metric
+      cellET = et_calc_.CalculateET_o(cellETParams);
+      cout << cellET << endl;
+
+   }
 }
 
 #ifdef _DEBUG
@@ -317,9 +321,5 @@ void Yard::DebugPrintHeights(std::string fileName) const
 
 #endif
 
-
-
-
-}
-}
+}}
 
