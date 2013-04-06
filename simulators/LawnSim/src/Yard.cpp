@@ -3,6 +3,7 @@
 #include "Yard.h"
 #include "WeatherData.h"
 #include "ETCalc.h"
+#include "ETCalcParametersBuilder.h"
 
 #define EdgeProject 1
 
@@ -12,7 +13,8 @@ Yard::Yard(const YardInfo& yardInfo)
    : locale_(yardInfo.locale()), cells_(InitCells(yardInfo)), 
      cells_by_height_(InitHeightMap(yardInfo)),
      sprinklers_(std::move(yardInfo.sprinklers())),
-	 surface_water_(cells_.size1(), cells_.size2(), 1)
+	 surface_water_(cells_.size1(), cells_.size2(), 1),
+    et_calc_(locale_)
 {
    // Zero everything out and
    // Generate a height sorted view of the Yard
@@ -180,8 +182,7 @@ void Yard::ElapseTime(pt::time_period tickPeriod, const WeatherData &data, const
 {
    // TODO: Change the api so that sprinklerDurations cannot be accidentally resized
    using namespace bnu;
-
-   FAO_ET::ETCalcParameters params;
+   using namespace Mist;
 
    cout << "ElapseTime: " << tickPeriod << endl;
 
@@ -193,7 +194,7 @@ void Yard::ElapseTime(pt::time_period tickPeriod, const WeatherData &data, const
    // Add sprinkler water to the surface
    for (size_t i = 0; i < sprinkler_masks_.size(); ++i) {
       pt::time_duration dt_s = sprinklerDurations[i];
-      noalias(matrix_range<matrix<double> >(surface_water_, 
+      noalias(matrix_range<matrix<water_mm_t> >(surface_water_, 
                                              range(1, surface_water_.size1() - 1), 
                                              range(1, surface_water_.size2() - 1)))
          += ((dt_s.ticks()/((double)dt_s.ticks_per_second())) * sprinkler_masks_[i]);
@@ -201,38 +202,48 @@ void Yard::ElapseTime(pt::time_period tickPeriod, const WeatherData &data, const
 
    // Add rain water to the surface
    if (data.rainfall().is_initialized()) {
-      noalias(matrix_range<matrix<double> >(surface_water_, 
+      noalias(matrix_range<matrix<water_mm_t> >(surface_water_, 
                                              range(1, surface_water_.size1() - 1), 
                                              range(1, surface_water_.size2() - 1)))
          += (data.rainfall().get() * rain_mask_);
    }
    
-   //Redistribute the water over the surface
+   // Redistribute the water over the surface
    for (LawnCoordinate pos : cells_by_height_) {
-      matrix_range<matrix<double> >(surface_water_, range(pos.Row - 1, pos.Row + 2), range(pos.Col - 1, pos.Col + 2))
+      matrix_range<matrix<water_mm_t> >(surface_water_, range(pos.Row - 1, pos.Row + 2), range(pos.Col - 1, pos.Col + 2))
          += surface_water_(pos.Row, pos.Col)*cells_(pos.Row, pos.Col).drift_entry().data();
    }
 
-   // Shine sunlight
-   
-   // Apply heat
-   
-   // Apply humidity
-   
-   // Blow wind
-
    // Calculate ET_0
-
+   FAO_ET::ETCalcParametersBuilder baseETBuilder(tickPeriod);
 
    // Grow
-   DoGrow(0);
+   // TODO: Parallelize
+   DoGrow(baseETBuilder.Build(), 0, cells_.data().size());
 }
 
-inline void Yard::DoGrow(const double ET_0) 
+inline void Yard::DoGrow(FAO_ET::ETParam_t ET_0, size_t startCell, size_t endCell)
 {
+   using namespace FAO_ET;
+   
+
+   ETCalcParameters cellETParams = ET_0;
+   ET_float_t cellET;
+
    // Grow the grass in the yard
-   for (YardCell &cell : cells_.data()) {
+   while (startCell < endCell) {  
+      // Shine sunlight
+   
+      // Apply heat
+   
+      // Apply humidity
+   
+      // Blow wind
+
       // Calculate ETo metric
+      cellET = et_calc_.CalculateET_o(cellETParams);
+      cout << cellET << endl;
+
    }
 }
 

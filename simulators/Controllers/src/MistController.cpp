@@ -46,7 +46,7 @@ void MistController::ElapseTime(pt::time_period interval,
                break;
             }
          } 
-
+         
          // Remove the current on time
          zone.OnTimes.pop_front();
       }

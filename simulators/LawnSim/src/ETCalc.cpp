@@ -2,15 +2,11 @@
 
 #include "ETCalc.h"
 
-
 #include <cmath>
 
 
 // Separate namespace for calculations
-namespace Mist { namespace FAO_ET {
-   typedef double ET_float_t;
-
-   
+namespace Mist { namespace FAO_ET {   
    // TODO: Modify based on current grass health
 
 
@@ -19,10 +15,10 @@ namespace Mist { namespace FAO_ET {
 // G soil heat flux density [MJ m-2 day-1],
 // T mean daily air temperature at 2 m height [°C],
 // u2 wind speed at 2 m height [m s-1],
-// e_s saturation vapour pressure [kPa],
-// e_a actual vapour pressure [kPa],
-// e_s - e_a saturation vapour pressure deficit [kPa],
-// D slope vapour pressure curve [kPa °C-1],
+// e_s saturation vapour Pressure() [kPa],
+// e_a actual vapour Pressure() [kPa],
+// e_s - e_a saturation vapour Pressure() deficit [kPa],
+// D slope vapour Pressure() curve [kPa °C-1],
 // g psychrometric constant [kPa °C-1].
 
 // Constants for calculations
@@ -61,46 +57,7 @@ namespace Constants {
 
 using namespace Constants;
 
-#ifdef _MSC_VER
-
-#define __attribute__(_) 
-#endif
-
-typedef const ETCalcParameters &ETParams_t;
-#define ETCalc_Func_decl(NAME, ...) static inline ET_float_t NAME(__VA_ARGS__) __attribute__((const))
-#define ETCalc_Func_def(NAME, ...) static inline ET_float_t NAME(__VA_ARGS__) 
-
-// FAO Equation 3.21
-ETCalc_Func_decl(R_a_day, ETParams_t ETParams);
-
-// FAO Equation 3.22
-ETCalc_Func_decl(DegreesToRadians, ET_float_t degrees);
-
-// FAO Equation 3.23
-ETCalc_Func_decl(d_r, ETParams_t ETParams);
-
-ETCalc_Func_decl(Omega_s,ETParams_t ETParams);
-
-// FAO Equation 3.28
-ETCalc_Func_decl(R_a_hourly, ETParams_t ETParams);
-
-// FAO Equation 3.29
-ETCalc_Func_decl(Omega_1, ETParams_t ETParams);
-
-// FAO Equation 3.30
-ETCalc_Func_decl(Omega_2, ETParams_t ETParams);
-
-// FAO Equation 3.31
-ETCalc_Func_decl(Omega, ETParams_t ETParams);
-
-// FAO Equation 3.32
-ETCalc_Func_decl(S_c, ETParams_t ETParams);
-
-// FAO Equation 3.35
-ETCalc_Func_decl(R_s, ETParams_t ETParams);
-
-ETCalc_Func_decl(a_s);
-ETCalc_Func_decl(b_s);
+#define ETCalc_Func_def(NAME, ...) inline ET_float_t ETCalc::NAME(__VA_ARGS__) const
 
 // Convert Celcius temperature to Kelvin
 static inline ET_float_t CToK(double celciusTemp) 
@@ -109,9 +66,10 @@ static inline ET_float_t CToK(double celciusTemp)
 }
 
 // Number of the day in the year
-static inline int J(ETParams_t ETParams)
+static inline int J(ETParam_t ETParam)
 {
-   return ETParams.interval.begin().date().day_of_year();
+   // TODO: Should this be the beginning or the middle??
+   return ETParam.Interval().begin().date().day_of_year();
 }
 
 ETCalc_Func_def(CalculateAtmPressure, ET_float_t altitude) 
@@ -127,7 +85,7 @@ ETCalc_Func_def(PressureFromAltitude, ET_float_t altitude)
 }
 
 // Psychometric Constant
-//    pressure is in KPa
+//    Pressure() is in KPa
 // FAO Equation 3.8
 ETCalc_Func_def(GammaFromPressure, ET_float_t pressure) 
 {
@@ -141,54 +99,55 @@ ETCalc_Func_def(Mean, ET_float_t min, ET_float_t max)
    return (max - min)/2;
 }
 
+// Saturation Vapour Pressure
 // Temperature in Celcius
 // FAO Equation 3.11
-ETCalc_Func_def(SaturationVapourPressure, ET_float_t temp) 
+ETCalc_Func_def(e_o, ET_float_t temp) 
 {
    return dp_a * exp((dp_b*temp)/(temp + dp_c));
 }
 
 // Mean Saturation Vapour Pressure
 // FAO Equation 3.12
-ETCalc_Func_def(MeanSaturationVapourPressure, ETParams_t ETParams)
+ETCalc_Func_def(MeanSaturationVapourPressure, ETParam_t ETParam)
 {
-   return (SaturationVapourPressure(ETParams.minTemp) + SaturationVapourPressure(ETParams.maxTemp))/2;
+   return (e_o(ETParam.MinTemp()) + e_o(ETParam.MaxTemp()))/2;
 }
 
 // Temperature in Celcius
 // FAO Equation 3.13
 ETCalc_Func_def(SaturationVapourPressureSlope, ET_float_t temp) 
 {   
-   return (4098*SaturationVapourPressure(temp))/((temp + dp_c)*(temp + dp_c));
+   return (4098*e_o(temp))/((temp + dp_c)*(temp + dp_c));
 }
 
 // Actual Vapour Pressure
 // FAO Equation 3.17
-ETCalc_Func_def(e_a, ETParams_t ETParams)
+ETCalc_Func_def(e_a, ETParam_t ETParam)
 {
-   return (ETParams.minRH*SaturationVapourPressure(ETParams.minTemp) + 
-      ETParams.maxRH*SaturationVapourPressure(ETParams.maxTemp)
+   return (ETParam.MinRH()*e_o(ETParam.MinTemp()) + 
+      ETParam.MaxRH()*e_o(ETParam.MaxTemp())
    )/2.0;
 }
 
 // Actual Vapour Pressure
 // FAO Equation 3.19
-ETCalc_Func_def(e_a_RHMean, ETParams_t ETParams)
+ETCalc_Func_def(e_a_RHMean, ETParam_t ETParam)
 {
-   return Mean(ETParams.minRH, ETParams.maxRH)*MeanSaturationVapourPressure(ETParams);
+   return Mean(ETParam.MinRH(), ETParam.MaxRH())*MeanSaturationVapourPressure(ETParam);
 }
 
 // Extraterrestrial radiation for daily periods
 // NOTE: This is only valid for time periods of a day
 // FAO Equation 3.21
-ETCalc_Func_def(R_a_day, ETParams_t ETParams)
+ETCalc_Func_def(R_a_day, ETParam_t ETParam)
 {
-   ET_float_t w_s = Omega_s(ETParams);
-   ET_float_t delta = d_r(ETParams);
+   ET_float_t w_s = Omega_s(ETParam);
+   ET_float_t delta = d_r(ETParam);
 
-   return (24*60/PI)*G_sc*d_r(ETParams)*(
-      w_s*sin(DegreesToRadians(ETParams.locale.latitude()))*sin(delta) + 
-      cos(DegreesToRadians(ETParams.locale.latitude()))*cos(delta)*sin(w_s)
+   return (24*60/PI)*G_sc*d_r(ETParam)*(
+      w_s*sin(DegreesToRadians(locale_.latitude()))*sin(delta) + 
+      cos(DegreesToRadians(locale_.latitude()))*cos(delta)*sin(w_s)
    );
 }
 
@@ -201,94 +160,99 @@ ETCalc_Func_def(DegreesToRadians, ET_float_t degrees)
 
 // Inverse relative distance from the Earth to the Sun
 // FAO Equation 3.23
-ETCalc_Func_def(d_r, ETParams_t ETParams)
+ETCalc_Func_def(d_r, ETParam_t ETParam)
 {
-   return 1.0 + 0.033*cos(2*PI*J(ETParams)/365.0);
+   return 1.0 + 0.033*cos(2*PI*J(ETParam)/365.0);
 }
 
 // Solar declination
 // FAO Equation 3.24
-ETCalc_Func_def(SolarDeclination,ETParams_t ETParams)
+ETCalc_Func_def(SolarDeclination,ETParam_t ETParam)
 {
-   return 0.409*sin(J(ETParams)*2.0*PI/365.0 - 1.39);
+   return 0.409*sin(J(ETParam)*2.0*PI/365.0 - 1.39);
 }
 
 // Sunset Hour Angle
+// Modified slightly to include refraction
 // FAO Equation 3.25
-ETCalc_Func_def(Omega_s,ETParams_t ETParams)
+ETCalc_Func_def(Omega_s,ETParam_t ETParam)
 {
-   return acos(-tan(DegreesToRadians(ETParams.locale.latitude()))*tan(SolarDeclination(ETParams)));
+   double phi = DegreesToRadians(locale_.latitude());
+   double delta = SolarDeclination(ETParam);
+
+   return acos(
+            (sin(-0.0144862327915529) - sin(phi)*sin(delta))
+            /
+            (cos(phi)*cos(delta))
+          );
 }
 
 // Extraterrestrial radiation for hourly or shorter periods
 // NOTE: This function is for less than a day only
 // FAO Equation 3.28
-ETCalc_Func_def(R_a_hourly, ETParams_t ETParams)
+ETCalc_Func_def(R_a_hours, ETParam_t ETParam)
 {
-   ET_float_t phi = DegreesToRadians(ETParams.locale.latitude()); 
-   ET_float_t delta = SolarDeclination(ETParams);
+   ET_float_t phi = DegreesToRadians(locale_.latitude()); 
+   ET_float_t delta = SolarDeclination(ETParam);
 
-   ET_float_t w_1 = Omega_1(ETParams);
-   ET_float_t w_2 = Omega_2(ETParams);
+   ET_float_t w_1 = Omega_1(ETParam);
+   ET_float_t w_2 = Omega_2(ETParam);
 
-   return (12*60/PI)*G_sc*d_r(ETParams)*(
+   return (12*60/PI)*G_sc*d_r(ETParam)*(
       ((w_2 - w_1)*sin(phi)*sin(delta) +
        cos(phi)*cos(delta)*(sin(w_2) - sin(w_1)))
    );
 }
 
 // FAO Equation 3.29
-ETCalc_Func_def(Omega_1, ETParams_t ETParams)
+ETCalc_Func_def(Omega_1, ETParam_t ETParam)
 {
-   return Omega(ETParams) - 
-      (PI/24.0)*ETParams.interval.length().total_milliseconds()/(1000*60*60);
+   return Omega(ETParam) - 
+      (PI/24.0)*ETParam.Interval().length().total_milliseconds()/(1000*60*60);
 }
 
 // FAO Equation 3.30
-ETCalc_Func_def(Omega_2, ETParams_t ETParams)
+ETCalc_Func_def(Omega_2, ETParam_t ETParam)
 {
-   return Omega(ETParams) + 
-      (PI/24.0)*ETParams.interval.length().total_milliseconds()/(1000*60*60);
+   return Omega(ETParam) + 
+      (PI/24.0)*ETParam.Interval().length().total_milliseconds()/(1000*60*60);
 }
 
 // FAO Equation 3.31
-ETCalc_Func_def(Omega, ETParams_t ETParams)
+ETCalc_Func_def(Omega, ETParam_t ETParam)
 {
-   pt::time_duration half = ETParams.interval.length()/2;
-   pt::ptime midpoint = ETParams.interval.begin() + half;
+   pt::time_duration half = ETParam.Interval().length()/2;
+   pt::ptime midpoint = ETParam.Interval().begin() + half;
    pt::time_duration dayTime = midpoint.time_of_day();
    ET_float_t t = dayTime.hours() + dayTime.minutes()/60.0 + dayTime.seconds()/(60.0*60.0);
 
-   return PI*((1/12.0)*(t + (2/30.0)*(ETParams.locale.Lz() - ETParams.locale.longitude()) + S_c(ETParams))-1);
+   return PI*((1/12.0)*(t + (2/30.0)*(locale_.Lz() - locale_.longitude()) + S_c(ETParam))-1);
 }
 
 // Seasonal correction for solar time
 // FAO Equation 3.32
-ETCalc_Func_def(S_c, ETParams_t ETParams)
+ETCalc_Func_def(S_c, ETParam_t ETParam)
 {
    // FAO Equation 3.33
-   ET_float_t b = (2*PI/364.0)*(J(ETParams)-81);
+   ET_float_t b = (2*PI/364.0)*(J(ETParam)-81);
 
    return 0.1645*sin(2*b)-0.1255*cos(b)-0.025*sin(b);
 }
 
-// Daylight hours
-// NOTE: This is only valid for time periods of a day
-// FAO Equation 3.34
-ETCalc_Func_def(N_duration, ETParams_t ETParams)
-{
-   return (24.0/PI)*Omega_s(ETParams);
-}
+//// Daylight hours
+//// NOTE: This is only valid for time periods of a day
+//// FAO Equation 3.34
+//ETCalc_Func_def(N_duration, ETParam_t ETParam)
+//{
+//   return (24.0/PI)*Omega_s(ETParam);
+//}
 
 // Solar Radiation
 // TODO: Figure out day/hourly discrepency
 // FAO Equation 3.35
-ETCalc_Func_def(R_s, ETParams_t ETParams)
+ETCalc_Func_def(R_s, ETParam_t ETParam)
 {
-   // TODO: Get n_duration
-   ET_float_t n_duration;
-
-   return (a_s() + b_s()*(n_duration/N_duration(ETParams)))*R_a_hourly(ETParams);
+   return (a_s() + b_s()*ETParam.SunlightFraction())*R_a_hours(ETParam);
 }
 
 // Uncalibrated always
@@ -308,73 +272,125 @@ ETCalc_Func_def(b_s)
 // Net solar or net shortwave radiation
 // TODO: Figure out day/hourly discrepency
 // FAO Equation 3.37
-ETCalc_Func_def(R_so, ETParams_t ETParams) 
+ETCalc_Func_def(R_so, ETParam_t ETParam) 
 {
-   return (0.75 + 2e-5 * ETParams.locale.elevation())*R_a_hourly(ETParams);
+   return (0.75 + 2e-5 * locale_.elevation())*R_a_hours(ETParam);
 }
 
 // Net solar or net shortwave radiation
 // FAO Equation 3.38
-ETCalc_Func_def(R_ns, ETParams_t ETParams) 
+ETCalc_Func_def(R_ns, ETParam_t ETParam) 
 {
-   return (1.0 - Constants::albedo)*R_s(ETParams);
+   return (1.0 - Constants::albedo)*R_s(ETParam);
 }
 
 // Net longwave radiation
 // TODO: Correct for the 24 hour temperature period requirement
 // FAO Equation 3.39
-ETCalc_Func_def(R_nl, ETParams_t ETParams) 
+ETCalc_Func_def(R_nl, ETParam_t ETParam) 
 {
-   return sigma*((pow(ETParams.maxTemp, 4) + pow(ETParams.minTemp,4))/2.0)*
-      (0.34-0.14*sqrt(e_a(ETParams))*
-      (1.35*(R_s(ETParams)/R_so(ETParams)) - 0.35)
+   return sigma*((pow(ETParam.MaxTemp(), 4) + pow(ETParam.MinTemp(),4))/2.0)*
+      (0.34-0.14*sqrt(e_a(ETParam))*
+      (1.35*(R_s(ETParam)/R_so(ETParam)) - 0.35)
    );
 }
 
 // Difference between incoming and outgoing radiations
 // FAO Equation 3.40
-ETCalc_Func_def(NetRadiation, ETParams_t ETParams)
+ETCalc_Func_def(NetRadiation, ETParam_t ETParam)
 {
-   return R_ns(ETParams) - R_nl(ETParams);
+   return R_ns(ETParam) - R_nl(ETParam);
 }
 
-ETCalc_Func_def(SoilHFD, ETParams_t ETParams)
+// Soil Heat Flux
+// FAO Equation 3.42
+ETCalc_Func_def(G_days)
 {
-   throw std::runtime_error("Not Implemented");
+   return 0;
+}
+
+// Soil Heat Flux
+// FAO Equation 3.43/3.44
+ETCalc_Func_def(G_months, ETParam_t ETParam)
+{
+   // The actual FAO equation is a little different, but since
+   //    theirs is a very rough approximation I think that we can
+   //    just use the same rough model without problems
+   return (ETParam.Interval().length().total_seconds()*(0.07/(60*60*24*30.44)))*
+      (ETParam.EndTemp() - ETParam.StartTemp());
+}
+
+// Soil Heat Flux
+// FAO Equation 3.45
+ETCalc_Func_def(G_hours_day, ET_float_t Rn)
+{
+   return 0.1 * Rn;
+}
+
+// Soil Heat Flux
+// FAO Equation 3.46
+ETCalc_Func_def(G_hours_night, ET_float_t Rn)
+{
+   return 0.5 * Rn;
 }
 
 // Dew point from temperature in celcius and relative humidity
-ETCalc_Func_def(DewPoint, double temp, double rh) {
+ETCalc_Func_def(DewPoint, double temp, double rh) 
+{
    double gam = log(rh) + temp*dp_b/(dp_c + temp);
 
    return dp_c*gam/(dp_b - gam);
 }
 
-ETCalc::ETCalc(GeoLocale locale) {
+ETCalc::ETCalc(GeoLocale locale) 
+   : locale_(locale)
+{
    // Precompute solar parameters
 }
 
 
 // Calculates ET_o for the parameters given.
-
+//
+// The function processes
+//
 // Note that ET_o also depends on the previously
 //    initialized location parameters.
 //
 // Temperature is in celcius
 // Wind Speed is in m/s.
 // 
-double ETCalc::CalculateET_o(ETParams_t ETParams) const {
+double ETCalc::CalculateET_o(ETParam_t ETParam) const {
    // Implementation of Eq 2.6
-   ET_float_t delta = SaturationVapourPressureSlope(ETParams.avgTemp);
-   ET_float_t gamma = GammaFromPressure(ETParams.pressure);
-   ET_float_t R_n = NetRadiation(ETParams);
-   ET_float_t G = SoilHFD(ETParams);
+   ET_float_t delta = SaturationVapourPressureSlope(ETParam.AvgTemp());
+   ET_float_t gamma = GammaFromPressure(ETParam.Pressure());
+   ET_float_t u_2 = ETParam.WindSpeed();
+   ET_float_t R_n;
+   ET_float_t G;
+   ET_float_t e_s = MeanSaturationVapourPressure(ETParam);
 
-   ET_float_t u_2 = ETParams.windSpeed;
-   ET_float_t e_s = MeanSaturationVapourPressure(ETParams);
+   switch(ETParam.LengthType()) {
+      case ETCalcLengthType::HoursDay:
+         R_n =;
+         G = G_hours_day(R_n);
+         break;
+      case ETCalcLengthType::HoursNight:
+         R_n =;
+         G = G_hours_night(R_n);
+         break;
+      case ETCalcLengthType::Days:
+         R_n =;
+         G = G_days();
+         break;
+      case ETCalcLengthType::Months:
+         G = G_months(ETParam);
+         break;
+   }
+
+   R_n = NetRadiation(ETParam);
+
 
    ET_float_t num_left = 0.408*delta*(R_n-G);
-   ET_float_t num_right = gamma*(900/(CToK(ETParams.avgTemp)))*u_2*(e_s - e_a(ETParams));
+   ET_float_t num_right = gamma*(900/(CToK(ETParam.AvgTemp())))*u_2*(e_s - e_a(ETParam));
    ET_float_t den = delta + gamma*(1+0.34*u_2);
 
    ET_float_t ET_o = (num_left + num_right)/den;

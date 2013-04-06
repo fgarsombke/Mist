@@ -7,8 +7,8 @@
 #include "DriftEntry.h"
 #include "WeatherData.h"
 #include "LawnCoordinate.h"
+#include "ETCalcParameters.h"
 
-#include "GeoLocale.h"
 #include "Controller.h"
 
 namespace Mist { namespace LawnSim {
@@ -56,15 +56,16 @@ private:
    bnu::scalar_matrix<double> rain_mask_;
 
    // The water on the surface across the yard, which has not yet been absorbed into the soil
-   bnu::matrix<double> surface_water_;
+   bnu::matrix<water_mm_t> surface_water_;
 
+   FAO_ET::ETCalc et_calc_;
 
    SprinklerMaskList_t InitSprinklerMasks(const YardInfo &yardInfo);
 
 
    void Absorb();
 
-   void DoGrow(const double ET_0);
+   void DoGrow(FAO_ET::ETParam_t ET_0, size_t startCell, size_t count);
 
    template<class T>
    static void DebugPrintMatrix(const bnu::matrix<T> &toPrint, std::string fileName);
@@ -74,13 +75,5 @@ private:
 };
 
 
-
-
-
-
-
-
-
-}
-}
+}}
 
