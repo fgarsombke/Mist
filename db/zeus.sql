@@ -114,7 +114,6 @@ CREATE TABLE IF NOT EXISTS vectors (
                             );
 
 CREATE TABLE IF NOT EXISTS feedback (
-                            vectorID INTEGER NOT NULL,
                             deviceID INTEGER NOT NULL,
                             created TIMESTAMP,
                             value INTEGER NOT NULL

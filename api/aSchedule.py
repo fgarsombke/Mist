@@ -41,7 +41,7 @@ def getScheduleForDevice(productID):
 class aSchedule:
     #GET API FOR SCHEDULE
     #Return all queued irrigations for a given device:.
-    #Expected parameter: productID (integer)
+    #Expected parameter: deviceID (integer)
     def GET(self):
         schedule_data = web.input()
 

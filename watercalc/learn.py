@@ -38,7 +38,7 @@ def main():
             feedback = getFeedbackForLearningVector(vector)
 
             #score the learning vector... and store it in the database.
-            scoreVector(feedback)
+            scoreVector(feedback, vector)
 
             #create a new learning vetctor... pick new parameters via hill climbing
             #store in database
@@ -53,90 +53,99 @@ def main():
 
     def generateNewSchedule(ETp):
         print "generate new schedule"
+        #given an ET value, generate a schedule.
+        #the first question to answer is what time period is this ET value calculated for?
+        #let's assume the ET value is just for today.
+        #well, we need a function that translates ET into minutes of watering.
 
-    def predictCorrectET(ETo, alpha, beta, gamma, delta):
-        correctET = math.pow(ETo, 2)*alpha + math.pow(ETo, 1)*beta + math.pow(ETo, 0)*gamma + math.pow(ETo, -1)*delta
+
+    def predictCorrectET(ETo, vector):
+        #need to decide on the length of the vector and which coefficients are part of the equation
+        correctET = 0
+        count = 0
+        for each in vector:
+            correctET += math.pow(ETo, count)*each
+            count += 1
         return correctET
 
     def createNewLearningVector():
         print "create new learning vector"
 
         #get last two vectors
-        lastTwo = getLastTwoLearningVectors()
-        lv1 = lastTwo[0]
-        lv2 = lastTwo[1]
+        last = getLastXLearningVectors(3)
+        lv1 = last[0]
+        lv2 = last[1]
+        lv3 = last[2]
 
-        #compute gradient ascent
+        #compute the inverse jacobian
         diffVector = np.subtract(lv1.vector, lv2.vector)
 
-        #compute if slope should be positive or negative
-        scoreChange = abs(lv1.score) - abs(lv2.score)
+        #get slope
+        scoreChange = lv1.score - lv2.score
+        previousScoreChange = lv2.score - lv3.score
 
-        #choose next parameters for learned function
-        multiplier = generateGaussianRandom(chooseStdDev(scoreChange, lv1.duration, lv2.duration))
+        #newtons method
+        jacobianApprox = scoreChange/diffVector
+        inverseJacobian = 1/(jacobianApprox)
+        updateJacob = inverseJacobian*lv1.score
 
-        for i in diffVector:
-            gaussDiffVector[i] = diffVector[i]*multiplier
+        #compute time constant TODO
+        timeConstant = 1.5*scheduleDuration
 
-        if scoreChange > 0: #go in direction of whichever score is closer to 0
-            newVector = lv1 + gaussDiffVector
-        else
-            newVector = lv1 - gaussDiffVector
+        #next vector
+        newVector = lv1.vector + (updateJacob)*timeConstant
+
+        #add randomness gaussian style
+        for each in newVector:
+            gauss = random.gauss(0, chooseStdDev(each, scoreChange, prevScoreChange))
+            each += gauss
 
         #create the LearningVector Object
         new = LearningVector()
         new.vector = newVector
 
-        #store it in the database.  when/where do I get ETo?
+        #store it in the database.  #TODO: ETo?
         sqlString = "INSERT INTO learning COLUMNS (deviceID, zoneNumber, ETo) VALUES (%s, %s, %s)" % (new, new, new)
         vectorID = result
 
-        #also the vectors
+        #also store the vectors
         for i in range(0:len(new.vector)):
             sqlString = "INSERT INTO vectors COLUMNS (vectorID, columnNumber, value) VALUES (%s, %s, %s)" % (vectorID, i, new.vector[i - 1])
 
         #populate it and return it
         return new
 
-    def chooseStdDev(scoreDelta, duration1, duration2):
-        #generated std dev from previous scores and durations
-        if scoreDelta < 0:
+    def chooseStdDev(vectorComponentLength, scoreDelta1, scoreDelta2):
+       #choose standard deviation based on the change in score and the length of the component of the difference vector 
+       return 1/10*vectorComponentLength*math.pow(scoreDelta1 - scoreDelta2, 2)
 
-
-
-
-
-    def generateGaussianRandom(float stdDev):
-        #pick a random point from a gaussian with mean 1 and the given standard deviation
-        temp = 0
-        for i in range(0,12):
-            temp += ((2.0 * (float(rand()) / RAND_MAX) - 1.0) * sqrt(stdDev))
-        return temp / 2.0
-
-    def getLastTwoLearningVectors():
+    def getLastXLearningVectors(number):
         conf = DBConfig.DBConfig()
         db = conf.connectToLocalConfigDatabase()
         cursor = db.cursor()
-        sqlString = "SELECT * FROM learning ORDER BY vectorID DESC LIMIT 2" % vector.vectorID
+        sqlString = "SELECT * FROM learning ORDER BY vectorID DESC LIMIT %s" % number
         cursor.execute(sqlString)
-        lastTwo = cursor.fetchall()
+        last = cursor.fetchall()
         cursor.close()
 
-        lv1 = getLearningVector(lastTwo[0][0])
-        lv2 = getLearningVector(lastTwo[1][0])
+        count = 0
+        lastVectors = []
+        while count < number:
+            lastVectors[count] = getLearningVector(last[count][0])
+            count += 1
 
-        return {lv1, lv2}
+        return lastVectors
 
-    def scoreVector(feedback):
+    def scoreVector(feedback, vector):
         print "scoring the vector with feedback"
 
         #scoring function
         summation = 0
-        count = len(feedback)
-        for value in feedback:
-           summation += (1/math.pow(2, count)*abs(value) 
-           count -= 1
-        score = 20 - summation
+        bSummation = 0
+        for each in feedback:
+           summation += math.pow(each.time, 1/2)*abs(each.value) 
+           bSummation += math.pow(each.time, 1/2)
+        score = summation/bSummation
 
         #store in database
         conf = DBConfig.DBConfig()
@@ -153,7 +162,7 @@ def main():
         sqlString = """SELECT * FROM executedIrrigations WHERE vectorID = '%s' ORDER BY startTime ASC""" % vector.vectorID
         cursor.execute(sqlString)
         earliest = cursor.fetchone()
-        sqlString = """SELECT * FROM feedback WHERE created > '%s'""" % earliest[3] #DATETIME
+        sqlString = """SELECT * FROM feedback WHERE deviceID = '%s' AND created > '%s'""" % earlist[1], earliest[3] #DATETIME
         cursor.execute(sqlString)
         feedback = cursor.fetchall()
         cursor.close()
