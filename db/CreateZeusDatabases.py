@@ -4,7 +4,7 @@ import MySQLdb
 import DBConfig
 
 def main():
-	sql = open("zeus.sql").read()
+	sql = open("db/zeus.sql").read()
 	sql = re.split('\n\s*\n', sql)	
 	print len(sql)
 
