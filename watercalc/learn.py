@@ -8,21 +8,23 @@ import MySQLdb
 from db import DBConfig
 
 class LearningVector:
-    def __init__(self, vectorID, deviceID, zoneNumber, ETo, score, feedback, vector):
-        if vectorID:
-            self.vectorID  = vectorID
-        if deviceID:
-            self.deviceID  = deviceID
-        if zoneNumber:
-            self.zoneNumber = zoneNumber
-        if ETo:
-            self.ETo = ETo
-        if score:
-            self.score = score
-        if feedback:
-            self.feedback = feedback
-        if vector:
-            self.vector = vector
+    def __init__(self, vectorID, deviceID, zoneNumber, ETo=0, score=0, feedback=[], vector=[]):
+        self.vectorID  = vectorID
+        self.deviceID  = deviceID
+        self.zoneNumber = zoneNumber
+        self.ETo = ETo
+        self.score = score
+        self.feedback = feedback
+        self.vector = vector
+
+    def printLV(self):
+        print "VectorID: %s" % self.vectorID
+        print "DeviceID: %s" % self.deviceID
+        print "Zone: %s" % self.zoneNumber
+        print "ETo: %s" % self.ETo
+        print "score: %s" % self.score
+        print "feedback: %s" % self.feedback
+        print "vector: %s" % self.vector
 
 def main():
     while(1):
@@ -53,12 +55,11 @@ def main():
                 generateNewSchedule(ETp)
 
 def generateNewSchedule(ETp):
-    print "generate new schedule"
     #given an ET value, generate a schedule.
     #the first question to answer is what time period is this ET value calculated for?
     #let's assume the ET value is just for today.
     #well, we need a function that translates ET into minutes of watering.
-
+    return 0    
 
 def predictCorrectET(ETo, vector):
     #need to decide on the length of the vector and which coefficients are part of the equation
@@ -70,8 +71,6 @@ def predictCorrectET(ETo, vector):
     return correctET
 
 def createNewLearningVector():
-    print "create new learning vector"
-
     #get the last X learning vectors
     last = getLastXLearningVectors(3)
     lv1 = last[0]
@@ -105,12 +104,12 @@ def createNewLearningVector():
     new.vector = newVector
 
     #store it in the database.  #TODO: ETo?
-    sqlString = "INSERT INTO learning COLUMNS (deviceID, zoneNumber, ETo) VALUES (%s, %s, %s)" % (new, new, new)
+    sqlString = "INSERT INTO learning (deviceID, zoneNumber, ETo) VALUES (%s, %s, %s)" % (new, new, new)
     vectorID = result
 
     #also store the vectors
     for i in range(len(new.vector)):
-        sqlString = "INSERT INTO vectors COLUMNS (vectorID, columnNumber, value) VALUES (%s, %s, %s)" % (vectorID, i, new.vector[i - 1])
+        sqlString = "INSERT INTO vectors (vectorID, columnNumber, value) VALUES (%s, %s, %s)" % (vectorID, i, new.vector[i - 1])
 
     #populate it and return it
     return new
@@ -128,41 +127,50 @@ def getLastXLearningVectors(number):
     last = cursor.fetchall()
     cursor.close()
 
+    print last
     count = 0
     lastVectors = []
+    #populate each vector?
     while count < number:
         lastVectors[count] = getLearningVector(last[count][0])
         count += 1
 
     return lastVectors
 
-def scoreVector(feedback, vector):
-    print "scoring the vector with feedback"
+def dateToValue(date):
+    #turn a date into a value to go into the scoring function
+    return 2.0
 
+def scoreVector(feedback, vector):
+    print feedback
+    vector.printLV()
     #scoring function
     summation = 0
     bSummation = 0
     for each in feedback:
-       summation += math.pow(each.time, 1/2)*abs(each.value) 
-       bSummation += math.pow(each.time, 1/2)
+       timeValue = dateToValue(each[1])
+       summation += math.pow(timeValue, 1/2)*abs(each[2]) 
+       bSummation += math.pow(timeValue, 1/2)
     score = summation/bSummation
-
+    print "SCORE:%s" % score
+    print "HELLO: %s" % vector.vectorID
     #store in database
     conf = DBConfig.DBConfig()
     db = conf.connectToLocalConfigDatabase()
     cursor = db.cursor()
-    sqlString = "UPDATE learning SET score = '%s' WHERE vectorID = '%s' """ % (score, vector.vectorID)
-    cursor.execute(sqlString)
+    #WHY ISNT THIS LINE WORKING???
+    cursor.execute("UPDATE learning SET score = (%s) WHERE vectorID = (%s)", (score, vector.vectorID))
+    db.commit()
     cursor.close()
 
 def getFeedbackForLearningVector(vector):
     conf = DBConfig.DBConfig()
     db = conf.connectToLocalConfigDatabase()
     cursor = db.cursor()
-    sqlString = """SELECT * FROM executedIrrigations WHERE vectorID = '%s' ORDER BY startTime ASC""" % vector.vectorID
+    sqlString = """SELECT * FROM queuedIrrigations WHERE vectorID = '%s' ORDER BY startTime ASC""" % vector.vectorID
     cursor.execute(sqlString)
     earliest = cursor.fetchone()
-    sqlString = """SELECT * FROM feedback WHERE deviceID = '%s' AND created > '%s'""" % earlist[1], earliest[3] #DATETIME
+    sqlString = """SELECT * FROM feedback WHERE deviceID = '%s' AND created > '%s'""" % (earliest[1], earliest[2])
     cursor.execute(sqlString)
     feedback = cursor.fetchall()
     cursor.close()
@@ -180,7 +188,7 @@ def getLearningVector(vectorID):
     vectors = cursor.fetchall()
     cursor.close()
 
-    #create the Learning Vector object
+    #create the Learning Vector object (no feedback or vectors yet)
     lv = LearningVector(v[0], v[1], v[2], v[3], v[4])
 
     #assimilate the vectors from the vectors table to create the list of parameters
