@@ -103,7 +103,7 @@ CREATE TABLE IF NOT EXISTS learning (
                             deviceID INTEGER NOT NULL,
                             zoneNumber INTEGER NOT NULL,
                             ETo FLOAT NOT NULL,
-                            score INTEGER NOT NULL,
+                            score FLOAT NOT NULL,
                             created TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
                             );
 
