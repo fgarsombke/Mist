@@ -1,4 +1,4 @@
-import pybrain
+import random
 import sys
 import datetime
 import time
@@ -8,7 +8,7 @@ import MySQLdb
 from db import DBConfig
 
 class LearningVector:
-    def __init__(self, vectorID, deviceID, zoneNumber, ETo=0, score=0, feedback=[], vector=[]):
+    def __init__(self, vectorID=0, deviceID=0, zoneNumber=0, ETo=0, score=0, feedback=[], vector=[]):
         self.vectorID  = vectorID
         self.deviceID  = deviceID
         self.zoneNumber = zoneNumber
@@ -79,20 +79,23 @@ def createNewLearningVector():
 
     #~~~NEWTON'S METHOD~~~
     diffVector = np.subtract(lv1.vector, lv2.vector)
-
+    print diffVector
     #get slope of score
     scoreChange = lv1.score - lv2.score
-    previousScoreChange = lv2.score - lv3.score
+    prevScoreChange = lv2.score - lv3.score
+    
     #jacobian
     jacobianApprox = scoreChange/diffVector
     inverseJacobian = 1/(jacobianApprox)
     updateJacob = inverseJacobian*lv1.score
 
     #compute time constant TODO
+    scheduleDuration = 5
     timeConstant = 1.5*scheduleDuration
 
     #next vector
     newVector = lv1.vector + (updateJacob)*timeConstant
+    print newVector
 
     #add randomness to each part of the vector gaussian style
     for each in newVector:
@@ -104,13 +107,23 @@ def createNewLearningVector():
     new.vector = newVector
 
     #store it in the database.  #TODO: ETo?
-    sqlString = "INSERT INTO learning (deviceID, zoneNumber, ETo) VALUES (%s, %s, %s)" % (new, new, new)
+    conf = DBConfig.DBConfig()
+    db = conf.connectToLocalConfigDatabase()
+    cursor = db.cursor()
+    sqlString = "INSERT INTO learning (deviceID, zoneNumber, ETo) VALUES (%s, %s, %s)" % (lv1.deviceID, lv1.zoneNumber, 6.0)
+    cursor.execute(sqlString)
+    result = cursor.lastrowid
+    db.commit()
     vectorID = result
 
     #also store the vectors
+    print len(new.vector)
+    print new.vector
     for i in range(len(new.vector)):
+        print i
         sqlString = "INSERT INTO vectors (vectorID, columnNumber, value) VALUES (%s, %s, %s)" % (vectorID, i, new.vector[i - 1])
-
+        cursor.execute(sqlString)
+    db.commit()
     #populate it and return it
     return new
 
@@ -132,7 +145,10 @@ def getLastXLearningVectors(number):
     lastVectors = []
     #populate each vector?
     while count < number:
-        lastVectors[count] = getLearningVector(last[count][0])
+        vector = last[count]
+        lastVectors.append(getLearningVector(vector[0]))
+        print "~~~VECTOR %s~~~" % count
+        lastVectors[count].printLV()
         count += 1
 
     return lastVectors
