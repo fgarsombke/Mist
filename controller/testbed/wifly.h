@@ -1,8 +1,9 @@
 void WiFly_Init(void);
-int WiFly_Send_Cmd(char *, char *);
-int WiFly_Send(char *, char *) ;
+long WiFly_Send_Cmd(char *, char *);
+long WiFly_Send(char *, char *) ;
 void WiFly_Flush(void);
 unsigned long WiFly_Time(void);
-int UART_Match(char *);
+void WiFly_Open(void); 
+long UART_Match(char *);
 void UART_Send(const unsigned char *, unsigned long);
 

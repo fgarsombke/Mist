@@ -5,15 +5,13 @@
 #include "driverlib/debug.h"
 #include "driverlib/gpio.h"
 #include "driverlib/interrupt.h"
+#include "drivers/rit128x96x4.h"
 #include "driverlib/sysctl.h"
 #include "driverlib/uart.h"
 #include "fifo.h"
 #include "string.h"
 #include "stdlib.h"
 #include "wifly.h"
-
-#include "drivers/rit128x96x4.h"
-#include "rgb_led.h"
 
 #define TRUE        1
 #define FALSE       0
@@ -22,12 +20,12 @@
 
 #define MAX_ATTEMPTS 5
 
-#define FIFOSIZE   64       
+#define FIFOSIZE    8192      
 #define FIFOSUCCESS 1       
 #define FIFOFAIL    0         
 AddIndexFifo(Rx, FIFOSIZE, char, FIFOSUCCESS, FIFOFAIL)
 
-// The UART interrupt handler.
+// The UART longerrupt handler.
 void UARTIntHandler(void) {
     unsigned long ulStatus;
     ulStatus = UARTIntStatus(UART0_BASE, true);
@@ -39,7 +37,7 @@ void UARTIntHandler(void) {
 }
 
 void WiFly_Init(void) {
-    SysCtlClockSet(SYSCTL_SYSDIV_1 | SYSCTL_USE_OSC | SYSCTL_OSC_MAIN | SYSCTL_XTAL_8MHZ);
+    SysCtlClockSet(SYSCTL_SYSDIV_4 | SYSCTL_USE_PLL | SYSCTL_OSC_MAIN | SYSCTL_XTAL_8MHZ);
     // enable UART0 on PORTA
     SysCtlPeripheralEnable(SYSCTL_PERIPH_UART0);
     SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);
@@ -61,9 +59,9 @@ void WiFly_Init(void) {
 
 // Function sends a command to the module and checks
 // for an expectend response
-int WiFly_Send_Cmd(char * cmd, char * resp) {
-  int status;
-  int cmd_status = FAILURE;
+long WiFly_Send_Cmd(char * cmd, char * resp) {
+  long status;
+  long cmd_status = FAILURE;
 
   WiFly_Flush();
   
@@ -77,9 +75,9 @@ int WiFly_Send_Cmd(char * cmd, char * resp) {
 
 // Sends a string via UART to the module and will
 // timeout after MAX_ATTEMPTS tries
-int WiFly_Send(char * send, char * resp) {
-  int status = SUCCESS;
-  int attempts = 0;
+long WiFly_Send(char * send, char * resp) {
+  long status = SUCCESS;
+  long attempts = 0;
   while(attempts < MAX_ATTEMPTS) {
     SysCtlDelay(SysCtlClockGet()/12);
     UART_Send((unsigned char*)send, strlen(send));
@@ -107,52 +105,61 @@ void WiFly_Flush(void) {
 // Issues occur when NIST server harcoded
 // to the module becomes unavailable
 unsigned long WiFly_Time(void) {
-  int i, status;
+  long i, status;
   char time[11];
+  WiFly_Flush();
   status = WiFly_Send("$$$", "CMD");
   if(status) { 
     status = WiFly_Send("show t t\r", "RTC=");
     if(!status) {
+      WiFly_Send("exit\r", "EXIT");
       return 0;
     }
-  } else {return 0;}
-  
+  } else {
+      WiFly_Send("exit\r", "EXIT");
+      return 0;
+  }
   for(i = 0; i < 10; i++) {
     RxFifo_Get(&time[i]);
   } time[10] = 0x0;
-
-  return strtol(time, NULL, 11);
+  //RIT128x96x4StringDraw(time, 0, 0, 15);
+  
+  WiFly_Send("exit\r", "EXIT");
+  
+  return strtoul(time, NULL, 0);
 }
 
-// // Function used to get a new NIST time server
-// int WiFly_NIST() {
-//   int status;
-//   int i = 0;
-//   char ip[16] = "000.000.000.000";
-//   status=WiFly_Send_Cmd("lookup ime.nist.gov\r", "ime.nist.gov=");
-//   if(status) {
-//     do {
-//       char c;
-//       Rx_Fifo_Get(&c);
-//       ip[i] = c; 
-//       i++;
-//     } while(c != '\n');
-//     ip[i] = 0x0;
-//     // need some string concatonation here
-//     //status = WiFly_Send_Cmd("time addr\r", "ime.nist.gov=");
-//   }
-//   return status;
-// }
+void WiFly_Open(void) {
+  unsigned long i = 0;
+  char resp[4096];
+  long status;
+  WiFly_Flush();
+  status = WiFly_Send("$$$", "CMD");
+  if(status) { 
+    status = WiFly_Send("open\r", NULL);
+    if(!status) {
+      WiFly_Send("exit\r", "EXIT");
+      return;
+    }
+  } else {
+    WiFly_Send("exit\r", "EXIT");
+    return;
+  }
   
-
+  SysCtlDelay(SysCtlClockGet()*3);
+  while(RxFifo_Get(&resp[i++]));
+  resp[i] = NULL;
+  return;
+}
+  
 // Searchs for a desired string by reading
 // through the recieved characters. This will remove
 // items from the buffer.
-int UART_Match(char * match) {
+long UART_Match(char * match) {
   char c; 
-  int idx = 0;
-  int m_len = strlen(match);
-  int fifo_status = FIFOSUCCESS;
+  long idx = 0;
+  long m_len = strlen(match);
+  long fifo_status = FIFOSUCCESS;
   while((m_len != idx) && (fifo_status == FIFOSUCCESS)) {
     fifo_status = RxFifo_Get(&c);
     if(c == match[idx]) {
