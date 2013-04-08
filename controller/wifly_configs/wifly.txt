@@ -1,0 +1,15 @@
+$$$
+set wlan ssid <ssid>
+set wlan phrase <password>
+set time addr 96.226.123.157
+set time port 123
+set time enable 1
+set time zone <time zone>
+set ip proto 18
+set dns name www.quattrotap.com:8080
+set ip address 0
+set ip remote 8080
+set com remote GET$/api/schedule?deviceID=1
+set sys printlvl 0
+save
+reboot
