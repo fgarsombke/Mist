@@ -20,7 +20,7 @@
 
 #define MAX_ATTEMPTS 5
 
-#define FIFOSIZE    2048       
+#define FIFOSIZE    8192      
 #define FIFOSUCCESS 1       
 #define FIFOFAIL    0         
 AddIndexFifo(Rx, FIFOSIZE, char, FIFOSUCCESS, FIFOFAIL)
@@ -37,7 +37,7 @@ void UARTIntHandler(void) {
 }
 
 void WiFly_Init(void) {
-    SysCtlClockSet(SYSCTL_SYSDIV_1 | SYSCTL_USE_OSC | SYSCTL_OSC_MAIN | SYSCTL_XTAL_8MHZ);
+    SysCtlClockSet(SYSCTL_SYSDIV_4 | SYSCTL_USE_PLL | SYSCTL_OSC_MAIN | SYSCTL_XTAL_8MHZ);
     // enable UART0 on PORTA
     SysCtlPeripheralEnable(SYSCTL_PERIPH_UART0);
     SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);
@@ -107,6 +107,7 @@ void WiFly_Flush(void) {
 unsigned long WiFly_Time(void) {
   long i, status;
   char time[11];
+  WiFly_Flush();
   status = WiFly_Send("$$$", "CMD");
   if(status) { 
     status = WiFly_Send("show t t\r", "RTC=");
@@ -121,18 +122,18 @@ unsigned long WiFly_Time(void) {
   for(i = 0; i < 10; i++) {
     RxFifo_Get(&time[i]);
   } time[10] = 0x0;
-  RIT128x96x4StringDraw(time, 0, 0, 15);
+  //RIT128x96x4StringDraw(time, 0, 0, 15);
   
   WiFly_Send("exit\r", "EXIT");
   
   return strtoul(time, NULL, 0);
 }
 
-void WiFly_Open(char * resp, unsigned long size) {
-  size_t index = 0;
-  char c = NULL;
+void WiFly_Open(void) {
+  unsigned long i = 0;
+  char resp[4096];
   long status;
-  
+  WiFly_Flush();
   status = WiFly_Send("$$$", "CMD");
   if(status) { 
     status = WiFly_Send("open\r", NULL);
@@ -144,10 +145,11 @@ void WiFly_Open(char * resp, unsigned long size) {
     WiFly_Send("exit\r", "EXIT");
     return;
   }
-  while(RxFifo_Get(&c) && (index < (size-1))) {
-    resp[index++] = c;
-  } 
-  resp[index] = NULL;
+  
+  SysCtlDelay(SysCtlClockGet()*3);
+  while(RxFifo_Get(&resp[i++]));
+  resp[i] = NULL;
+  return;
 }
   
 // Searchs for a desired string by reading
