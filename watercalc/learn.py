@@ -8,14 +8,14 @@ import MySQLdb
 from db import DBConfig
 
 class LearningVector:
-    def __init__(self, vectorID=0, deviceID=0, zoneNumber=0, ETo=0, score=0, feedback=[], vector=[]):
+    def __init__(self, vectorID=0, deviceID=0, zoneNumber=0, ETo=0, score=0, feedback=[], vector=[]): #the default array values don't work b/c of how python figures these out at run time and only does so once....
         self.vectorID  = vectorID
         self.deviceID  = deviceID
         self.zoneNumber = zoneNumber
         self.ETo = ETo
         self.score = score
-        self.feedback = feedback
-        self.vector = vector
+        self.feedback = [] 
+        self.vector = []
 
     def printLV(self):
         print "VectorID: %s" % self.vectorID
@@ -80,14 +80,22 @@ def createNewLearningVector():
     #~~~NEWTON'S METHOD~~~
     diffVector = np.subtract(lv1.vector, lv2.vector)
     print diffVector
+    #diff vector is currently 0's
+
     #get slope of score
     scoreChange = lv1.score - lv2.score
     prevScoreChange = lv2.score - lv3.score
-    
+    print scoreChange
+    print prevScoreChange
+
     #jacobian
+    #scoreChange is 0 so the next two lines cause a divide by zero error!!!!! Almost fixed.  Data problem.
     jacobianApprox = scoreChange/diffVector
+    print jacobianApprox
     inverseJacobian = 1/(jacobianApprox)
+    print inverseJacobian
     updateJacob = inverseJacobian*lv1.score
+    print updateJacob
 
     #compute time constant TODO
     scheduleDuration = 5
@@ -95,12 +103,13 @@ def createNewLearningVector():
 
     #next vector
     newVector = lv1.vector + (updateJacob)*timeConstant
-    print newVector
 
     #add randomness to each part of the vector gaussian style
     for each in newVector:
         gauss = random.gauss(0, chooseStdDev(each, scoreChange, prevScoreChange))
         each += gauss
+
+    #the guess for the next set of parameters.  print it
 
     #create the LearningVector Object
     new = LearningVector()
@@ -117,13 +126,12 @@ def createNewLearningVector():
     vectorID = result
 
     #also store the vectors
-    print len(new.vector)
-    print new.vector
     for i in range(len(new.vector)):
-        print i
         sqlString = "INSERT INTO vectors (vectorID, columnNumber, value) VALUES (%s, %s, %s)" % (vectorID, i, new.vector[i - 1])
         cursor.execute(sqlString)
+
     db.commit()
+
     #populate it and return it
     return new
 
@@ -139,16 +147,14 @@ def getLastXLearningVectors(number):
     cursor.execute(sqlString)
     last = cursor.fetchall()
     cursor.close()
-
-    print last
+    
     count = 0
     lastVectors = []
     #populate each vector?
     while count < number:
         vector = last[count]
-        lastVectors.append(getLearningVector(vector[0]))
-        print "~~~VECTOR %s~~~" % count
-        lastVectors[count].printLV()
+        vID = vector[0]
+        lastVectors.append(getLearningVector(vID))
         count += 1
 
     return lastVectors
@@ -158,7 +164,6 @@ def dateToValue(date):
     return 2.0
 
 def scoreVector(feedback, vector):
-    print feedback
     vector.printLV()
     #scoring function
     summation = 0
@@ -168,8 +173,6 @@ def scoreVector(feedback, vector):
        summation += math.pow(timeValue, 1/2)*abs(each[2]) 
        bSummation += math.pow(timeValue, 1/2)
     score = summation/bSummation
-    print "SCORE:%s" % score
-    print "HELLO: %s" % vector.vectorID
     #store in database
     conf = DBConfig.DBConfig()
     db = conf.connectToLocalConfigDatabase()
@@ -205,11 +208,15 @@ def getLearningVector(vectorID):
     cursor.close()
 
     #create the Learning Vector object (no feedback or vectors yet)
+    print v
     lv = LearningVector(v[0], v[1], v[2], v[3], v[4])
-
+    
+    # WHY IS THIS lv VECTOR POPULATED WITH a vector with vector ID = 1?? initially 
+    lv.printLV()
     #assimilate the vectors from the vectors table to create the list of parameters
     for vector in vectors:
         lv.vector.append(vector[2])
+    lv.printLV()
     return lv
 
 def getMostRecentIrrigationEventForDevice(deviceID):
