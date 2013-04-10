@@ -27,32 +27,46 @@ class LearningVector:
         print "vector: %s" % self.vector
 
 def main():
-    while(1):
-        #if certain amount of feedback gotten 
-        if(1):
-            #check the most recently executed irrigation for a given deviceID.
-            event = getMostRecentIrrigationEventForDevice(1)
-            if event:
-                identifier = event[0]
-                #grab the learning vector for that irrigation event
-                vector = getLearningVector(identifier)
+    #if certain amount of feedback gotten 
+    if(1):
+        #check the most recently executed irrigation for a given deviceID.
+        event = getMostRecentIrrigationEventForDevice(1)
+        if event:
+            print "Got learningID for most recent irrigation event for device: %s" % str(1)
+            identifier = event[5]
+            print identifier
+            #grab the learning vector for that irrigation event
+            vector = getLearningVector(identifier)
+            print "Got learning vector for ID: %s" % vector
 
-                #assimilate all feedback that has happened since the creation of that learning vector (or since downloading of the schedule directly attributed to that vector?)
-                feedback = getFeedbackForLearningVector(vector)
+            #assimilate all feedback that has happened since the creation of that learning vector (or since downloading of the schedule directly attributed to that vector?)
+            feedback = getFeedbackForLearningVector(vector)
+            print "Got feedback: %s" % str(feedback)
 
-                #score the learning vector... and store it in the database.
-                scoreVector(feedback, vector)
+            #score the learning vector... and store it in the database.
+            scoreVector(feedback, vector)
+            print "scored the vector based on feedback"
 
-                #create a new learning vetctor... pick new parameters via hill climbing
-                #store in database
-                newVector = createNewLearningVector()
+            #create a new learning vetctor... pick new parameters via hill climbing
+            #store in database
+            newVector = createNewLearningVector()
+            print "now generating the new vector"
 
-                #predict the new ET prime
-                ETp = predictCorrectET(newVector)
+            ETo = getETo()
+            print "got ETo for this vector"
 
-                #generate a new schedule for the device
-                #and store it in the database
-                generateNewSchedule(ETp)
+            #predict the new ET prime
+            ETp = predictCorrectET(ETo, newVector)
+            print "predicted the corrent ET based on learned function"
+
+            #generate a new schedule for the device
+            #and store it in the database
+            generateNewSchedule(ETp)
+            print "generated schedule"
+
+def getETo(deviceID):
+    #TODO get ETo for this device
+    return 2
 
 def generateNewSchedule(ETp):
     #given an ET value, generate a schedule.
@@ -65,7 +79,7 @@ def predictCorrectET(ETo, vector):
     #need to decide on the length of the vector and which coefficients are part of the equation
     correctET = 0
     count = 0
-    for each in vector:
+    for each in vector.vector:
         correctET += math.pow(ETo, count)*each
         count += 1
     return correctET
@@ -79,27 +93,21 @@ def createNewLearningVector():
 
     #~~~NEWTON'S METHOD~~~
     diffVector = np.subtract(lv1.vector, lv2.vector)
-    print diffVector
-    #diff vector is currently 0's
+    #Have to make sure diff vector is not zero DATA PROBLEM
 
     #get slope of score
     scoreChange = lv1.score - lv2.score
     prevScoreChange = lv2.score - lv3.score
-    print scoreChange
-    print prevScoreChange
 
     #jacobian
-    #scoreChange is 0 so the next two lines cause a divide by zero error!!!!! Almost fixed.  Data problem.
+    #have to make sure score change is not zero DATA PROBLEM
     jacobianApprox = scoreChange/diffVector
-    print jacobianApprox
     inverseJacobian = 1/(jacobianApprox)
-    print inverseJacobian
     updateJacob = inverseJacobian*lv1.score
-    print updateJacob
 
     #compute time constant TODO
-    scheduleDuration = 5
-    timeConstant = 1.5*scheduleDuration
+    scheduleDuration = .7
+    timeConstant = 1.3*scheduleDuration
 
     #next vector
     newVector = lv1.vector + (updateJacob)*timeConstant
@@ -109,25 +117,26 @@ def createNewLearningVector():
         gauss = random.gauss(0, chooseStdDev(each, scoreChange, prevScoreChange))
         each += gauss
 
-    #the guess for the next set of parameters.  print it
-
     #create the LearningVector Object
     new = LearningVector()
     new.vector = newVector
 
-    #store it in the database.  #TODO: ETo?
+    #store it in the database.
+    new.ETo = getETo(lv1.deviceID)
+    new.deviceID = lv1.deviceID
+    new.zoneNumber = lv1.zoneNumber
+
     conf = DBConfig.DBConfig()
     db = conf.connectToLocalConfigDatabase()
     cursor = db.cursor()
-    sqlString = "INSERT INTO learning (deviceID, zoneNumber, ETo) VALUES (%s, %s, %s)" % (lv1.deviceID, lv1.zoneNumber, 6.0)
+    sqlString = "INSERT INTO learning (deviceID, zoneNumber, ETo) VALUES (%s, %s, %s)" % (new.deviceID, new.zoneNumber, new.ETo)
     cursor.execute(sqlString)
-    result = cursor.lastrowid
+    new.vectorID = cursor.lastrowid
     db.commit()
-    vectorID = result
 
     #also store the vectors
     for i in range(len(new.vector)):
-        sqlString = "INSERT INTO vectors (vectorID, columnNumber, value) VALUES (%s, %s, %s)" % (vectorID, i, new.vector[i - 1])
+        sqlString = "INSERT INTO vectors (vectorID, columnNumber, value) VALUES (%s, %s, %s)" % (new.vectorID, i, new.vector[i - 1])
         cursor.execute(sqlString)
 
     db.commit()
@@ -143,6 +152,7 @@ def getLastXLearningVectors(number):
     conf = DBConfig.DBConfig()
     db = conf.connectToLocalConfigDatabase()
     cursor = db.cursor()
+    #NEED TO INCLUDE deviceID in this query....
     sqlString = "SELECT * FROM learning ORDER BY vectorID DESC LIMIT %s" % number
     cursor.execute(sqlString)
     last = cursor.fetchall()
@@ -164,7 +174,7 @@ def dateToValue(date):
     return 2.0
 
 def scoreVector(feedback, vector):
-    vector.printLV()
+    #vector.printLV()
     #scoring function
     summation = 0
     bSummation = 0
@@ -208,15 +218,14 @@ def getLearningVector(vectorID):
     cursor.close()
 
     #create the Learning Vector object (no feedback or vectors yet)
-    print v
     lv = LearningVector(v[0], v[1], v[2], v[3], v[4])
     
     # WHY IS THIS lv VECTOR POPULATED WITH a vector with vector ID = 1?? initially 
-    lv.printLV()
+    #lv.printLV()
     #assimilate the vectors from the vectors table to create the list of parameters
     for vector in vectors:
         lv.vector.append(vector[2])
-    lv.printLV()
+    #lv.printLV()
     return lv
 
 def getMostRecentIrrigationEventForDevice(deviceID):
