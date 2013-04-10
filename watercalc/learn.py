@@ -6,6 +6,7 @@ import math
 import numpy as np
 import MySQLdb
 from db import DBConfig
+import DailyET
 
 class LearningVector:
     def __init__(self, vectorID=0, deviceID=0, zoneNumber=0, ETo=0, score=0, feedback=[], vector=[]):
@@ -65,6 +66,9 @@ def main():
 
 def getETo(deviceID):
     #TODO get ETo for this device
+    #Make ETo code modular and use that
+    value = DailyET.computeEToForStation('KAUS')
+    print value
     return 2
 
 def generateNewSchedule(ETp):
