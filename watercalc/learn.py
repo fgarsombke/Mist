@@ -8,7 +8,7 @@ import MySQLdb
 from db import DBConfig
 
 class LearningVector:
-    def __init__(self, vectorID=0, deviceID=0, zoneNumber=0, ETo=0, score=0, feedback=[], vector=[]): #the default array values don't work b/c of how python figures these out at run time and only does so once....
+    def __init__(self, vectorID=0, deviceID=0, zoneNumber=0, ETo=0, score=0, feedback=[], vector=[]):
         self.vectorID  = vectorID
         self.deviceID  = deviceID
         self.zoneNumber = zoneNumber
@@ -92,14 +92,14 @@ def createNewLearningVector():
 
     #~~~NEWTON'S METHOD~~~
     diffVector = np.subtract(lv1.vector, lv2.vector)
-    #Have to make sure diff vector is not zero DATA PROBLEM
+    #TODO: HOW DO YOU HANDLE A DIFF VECTOR WITH ZERO CHANGE?
 
     #get slope of score
     scoreChange = lv1.score - lv2.score
     prevScoreChange = lv2.score - lv3.score
 
     #jacobian
-    #have to make sure score change is not zero DATA PROBLEM
+    #TODO: HOW DO YOU HANDLE A SCORE CHANGE OF ZERO??
     jacobianApprox = scoreChange/diffVector
     inverseJacobian = 1.0/(jacobianApprox)
     updateJacob = inverseJacobian*lv1.score
@@ -122,28 +122,27 @@ def createNewLearningVector():
     #create the LearningVector Object
     new = LearningVector()
     new.vector = newVector
-
-    #store it in the database.
     new.ETo = getETo(lv1.deviceID)
     new.deviceID = lv1.deviceID
     new.zoneNumber = lv1.zoneNumber
 
+    #store in database
     conf = DBConfig.DBConfig()
     db = conf.connectToLocalConfigDatabase()
     cursor = db.cursor()
     sqlString = "INSERT INTO learning (deviceID, zoneNumber, ETo) VALUES (%s, %s, %s)" % (new.deviceID, new.zoneNumber, new.ETo)
     cursor.execute(sqlString)
+    #get the ID
     new.vectorID = cursor.lastrowid
     db.commit()
 
-    #also store the vectors
+    #now store the vector in vectors table
     for i in range(len(new.vector)):
         sqlString = "INSERT INTO vectors (vectorID, columnNumber, value) VALUES (%s, %s, %s)" % (new.vectorID, i, new.vector[i - 1])
         cursor.execute(sqlString)
-
     db.commit()
 
-    #populate it and return it
+    #Return the vector
     return new
 
 def chooseStdDev(vectorComponentLength, scoreDelta1, scoreDelta2):
@@ -154,7 +153,7 @@ def getLastXLearningVectors(number):
     conf = DBConfig.DBConfig()
     db = conf.connectToLocalConfigDatabase()
     cursor = db.cursor()
-    #NEED TO INCLUDE deviceID in this query....
+    #TODO: NEED TO INCLUDE deviceID in this query....
     sqlString = "SELECT * FROM learning ORDER BY vectorID DESC LIMIT %s" % number
     cursor.execute(sqlString)
     last = cursor.fetchall()
@@ -162,7 +161,8 @@ def getLastXLearningVectors(number):
 
     count = 0
     lastVectors = []
-    #populate each vector?
+
+    #populate each learning vector
     while count < number:
         vector = last[count]
         vID = vector[0]
@@ -185,14 +185,14 @@ def scoreVector(feedback, vector):
        summation += math.pow(timeValue, 1/2)*abs(each[2]) 
        bSummation += math.pow(timeValue, 1/2)
     score = summation/bSummation
-    #store in database
+
+    #store score in database
     conf = DBConfig.DBConfig()
     db = conf.connectToLocalConfigDatabase()
     cursor = db.cursor()
-    #WHY ISNT THIS LINE WORKING???
     cursor.execute("UPDATE learning SET score = (%s) WHERE vectorID = (%s)", (score, vector.vectorID))
-    db.commit()
     cursor.close()
+    db.commit()
     return score
 
 def getFeedbackForLearningVector(vector):
@@ -222,10 +222,9 @@ def getLearningVector(vectorID):
 
     #create the Learning Vector object (no feedback or vectors yet)
     lv = LearningVector(v[0], v[1], v[2], v[3], v[4])
-    
-    # WHY IS THIS lv VECTOR POPULATED WITH a vector with vector ID = 1?? initially 
+
     #lv.printLV()
-    #assimilate the vectors from the vectors table to create the list of parameters
+    #assimilate the parameter vector from the vectors table
     for vector in vectors:
         lv.vector.append(vector[2])
     #lv.printLV()
