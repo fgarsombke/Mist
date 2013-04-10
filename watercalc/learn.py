@@ -14,7 +14,7 @@ class LearningVector:
         self.zoneNumber = zoneNumber
         self.ETo = ETo
         self.score = score
-        self.feedback = [] 
+        self.feedback = []
         self.vector = []
 
     def printLV(self):
@@ -22,9 +22,9 @@ class LearningVector:
         print "DeviceID: %s" % self.deviceID
         print "Zone: %s" % self.zoneNumber
         print "ETo: %s" % self.ETo
-        print "score: %s" % self.score
-        print "feedback: %s" % self.feedback
-        print "vector: %s" % self.vector
+        print "Score: %s" % self.score
+        print "Feedback: %s" % self.feedback
+        print "Vector: %s" % self.vector
 
 def main():
     #if certain amount of feedback gotten 
@@ -32,37 +32,36 @@ def main():
         #check the most recently executed irrigation for a given deviceID.
         event = getMostRecentIrrigationEventForDevice(1)
         if event:
-            print "Got learningID for most recent irrigation event for device: %s" % str(1)
             identifier = event[5]
-            print identifier
+            print "LearningID: %s (For most recent irrigation event for DeviceID: %s)" % (identifier, str(1))
+
             #grab the learning vector for that irrigation event
             vector = getLearningVector(identifier)
-            print "Got learning vector for ID: %s" % vector
+            print "~~Learning Vector~~"
+            vector.printLV()
 
-            #assimilate all feedback that has happened since the creation of that learning vector (or since downloading of the schedule directly attributed to that vector?)
+            #assimilate all feedback since the creation of that learning vector (or since downloading of the schedule directly attributed to that vector?)
             feedback = getFeedbackForLearningVector(vector)
-            print "Got feedback: %s" % str(feedback)
+            print "Feedback: %s" % str(feedback)
 
             #score the learning vector... and store it in the database.
-            scoreVector(feedback, vector)
-            print "scored the vector based on feedback"
+            score = scoreVector(feedback, vector)
+            print "Vector Score: %s" % score
 
             #create a new learning vetctor... pick new parameters via hill climbing
             #store in database
             newVector = createNewLearningVector()
-            print "now generating the new vector"
-
-            ETo = getETo()
-            print "got ETo for this vector"
+            print "~~New Generated Vector~~"
+            newVector.printLV()
 
             #predict the new ET prime
-            ETp = predictCorrectET(ETo, newVector)
-            print "predicted the corrent ET based on learned function"
+            ETp = predictCorrectET(newVector)
+            print "Computed ETprime: %s" % ETp
 
             #generate a new schedule for the device
             #and store it in the database
             generateNewSchedule(ETp)
-            print "generated schedule"
+            print "Generated Schedule"
 
 def getETo(deviceID):
     #TODO get ETo for this device
@@ -75,12 +74,12 @@ def generateNewSchedule(ETp):
     #well, we need a function that translates ET into minutes of watering.
     return 0    
 
-def predictCorrectET(ETo, vector):
+def predictCorrectET(vector):
     #need to decide on the length of the vector and which coefficients are part of the equation
     correctET = 0
     count = 0
     for each in vector.vector:
-        correctET += math.pow(ETo, count)*each
+        correctET += math.pow(vector.ETo, count)*each
         count += 1
     return correctET
 
@@ -102,7 +101,7 @@ def createNewLearningVector():
     #jacobian
     #have to make sure score change is not zero DATA PROBLEM
     jacobianApprox = scoreChange/diffVector
-    inverseJacobian = 1/(jacobianApprox)
+    inverseJacobian = 1.0/(jacobianApprox)
     updateJacob = inverseJacobian*lv1.score
 
     #compute time constant TODO
@@ -113,9 +112,12 @@ def createNewLearningVector():
     newVector = lv1.vector + (updateJacob)*timeConstant
 
     #add randomness to each part of the vector gaussian style
+    gaussArray = []
     for each in newVector:
-        gauss = random.gauss(0, chooseStdDev(each, scoreChange, prevScoreChange))
-        each += gauss
+        stdDev = chooseStdDev(each, scoreChange, prevScoreChange)
+        gauss = random.gauss(0, stdDev)
+        gaussArray.append(gauss)
+    newVector = np.add(newVector, gaussArray)
 
     #create the LearningVector Object
     new = LearningVector()
@@ -146,7 +148,7 @@ def createNewLearningVector():
 
 def chooseStdDev(vectorComponentLength, scoreDelta1, scoreDelta2):
    #choose standard deviation based on the change in score and the length of the component of the difference vector 
-   return 1/10*vectorComponentLength*math.pow(scoreDelta1 - scoreDelta2, 2)
+   return (1.0/10.0)*vectorComponentLength*math.pow(scoreDelta1 - scoreDelta2, 2)
 
 def getLastXLearningVectors(number):
     conf = DBConfig.DBConfig()
@@ -157,7 +159,7 @@ def getLastXLearningVectors(number):
     cursor.execute(sqlString)
     last = cursor.fetchall()
     cursor.close()
-    
+
     count = 0
     lastVectors = []
     #populate each vector?
@@ -191,6 +193,7 @@ def scoreVector(feedback, vector):
     cursor.execute("UPDATE learning SET score = (%s) WHERE vectorID = (%s)", (score, vector.vectorID))
     db.commit()
     cursor.close()
+    return score
 
 def getFeedbackForLearningVector(vector):
     conf = DBConfig.DBConfig()
