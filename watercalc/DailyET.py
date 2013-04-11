@@ -33,7 +33,7 @@ def computeEToForStation(station):
 
     #iterate through the last 24 hours of weather readings
     if len(results) > 12:               
-        # average each of the last 12 readings
+        #average each of the last 12 readings
         for result in results:
             #verify that all results exist (NOT NULL)
             if result[2] is not None:
@@ -59,7 +59,7 @@ def computeEToForStation(station):
             if result[6] is not None:
                 windCount += 1
                 avgDailyWind += result[6]
-    
+
         #compute averages and then ET (only if we have enough data)
         if humidCount != 0 and tempCount != 0 and pressureCount != 0 and dewCount != 0 and windCount != 0:  
             avgDailyTemp = avgDailyTemp / tempCount
@@ -68,14 +68,16 @@ def computeEToForStation(station):
             avgDailyPressure = avgDailyPressure / pressureCount
             avgDailyDew = avgDailyDew / dewCount
             isoTime = results[len(results) - 1][8] #Most recent time reading
-    
+
             #function that computes the ET from the information in the METAR report
-            ETresults = computeDailyETo(avgDailyTemp, maxTemp, minTemp, avgDailyWind, avgDailyHumidity, avgDailyPressure, avgDailyDew, isoTime, 30.183, 172) #latitude and altitude for ATX KAUS
+            #latitude and altitude for ATX KAUS
+            ETresults = ComputeET.computeDailyETo(avgDailyTemp, maxTemp, minTemp, avgDailyWind, avgDailyHumidity, avgDailyPressure, avgDailyDew, isoTime, 30.183, 172) 
+            ETresults.append(isoTime)
             return ETresults
         else:
-            return -1
+            return (-1, 0)
     else:
-        return -1
+        return (-1, 0)
 
 def main():
     #get list of all weather stations zeus database
@@ -87,10 +89,10 @@ def main():
 
     #for each weather station 24 hours to compute the Daily ETo, then store in DailyETo database
     for station in stations:
-        ETresults = computeETForStation(station)    
-        if ETresults > 0:
+        ETresults = computeEToForStation(station)    
+        if ETresults[0] > 0:
             cursor = db.cursor()
-            cursor.execute("INSERT INTO dailyETo (climateStationID, ETo, dayOfYear, date) VALUES (%s, %s, %s, %s)", (station[0], ETresults[0], ETresults[1], isoTime))
+            cursor.execute("INSERT INTO dailyETo (climateStationID, ETo, dayOfYear, date) VALUES (%s, %s, %s, %s)", (station[0], ETresults[0], ETresults[1], ETresults[2]))
             cursor.close()  
             db.commit()
         else:
