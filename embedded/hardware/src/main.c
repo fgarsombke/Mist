@@ -17,7 +17,6 @@ void __error__(char *pcFilename, unsigned long ulLine){}
 #endif
 
 int main(void){
-    volatile unsigned long time;
     RIT128x96x4Init(1000000);
     RIT128x96x4Clear();
     WiFly_Init();
