@@ -28,55 +28,75 @@ class LearningVector:
         print "Vector: %s" % self.vector
 
 def main():
-    #if certain amount of feedback gotten 
-    if(1):
-        #check the most recently executed irrigation for a given deviceID.
-        event = getMostRecentIrrigationEventForDevice(1)
-        if event:
-            identifier = event[5]
-            print "LearningID: %s (For most recent irrigation event for DeviceID: %s)" % (identifier, str(1))
+    deviceID = 1
+    zone = 1
+    numIterations = getNumIterations(deviceID)
 
-            #grab the learning vector for that irrigation event
-            vector = getLearningVector(identifier)
-            print "~~Learning Vector~~"
-            vector.printLV()
+    if numIterations > 0:
+        event = getMostRecentIrrigationEventForDevice(deviceID)
+        identifier = event[5]
+        print "LearningID: %s (For most recent irrigation event for DeviceID: %s)" % (identifier, deviceID)
 
-            #assimilate all feedback since the creation of that learning vector (or since downloading of the schedule directly attributed to that vector?)
-            feedback = getFeedbackForLearningVector(vector)
-            print "Feedback: %s" % str(feedback)
+        #check how many iterations we've done. 
 
-            #score the learning vector... and store it in the database.
-            score = scoreVector(feedback, vector)
-            print "Vector Score: %s" % score
+        #grab the learning vector for that irrigation event
+        vector = getLearningVector(identifier)
+        print "~~Learning Vector~~"
+        vector.printLV()
 
-            #create a new learning vetctor... pick new parameters via hill climbing
-            #store in database
-            newVector = createNewLearningVector()
-            print "~~New Generated Vector~~"
-            newVector.printLV()
+        #assimilate all feedback since the creation of that learning vector (or since downloading of the schedule directly attributed to that vector?)
+        feedback = getFeedbackForLearningVector(vector)
+        print "Feedback: %s" % str(feedback)
 
-            #predict the new ET prime
-            ETp = predictCorrectET(newVector)
-            print "Computed ETprime: %s" % ETp
+        #score the learning vector... and store it in the database.
+        score = scoreVector(feedback, vector)
+        print "Vector Score: %s" % score
 
-            #generate a new schedule for the device
-            #and store it in the database
-            generateNewSchedule(ETp)
-            print "Generated Schedule"
+        #create a new learning vetctor... pick new parameters via hill climbing and store in database
+        newVector = createNewLearningVector(numIterations)
+        print "~~New Generated Vector~~"
+        newVector.printLV()
+
+        #predict the new ET prime
+        ETp = predictCorrectET(newVector)
+        print "Computed ETprime: %s" % ETp
+
+        #generate a new schedule for the device
+        #and store it in the database
+        generateNewSchedule(ETp)
+        print "Generated Schedule"
+    else:
+        #this is the very first iteration.  
+        #we assume ETo = ETp
+        #create and store the first learning vector
+        newVector = createNewLearningVector(numIterations, deviceID, zone)
+        #then generate a schedule and store it
+
+def getNumIterations(deviceID):
+    return 0
+
+def getStationIDforDevice(deviceID):
+    conf = DBConfig.DBConfig()
+    db = conf.connectToLocalConfigDatabase()
+    cursor = db.cursor()
+    sqlString = "SELECT climateStationID FROM devices WHERE productID = %s" % deviceID
+    cursor.execute(sqlString)
+    station = cursor.fetchone()
+    return station
 
 def getETo(deviceID):
-    #TODO get ETo for this device
     #Make ETo code modular and use that
-    value = DailyET.computeEToForStation('KAUS')
-    print value
-    return 2
+    station = getStationIDforDevice(deviceID)
+    value = DailyET.computeEToForStation(station[0])
+    return value[0]
 
 def generateNewSchedule(ETp):
     #given an ET value, generate a schedule.
     #the first question to answer is what time period is this ET value calculated for?
     #let's assume the ET value is just for today.
     #well, we need a function that translates ET into minutes of watering.
-    return 0    
+    #TODO: THIS FUNCTION BRO
+    return 0
 
 def predictCorrectET(vector):
     #need to decide on the length of the vector and which coefficients are part of the equation
@@ -87,23 +107,15 @@ def predictCorrectET(vector):
         count += 1
     return correctET
 
-def createNewLearningVector():
-    #get the last X learning vectors
-    last = getLastXLearningVectors(3)
-    lv1 = last[0]
-    lv2 = last[1]
-    lv3 = last[2]
-
+def computeDescent(vector1, vector2):
     #~~~NEWTON'S METHOD~~~
     diffVector = np.subtract(lv1.vector, lv2.vector)
-    #TODO: HOW DO YOU HANDLE A DIFF VECTOR WITH ZERO CHANGE?
 
     #get slope of score
     scoreChange = lv1.score - lv2.score
-    prevScoreChange = lv2.score - lv3.score
 
     #jacobian
-    #TODO: HOW DO YOU HANDLE A SCORE CHANGE OF ZERO??
+    #TODO: HOW DO YOU HANDLE A SCORE CHANGE OF ZERO?????
     jacobianApprox = scoreChange/diffVector
     inverseJacobian = 1.0/(jacobianApprox)
     updateJacob = inverseJacobian*lv1.score
@@ -114,21 +126,57 @@ def createNewLearningVector():
 
     #next vector
     newVector = lv1.vector + (updateJacob)*timeConstant
+    return newVector
 
-    #add randomness to each part of the vector gaussian style
-    gaussArray = []
-    for each in newVector:
-        stdDev = chooseStdDev(each, scoreChange, prevScoreChange)
-        gauss = random.gauss(0, stdDev)
-        gaussArray.append(gauss)
-    newVector = np.add(newVector, gaussArray)
+#case 0: 1st iteration of algorithm
+#case 1: 2nd iteration of algorithm
+#case 2: 3rd or greater iteration of algorithm
+def createNewLearningVector(case, deviceID, zoneNumber):
+    newVector = []
+    #pick parameters for new vector based on what iteration of algorithm it is
+    if case == 0:
+        #initially ETp = 0*ETo^2 + 1*ETo + 0
+        newVector = [0.0, 1.0, 0.0]
+
+    if case == 1:
+        last = getLastXLearningVectors(deviceID, 1)
+        if last[0].score > 0: #too little water, we are underpredicing ETp
+            newVector = [0.1, 1.2, 0.1]
+        else: #too much water, we are overpredicting ETp
+            newVector = [-.05, .94, -.05]
+
+    if case == 2:
+        #do a descent, no randomness
+        last = getLastXLearningVectors(deviceID, 2)
+        lv1 = last[0]
+        lv2 = last[1]
+        newVector = computeDescent(lv1, lv2)
+
+    if case >= 3:
+        #do a descent, with randomness
+        last = getLastXLearningVectors(deviceID, 3)
+        lv1 = last[0]
+        lv2 = last[1]
+        lv3 = last[2]
+        newVector = computeDescent(lv1, lv2)
+        scoreChange = lv1.score - lv2.score
+        prevScoreChange = lv2.score - lv3.score
+
+        #add randomness to each part of the vector gaussian style
+        gaussArray = []
+        for each in newVector:
+            stdDev = chooseStdDev(each, scoreChange, prevScoreChange)
+            gauss = random.gauss(0, stdDev)
+            gaussArray.append(gauss)
+
+        newVector = np.add(newVector, gaussArray)
 
     #create the LearningVector Object
     new = LearningVector()
     new.vector = newVector
-    new.ETo = getETo(lv1.deviceID)
-    new.deviceID = lv1.deviceID
-    new.zoneNumber = lv1.zoneNumber
+    new.ETo = getETo(deviceID)
+    new.deviceID = deviceID
+    new.zoneNumber = zoneNumber
 
     #store in database
     conf = DBConfig.DBConfig()
@@ -153,12 +201,11 @@ def chooseStdDev(vectorComponentLength, scoreDelta1, scoreDelta2):
    #choose standard deviation based on the change in score and the length of the component of the difference vector 
    return (1.0/10.0)*vectorComponentLength*math.pow(scoreDelta1 - scoreDelta2, 2)
 
-def getLastXLearningVectors(number):
+def getLastXLearningVectors(deviceID, number):
     conf = DBConfig.DBConfig()
     db = conf.connectToLocalConfigDatabase()
     cursor = db.cursor()
-    #TODO: NEED TO INCLUDE deviceID in this query....
-    sqlString = "SELECT * FROM learning ORDER BY vectorID DESC LIMIT %s" % number
+    sqlString = "SELECT * FROM learning WHERE deviceID = %s ORDER BY vectorID DESC LIMIT %s" % (deviceID, number)
     cursor.execute(sqlString)
     last = cursor.fetchall()
     cursor.close()

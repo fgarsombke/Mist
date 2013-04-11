@@ -70,9 +70,9 @@ class aSchedule:
 
                 d = collections.OrderedDict()
                 if row[2]:
-                    d['startTime'] = time.mktime(row[2].timetuple())
+                    d['startTime'] = int(time.mktime(row[2].timetuple()))
                 if row[2] and row[3]:
-                    d['endTime'] = time.mktime(row[2].timetuple()) + (row[3]*60)
+                    d['endTime'] = int(time.mktime(row[2].timetuple()) + (row[3]*60))
                 currzone_list.append(d)
 
             #GRAB the last one

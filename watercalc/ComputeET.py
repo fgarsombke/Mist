@@ -1,3 +1,4 @@
+import math
 #this is the alternative way of finding solar radiation in the absence of sunshine hours data
 #it estimates the solar radiation using the difference between the maximum and minimum daily temperature
 def computeSolarRadiationFromTemp(extraTerrest, adjCoeff, TMax, TMin):
