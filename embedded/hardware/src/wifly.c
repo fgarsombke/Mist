@@ -23,7 +23,7 @@
 #define FIFOSIZE    8192      
 #define FIFOSUCCESS 1       
 #define FIFOFAIL    0         
-AddIndexFifo(Rx, FIFOSIZE, char, FIFOSUCCESS, FIFOFAIL)
+AddPointerFifo(Rx, FIFOSIZE, char, FIFOSUCCESS, FIFOFAIL)
 
 // The UART longerrupt handler.
 void UARTIntHandler(void) {
@@ -82,7 +82,10 @@ long WiFly_Send(char * send, char * resp) {
     SysCtlDelay(SysCtlClockGet()/12);
     UART_Send((unsigned char*)send, strlen(send));
     SysCtlDelay(SysCtlClockGet()/12);
-    if(UART_Match(resp) || (resp == NULL)) {
+    if(resp == NULL) {
+        break;
+    }
+    else if(UART_Match(resp)) {
       break;
     } 
     attempts++; 
@@ -130,9 +133,10 @@ unsigned long WiFly_Time(void) {
 }
 
 void WiFly_Open(void) {
-  unsigned long i = 0;
   char resp[4096];
-  long status;
+  char *resp_pt = resp;
+  long status;    
+    
   WiFly_Flush();
   status = WiFly_Send("$$$", "CMD");
   if(status) { 
@@ -145,10 +149,9 @@ void WiFly_Open(void) {
     WiFly_Send("exit\r", "EXIT");
     return;
   }
-  
-  SysCtlDelay(SysCtlClockGet()*3);
-  while(RxFifo_Get(&resp[i++]));
-  resp[i] = NULL;
+  SysCtlDelay(SysCtlClockGet()*6);
+  while(RxFifo_Get(resp_pt)){resp_pt++;}
+  *resp_pt = NULL;
   return;
 }
   
