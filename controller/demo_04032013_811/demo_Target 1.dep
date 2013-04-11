@@ -1,5 +1,0 @@
-Dependencies for Project 'demo', Target 'Target 1': (DO NOT MODIFY !)
-F (.\jsmn.c)(0x513281F4)(-c --cpu Cortex-M3 -g -O0 --apcs=interwork -I C:\Keil\ARM\RV31\INC -I C:\Keil\ARM\CMSIS\Include -I C:\Keil\ARM\Inc\Luminary -o "jsmn.o" --omf_browse "jsmn.crf" --depend "jsmn.d")
-I (C:\Keil\ARM\ARMCC\bin\..\include\stdlib.h)(0x4EB18954)
-I (jsmn.h)(0x513281F4)
-F (.\demo.c)(0x513281F4)()
