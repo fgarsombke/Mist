@@ -115,18 +115,21 @@ def computeDescent(vector1, vector2):
     scoreChange = lv1.score - lv2.score
 
     #jacobian
-    #TODO: HOW DO YOU HANDLE A SCORE CHANGE OF ZERO?????
-    jacobianApprox = scoreChange/diffVector
-    inverseJacobian = 1.0/(jacobianApprox)
-    updateJacob = inverseJacobian*lv1.score
+    if scoreChange == 0:
+       #this can definitely be improved!!!
+       newVector = lv1.vector + diffVector/2
+    else:
+        jacobianApprox = scoreChange/diffVector
+        inverseJacobian = 1.0/(jacobianApprox)
+        updateJacob = inverseJacobian*lv1.score
 
-    #compute time constant TODO
-    scheduleDuration = .7
-    timeConstant = 1.3*scheduleDuration
+        #compute time constant TODO
+        scheduleDuration = .7
+        timeConstant = 1.3*scheduleDuration
 
-    #next vector
-    newVector = lv1.vector + (updateJacob)*timeConstant
-    return newVector
+        #next vector
+        newVector = lv1.vector + (updateJacob)*timeConstant
+        return newVector
 
 #case 0: 1st iteration of algorithm
 #case 1: 2nd iteration of algorithm
