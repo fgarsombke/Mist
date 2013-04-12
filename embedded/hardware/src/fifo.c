@@ -1,4 +1,4 @@
-// FIFO.h
+// FIFO.c
 // Runs on any LM3Sxxx
 // Provide functions that initialize a FIFO, put data in, get data out,
 // and return the current size.  The file includes a transmit FIFO
@@ -23,10 +23,61 @@
  OR CONSEQUENTIAL DAMAGES, FOR ANY REASON WHATSOEVER.
  For more information about my classes, my research, and my books, see
  http://users.ece.utexas.edu/~valvano/
- */ 
+ */
 
-void RxFifo_Init(void);
-int RxFifo_Put(char data);
-int RxFifo_Get(char *datapt);
-unsigned short RxFifo_Size(void);
+
+#define TYPE char
+#define SIZE 8192
+#define FAIL 0
+#define SUCCESS 1
+
+long StartCritical(void);
+void EndCritical(long);
+
+char volatile *RxPutPt;
+char volatile *RxGetPt; 
+
+char static RxFifo[SIZE];   
+
+void RxFifo_Init(void){
+    long sr;
+    sr = StartCritical();                
+    RxPutPt = RxGetPt = &RxFifo[0];
+    EndCritical(sr);
+}
+
+int RxFifo_Put (char data){
+    char volatile *nextPutPt;
+    nextPutPt = RxPutPt + 1;
+
+    if(nextPutPt == &RxFifo[SIZE]){
+        nextPutPt = &RxFifo[0];
+    }
+
+    if(nextPutPt == RxGetPt ){
+        return(FAIL);
+    }
+    else{
+        *( RxPutPt ) = data;
+        RxPutPt = nextPutPt;
+        return(SUCCESS);
+    }
+}
+
+int RxFifo_Get (char *datapt){
+    if( RxPutPt == RxGetPt ){
+        return(FAIL);
+    }
+    *datapt = *(RxGetPt++);
+    if( RxGetPt == &RxFifo[SIZE]){
+        RxGetPt = &RxFifo[0];
+    }
+    return(SUCCESS);
+}
+unsigned short RxFifo_Size (void){
+    if( RxPutPt < RxGetPt ){
+        return ((unsigned short)( RxPutPt - RxGetPt + (SIZE*sizeof(char)))/sizeof(char));
+    }
+    return ((unsigned short)( RxPutPt - RxGetPt )/sizeof(char));
+}
 
