@@ -431,6 +431,11 @@
               <FileType>1</FileType>
               <FilePath>.\src\fifo.c</FilePath>
             </File>
+            <File>
+              <FileName>uart.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\uart.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -460,6 +465,16 @@
               <FileName>wifly.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\inc\wifly.h</FilePath>
+            </File>
+            <File>
+              <FileName>uart.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\inc\uart.h</FilePath>
+            </File>
+            <File>
+              <FileName>rit128x96x4.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>..\drivers\rit128x96x4.h</FilePath>
             </File>
           </Files>
         </Group>

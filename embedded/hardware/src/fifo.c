@@ -25,6 +25,7 @@
  http://users.ece.utexas.edu/~valvano/
  */
 
+#include "fifo.h"
 
 #define TYPE char
 #define SIZE 8192
@@ -38,6 +39,11 @@ char volatile *RxPutPt;
 char volatile *RxGetPt; 
 
 char static RxFifo[SIZE];   
+
+void RxFifo_Flush(void){
+  char c;
+  while(RxFifo_Get(&c));
+}
 
 void RxFifo_Init(void){
     long sr;
@@ -80,4 +86,3 @@ unsigned short RxFifo_Size (void){
     }
     return ((unsigned short)( RxPutPt - RxGetPt )/sizeof(char));
 }
-
