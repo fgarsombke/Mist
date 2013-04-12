@@ -20,11 +20,6 @@
 
 #define MAX_ATTEMPTS 5
 
-#define FIFOSIZE    8192      
-#define FIFOSUCCESS 1       
-#define FIFOFAIL    0         
-AddPointerFifo(Rx, FIFOSIZE, char, FIFOSUCCESS, FIFOFAIL)
-
 // The UART longerrupt handler.
 void UARTIntHandler(void) {
     unsigned long ulStatus;
@@ -132,8 +127,7 @@ unsigned long WiFly_Time(void) {
   return strtoul(time, NULL, 0);
 }
 
-void WiFly_Open(void) {
-  char resp[4096];
+void WiFly_Open(char *resp) {
   char *resp_pt = resp;
   long status;    
     
@@ -150,7 +144,11 @@ void WiFly_Open(void) {
     return;
   }
   SysCtlDelay(SysCtlClockGet()*6);
-  while(RxFifo_Get(resp_pt)){resp_pt++;}
+  status = 1;
+  while(status) {
+    status = RxFifo_Get(resp_pt);
+    resp_pt++;
+   }
   *resp_pt = NULL;
   return;
 }
@@ -162,8 +160,8 @@ long UART_Match(char * match) {
   char c; 
   long idx = 0;
   long m_len = strlen(match);
-  long fifo_status = FIFOSUCCESS;
-  while((m_len != idx) && (fifo_status == FIFOSUCCESS)) {
+  long fifo_status = SUCCESS;
+  while((m_len != idx) && fifo_status) {
     fifo_status = RxFifo_Get(&c);
     if(c == match[idx]) {
       idx++;
