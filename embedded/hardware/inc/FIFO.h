@@ -25,8 +25,9 @@
  http://users.ece.utexas.edu/~valvano/
  */ 
 
+void RxFifo_Flush(void);
+int RxFifo_Get(char*);
 void RxFifo_Init(void);
-int RxFifo_Put(char data);
-int RxFifo_Get(char *datapt);
+int RxFifo_Put(char);
 unsigned short RxFifo_Size(void);
 

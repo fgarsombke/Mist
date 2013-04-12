@@ -1,3 +1,3 @@
 
-void scheduleParse(char *);
-void scheduleExtract(char *);
+void scheduleParse(char*);
+void scheduleExtract(char*);
