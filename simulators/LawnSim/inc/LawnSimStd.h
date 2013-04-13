@@ -28,6 +28,6 @@ namespace bnu = boost::numeric::ublas;
 #include "MistStd.h"
 #include "Constants.h"
 #include "GeoLocale.h"
+#include "ETCalc.h"
 
-typedef double ET_float_t;
-typedef ET_float_t water_mm_t;
+typedef Mist::ETCalc::ET_float_t water_mm_t;

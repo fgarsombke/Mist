@@ -1,17 +1,21 @@
-#include "LawnSimStd.h"
+#include "MistStd.h"
 #include "ETCalcParametersBuilder.h"
 
-namespace Mist { namespace FAO_ET {
-
-using namespace ETCalcParametersBuilderInternal;
-
+namespace Mist { namespace ETCalc {
 
 ETCalcParameters ETCalcParametersBuilder::Build() const
 {
    ETCalcParameters retVal(interval_);
 
 
+
+
    return retVal;
+}
+
+void ETCalcParametersBuilder::AddWeatherData(const WeatherData& data)
+{
+
 }
 
 }}

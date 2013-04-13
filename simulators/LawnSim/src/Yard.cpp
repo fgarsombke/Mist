@@ -178,7 +178,7 @@ void Yard::ResetState()
 }
 
 
-void Yard::ElapseTime(pt::time_period tickPeriod, const WeatherData &data, const std::vector<pt::time_duration> sprinklerDurations) 
+void Yard::ElapseTime(pt::time_period tickPeriod, const WeatherData &wdata, const std::vector<pt::time_duration> sprinklerDurations) 
 {
    // TODO: Change the api so that sprinklerDurations cannot be accidentally resized
    using namespace bnu;
@@ -201,11 +201,11 @@ void Yard::ElapseTime(pt::time_period tickPeriod, const WeatherData &data, const
    }
 
    // Add rain water to the surface
-   if (data.rainfall().is_initialized()) {
+   if (wdata.IsSet(WeatherDataValue_t::Rainfall)) {
       noalias(matrix_range<matrix<water_mm_t> >(surface_water_, 
                                              range(1, surface_water_.size1() - 1), 
                                              range(1, surface_water_.size2() - 1)))
-         += (data.rainfall().get() * rain_mask_);
+         += (wdata.GetValue(WeatherDataValue_t::Rainfall) * rain_mask_);
    }
    
    // Redistribute the water over the surface
@@ -215,17 +215,17 @@ void Yard::ElapseTime(pt::time_period tickPeriod, const WeatherData &data, const
    }
 
    // Calculate ET_0
-   FAO_ET::ETCalcParametersBuilder baseETBuilder(tickPeriod);
+	using namespace ETCalc;
+   ETCalcParametersBuilder baseETBuilder(tickPeriod);
 
    // Grow
    // TODO: Parallelize
    DoGrow(baseETBuilder.Build(), 0, cells_.data().size());
 }
 
-inline void Yard::DoGrow(FAO_ET::ETParam_t ET_0, size_t startCell, size_t endCell)
+inline void Yard::DoGrow(ETCalc::ETParam_t ET_0, size_t startCell, size_t endCell)
 {
-   using namespace FAO_ET;
-   
+   using namespace ETCalc;
 
    ETCalcParameters cellETParams = ET_0;
    ET_float_t cellET;
@@ -233,7 +233,8 @@ inline void Yard::DoGrow(FAO_ET::ETParam_t ET_0, size_t startCell, size_t endCel
    // Grow the grass in the yard
    while (startCell < endCell) {  
       // Shine sunlight
-   
+		cellETParams.SetSunlightFraction(1.0);
+
       // Apply heat
    
       // Apply humidity
@@ -243,7 +244,7 @@ inline void Yard::DoGrow(FAO_ET::ETParam_t ET_0, size_t startCell, size_t endCel
       // Calculate ETo metric
       cellET = et_calc_.CalculateET_o(cellETParams);
       cout << cellET << endl;
-
+		startCell++;
    }
 }
 

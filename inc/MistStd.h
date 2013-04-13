@@ -30,7 +30,7 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/uuid/string_generator.hpp>
-#include <boost/optional.hpp>
+#include <boost/preprocessor.hpp>
 
 namespace pt = boost::posix_time;
 namespace dt = boost::date_time;

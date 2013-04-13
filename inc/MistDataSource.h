@@ -16,7 +16,7 @@ class MistDataSource : public ScheduleSource, public WeatherDataSource {
 public:
    static sPtrMistDataSource GetDefaultDataSource();
 
-   virtual WeatherData GetWeatherData(GeoLocale locale, pt::time_period period) override;
+   virtual WeatherData GetWeatherData(GeoLocale locale, pt::time_period period, unsigned int timeout = -1) override;
    virtual MistSchedule GetSchedule(product_id_t id, unsigned int timeout = -1) const override;
 private:
    explicit MistDataSource(const std::string &host)

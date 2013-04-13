@@ -14,6 +14,8 @@ namespace MistScheduleInteral {
    extern const char* TIMES_ARRAY_LABEL;
    extern const char* START_LABEL;
    extern const char* END_LABEL;
+
+	typedef double json_time_parse_t;
 }
 
 class ZoneInfo 
@@ -21,10 +23,6 @@ class ZoneInfo
 public:
    std::forward_list<pt::time_period> OnTimes;
 };
-
-namespace MistScheduleInteral{
-   typedef double json_time_parse_t;
-}
 
 using namespace MistScheduleInteral;
 
@@ -68,7 +66,6 @@ public:
 
    std::vector<ZoneInfo> &zone_data() { return zone_data_; }
 
-   // Read the schedule in 
    bool operator==(const MistSchedule &other) {return schedule_id_ == other.schedule_id_;}
 
    static pt::ptime LongTimeToPTime(json_time_parse_t ms);

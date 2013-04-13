@@ -16,7 +16,6 @@
 // Boost Headers
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/date_time.hpp>
-#include <boost/optional.hpp>
 
 namespace pt = boost::posix_time;
 namespace dt = boost::date_time;

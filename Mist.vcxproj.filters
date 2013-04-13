@@ -39,6 +39,12 @@
     <ClInclude Include="inc\WeatherDataSource.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="inc\DataSetOptional.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="inc\FeedbackSink.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\HtmlSource.cpp">
@@ -51,6 +57,9 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="src\MistSchedule.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="src\WeatherData.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>

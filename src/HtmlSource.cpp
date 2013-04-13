@@ -29,7 +29,8 @@ int HTMLSource::GetHtml(const std::string &urlPath,
       << "Host: " << host_ << ":" << port_ << "\r\n"
       << "Cache-Control: no-cache\r\n"
       << "Accept: */*\r\n"
-      << "Connection: keep-alive\r\n\r\n";
+      << "Connection: keep-alive\r\n"
+		<< "\r\n";
       request_stream.flush();
 
       string line1;
@@ -64,7 +65,7 @@ int HTMLSource::GetHtml(const std::string &urlPath,
       string hackLine;
       getline(request_stream, hackLine);
 
-      if (hackLine != "349\r") {
+      if (hackLine.length() > 10) {
          out << hackLine;
       }
 

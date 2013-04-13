@@ -1,48 +1,49 @@
 #pragma once
 #include "MistStd.h"
+#include "DataSetOptional.h"
 
 namespace Mist { 
 
-class WeatherData {
+#define WDATA_VALUES (Rainfall)(StartTemp)(EndTemp)(AvgTemp)(WindVelocity)(AvgRH)(AvgPressure)(ENUM_COUNT)
+// Effective precipitation in mm
+// All in celcius
+
+
+// magnitude in meters per second
+// As a fraction (not percentage)
+
+enum class WeatherDataValue_t
+{
+	BOOST_PP_SEQ_ENUM(WDATA_VALUES)
+};
+
+namespace WeatherDataInteral {
+   extern const char* ID_LABEL;
+}
+
+class WeatherData 
+	: public DataSetOptional<double, WeatherDataValue_t, static_cast<size_t>(WeatherDataValue_t::ENUM_COUNT)>
+{
 public:
+	template<class strT>
+   static WeatherData CreateFromJson(strT &inSchedule)
+   {
+      boost::property_tree::ptree scheduleTree;
+
+      bJP::read_json(inSchedule, scheduleTree);
+
+      return CreateFromPTree(scheduleTree);
+   } 
+
    WeatherData()
-      : //period_(pt::time_period(pt::not_a_date_time, pt::seconds(0))),
-        start_temp_(decltype(start_temp_)()),
-        end_temp_(decltype(end_temp_)()),
-        avg_temp_(decltype(avg_temp_)()),
-        wind_velocity_(decltype(wind_velocity_)()),
-        avg_humidity_(decltype(avg_humidity_)())
    {
    }
-
-   //const pt::time_period period() const { return period_; }
-
-   const boost::optional<double> rainfall() const { return rainfall_; }
 
 private:
    // The posix time period from which the data comes
    //pt::time_period period_;
 
-
-   // Effective precipitation in mm
-   boost::optional<double> rainfall_;
-
-   // Not sure of units here
-   // Need solar radiation
-
-   // All in celcius
-   boost::optional<double> start_temp_;
-   boost::optional<double> end_temp_;
-   boost::optional<double> avg_temp_;
-
-   // magnitude in meters per second
-   boost::optional<double> wind_velocity_;
-
-   // As a fraction (not percentage)
-   boost::optional<double> avg_humidity_;
-
-   // Barometric Pressure 
-   boost::optional<double> avg_pressure_;
+	static WeatherData CreateFromPTree(boost::property_tree::ptree &weatherTree);
 };
 
 }

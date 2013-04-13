@@ -58,14 +58,14 @@ private:
    // The water on the surface across the yard, which has not yet been absorbed into the soil
    bnu::matrix<water_mm_t> surface_water_;
 
-   FAO_ET::ETCalc et_calc_;
+   ETCalc::ETCalc et_calc_;
 
    SprinklerMaskList_t InitSprinklerMasks(const YardInfo &yardInfo);
 
 
    void Absorb();
 
-   void DoGrow(FAO_ET::ETParam_t ET_0, size_t startCell, size_t count);
+   void DoGrow(ETCalc::ETParam_t ET_0, size_t startCell, size_t count);
 
    template<class T>
    static void DebugPrintMatrix(const bnu::matrix<T> &toPrint, std::string fileName);

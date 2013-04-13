@@ -1,0 +1,12 @@
+include ../../make/stdprefix.mk
+
+NESTING := ../../
+OUT_DIR := ../../lib
+
+LIB = ETCalc
+SOURCE_NAMES = ETCalc.cpp ETCalcParameters.cpp ETCalcParametersBuilder.cpp ETCalcPython.cpp
+LSTATIC_LIBS:=mist_shared boost_python
+
+all : dirs $(OBJECTS) $(EXE)
+	
+include $(NESTING)/make/stdsuffix.mk

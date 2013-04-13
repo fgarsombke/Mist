@@ -110,7 +110,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_USRDLL;CONTROLLERS_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalOptions>-D_SCL_SECURE_NO_WARNINGS -Zm110 %(AdditionalOptions)</AdditionalOptions>
-      <AdditionalIncludeDirectories>C:\Program Files (x86)\GnuWin32\include;D:\Software\boost;$(ProjectDir)../../inc;$(ProjectDir)inc</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\..\boost\;$(ProjectDir)../../inc;$(ProjectDir)inc</AdditionalIncludeDirectories>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
       <DisableLanguageExtensions>false</DisableLanguageExtensions>
       <PrecompiledHeaderFile>ControllersStd.h</PrecompiledHeaderFile>
