@@ -20,8 +20,6 @@ namespace Mist {
 	public:
 		DataSetOptional()
 		{
-			size_t i = 0;
-
 			for (size_t i=0; i < enum_count; ++i) {
 				data_entries_[i].IsSet = false;
 			}
