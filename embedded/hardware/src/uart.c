@@ -1,7 +1,7 @@
 #include "inc/hw_ints.h"
 #include "inc/hw_memmap.h"
 #include "inc/hw_types.h"
-#include "inc/lm3s1968.h"
+#include "inc/lm3s811.h"
 
 #include "driverlib/gpio.h"
 #include "driverlib/interrupt.h"
@@ -14,6 +14,9 @@
 
 // Initalizes UART0 with interrupts
 void UART_Init(void) {
+        // Initialize the FIFO
+        RxFifo_Init();
+    
         // Enable UART0 on PORTA
         SysCtlPeripheralEnable(SYSCTL_PERIPH_UART0);
         SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);
@@ -30,9 +33,6 @@ void UART_Init(void) {
         // Enable UART0 RX/TX interrupts
         IntEnable(INT_UART0);
         UARTIntEnable(UART0_BASE, UART_INT_RX | UART_INT_RT);
-    
-        // Initialize the FIFO
-        RxFifo_Init();
 }
   
 // Sends "count" characters from "buffer" over UART

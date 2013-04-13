@@ -96,7 +96,7 @@ int Schedule_Enter(schedule_entry_t *entry_ptr)
 
 void Schedule_Refresh(void) 
 {
-    if(Schedule = (unsigned long *) SCHEDULE_BUFFER_A_ADDR)  {
+    if(Schedule == (unsigned long *) SCHEDULE_BUFFER_A_ADDR)  {
         Schedule = (unsigned long *) SCHEDULE_BUFFER_B_ADDR;
         ScheduleIndex = 0;
         TempSchedule = (unsigned long *) SCHEDULE_BUFFER_A_ADDR;
