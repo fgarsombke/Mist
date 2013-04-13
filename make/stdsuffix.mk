@@ -12,8 +12,15 @@ ifneq ($(LSTATIC_LIBS),)
 	LSTATIC_ARGS:=$(LSTATIC_LIBS:%=-Wl,-l% -static)
 endif
 
+ifneq ($(LSHARED_LIBS),)
+	LSHARED_ARGS:=$(LSHARED_LIBS:%=-Wl,-soname"-l%")
+endif
+
 $(LIB) : $(OBJECTS)
 	ar crs $(OUT_DIR)/lib$(LIB).a $^ 
+	
+$(SHLIB) : $(OBJECTS)
+	$(CXX) -o (OUT_DIR)/lib$(LIB).a $^ 
 
 $(EXE) : $(OBJECTS)
 	$(CXX) -o $(OUT_DIR)/$(EXE) $^ $(ADTLEXE_FLGS) -L./$(NESTING)/lib $(LDIRARGS) $(LFLAGS) $(LSTATIC_ARGS) -Bdynamic

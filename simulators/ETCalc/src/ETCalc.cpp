@@ -407,6 +407,8 @@ double ETCalc::CalculateET_o(ETParam_t ETParam) const {
 			R_n = NetRadiation(R_ns_days(ETParam), R_nl_days(ETParam));
          G = G_months(ETParam);
          break;
+		default:
+				return 0;
    }
 
    ET_float_t num_left = 0.408*delta*(R_n-G);
