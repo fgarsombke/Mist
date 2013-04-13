@@ -28,7 +28,7 @@
 #include "fifo.h"
 
 #define TYPE char
-#define SIZE 8192
+#define SIZE 2048
 #define FAIL 0
 #define SUCCESS 1
 
