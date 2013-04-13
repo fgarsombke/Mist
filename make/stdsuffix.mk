@@ -13,7 +13,7 @@ ifneq ($(LSTATIC_LIBS),)
 endif
 
 $(LIB) : $(OBJECTS)
-	ar crfs $(OUT_DIR)/lib$(LIB).a $^ 
+	ar crs $(OUT_DIR)/lib$(LIB).a $^ 
 
 $(EXE) : $(OBJECTS)
 	$(CXX) -o $(OUT_DIR)/$(EXE) $^ $(ADTLEXE_FLGS) -L./$(NESTING)/lib $(LDIRARGS) $(LFLAGS) $(LSTATIC_ARGS) -Bdynamic
