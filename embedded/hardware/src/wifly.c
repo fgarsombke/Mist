@@ -1,7 +1,8 @@
 #include "inc/hw_types.h"
 #include "driverlib/sysctl.h"
+#include "inc/lm3s811.h"
 
-#include "drivers/rit128x96x4.h"
+//#include "drivers/rit128x96x4.h"
 
 #include "stdlib.h"
 #include "string.h"
@@ -19,14 +20,56 @@ const char* TIME_CMD = "show t t\r";
 const char* TIME_RSP = "RTC=";
 const char* OPEN_CMD = "open\r";
 
+#define ADHOC_IO 0x01
+#define RESET_IO 0x10
+
 // Delays 250ms based on the clock speed
 void delay250ms(void){ SysCtlDelay(SysCtlClockGet()/12); }
 
+void WiFly_Adhoc_On(void) {
+  GPIO_PORTD_DATA_R |= ADHOC_IO;
+}
+
+void WiFly_Adhoc_Off(void) {
+  GPIO_PORTD_DATA_R &= ~(ADHOC_IO);
+}
+
 // Initializes the WiFly module
 void WiFly_Init(void) {
+    volatile unsigned long delay;
+    SYSCTL_RCGC2_R |= SYSCTL_RCGC2_GPIOD;
+    delay = SYSCTL_RCGC2_R;
+    
+    GPIO_PORTD_DIR_R |= (ADHOC_IO | RESET_IO);
+    GPIO_PORTD_DEN_R |= (ADHOC_IO | RESET_IO);
+    
+    WiFly_Adhoc_Off();
     UART_Init();
     WiFly_Send(EXIT_CMD, NO_RSP);
-    delay250ms();
+    WiFly_Reset();
+}
+
+// Searchs for a desired string by reading
+// through the recieved characters. This will remove
+// items from the buffer.
+tBoolean WiFly_Match(const char * match) {
+  char ch; 
+  long idx = 0;
+  long len = strlen(match);
+  tBoolean status = true;
+  while((len != idx) && status) {
+    status = RxFifo_Get(&ch);
+    idx = (ch == match[idx]) ? (idx+1) : 0;
+  }
+  
+  if(len == idx) status = true;
+  return status;
+}
+
+void WiFly_Reset(void) {
+  GPIO_PORTD_DATA_R &= ~(RESET_IO);
+  delay250ms();
+  GPIO_PORTD_DATA_R |= RESET_IO;
 }
 
 // Sends a string to the WiFly module and will timeout after MAX_ATTEMPTS
@@ -86,7 +129,7 @@ unsigned long WiFly_Time(void){
     if(status) {
           for(i = 0; i < 10; i++) RxFifo_Get(&time_str[i]);
           time_str[10] = 0x0;
-          RIT128x96x4StringDraw(time_str, 0, 0, 15);
+          //RIT128x96x4StringDraw(time_str, 0, 0, 15);
           time = strtoul(time_str, NULL, 0); // Convert to unsigned long
     }
   }
@@ -117,20 +160,4 @@ tBoolean WiFly_Open(char *resp) {
   
   return status;
 }
-  
-// Searchs for a desired string by reading
-// through the recieved characters. This will remove
-// items from the buffer.
-tBoolean WiFly_Match(const char * match) {
-  char ch; 
-  long idx = 0;
-  long len = strlen(match);
-  tBoolean status = true;
-  while((len != idx) && status) {
-    status = RxFifo_Get(&ch);
-    idx = (ch == match[idx]) ? (idx+1) : 0;
-  }
-  
-  if(len == idx) status = true;
-  return status;
-}
+
