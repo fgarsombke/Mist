@@ -7,7 +7,12 @@ namespace Mist { namespace ETCalc {
 
 class ETCalc {
 public:
-   ETCalc(GeoLocale locale);
+	ETCalc(double latitude, double longitude)
+		:	locale_(GeoLocale(latitude, longitude))
+	{
+	}
+
+   explicit ETCalc(GeoLocale locale);
 
 
    double CalculateET_o(ETParam_t ETParams) const;
