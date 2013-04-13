@@ -1,6 +1,6 @@
 #include "inc/hw_types.h"
 
-#include "drivers/rit128x96x4.h"
+//#include "drivers/rit128x96x4.h"
 
 #include "stdio.h"
 #include "stdlib.h"
@@ -37,7 +37,7 @@ void scheduleParse(char *json){
     if (!schedule){/*error*/}
     
     else{
-        char debug[34], debug_idx = 1; 
+        char debug[34]; 
         int array_idx, time_idx;
         
         cJSON *zone_array = cJSON_GetObjectItem(schedule, ZONE_LABEL);
@@ -53,7 +53,7 @@ void scheduleParse(char *json){
                 int end_time = cJSON_GetObjectItem(time, END_LABEL)->valueint;
                 
                 sprintf(debug, "Zone %d = {%d, %d}\n", zone_num, start_time, end_time);
-                RIT128x96x4StringDraw(debug, 0, (debug_idx++)*8, 15);
+                //RIT128x96x4StringDraw(debug, 0, (debug_idx++)*8, 15);
             }
         }
         
