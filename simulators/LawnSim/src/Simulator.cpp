@@ -125,11 +125,14 @@ void Simulator::Run()
       WeatherData weatherData = weather_source_->GetWeatherData(yard_.locale(), tick_period);
       controller_->ElapseTime(tick_period, sprinklerDurations);
 
-      // Debug Print Durations
       DbgPrintDurations(sprinklerDurations);
 
-      // Let the yard check whether or not the sprinkler durations list was resized
+		// Send the sprinkler times to the yard
+		// Here is where actual watering and growing takes place
       yard_.ElapseTime(tick_period, weatherData, sprinklerDurations);
+
+		// Determine whether or not to give feedback to the server
+
 
       // Compute next tick time
       nextTickTime += tick_period_ms_;

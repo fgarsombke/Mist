@@ -48,7 +48,7 @@ private:
    YardCell(YardCellInfo info, YardCellType_t type, NeighborHeightDiffs_t &heightDiffs);
 
    // Returns the amount of water lost from the soil
-   double Grow(double waterSupplied, const FAO_ET::ETCalcParameters &etParams);
+   double Grow(double waterSupplied, const ETCalc::ETCalcParameters &etParams);
 };
 
 

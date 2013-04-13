@@ -1,10 +1,9 @@
 #pragma once
 
-#include "LawnSimStd.h"
-#include "GeoLocale.h"
+#include "MistStd.h"
 #include "ETCalcParameters.h"
 
-namespace Mist { namespace FAO_ET {
+namespace Mist { namespace ETCalc {
 
 class ETCalc {
 public:
@@ -46,7 +45,7 @@ private:
    ETCalc_Func_decl(e_a_RHMean, ETParam_t ETParams);
 
    // FAO Equation 3.21
-   ETCalc_Func_decl(R_a_day, ETParam_t ETParams);
+   ETCalc_Func_decl(R_a_days, ETParam_t ETParams);
 
    // FAO Equation 3.22
    ETCalc_Func_decl(DegreesToRadians, ET_float_t degrees);
@@ -78,20 +77,32 @@ private:
    // FAO Equation 3.34
    ETCalc_Func_decl(N_duration, ETParam_t ETParams);
 
+	// FAO Equation 3.35ii
+	ETCalc_Func_decl(R_s_days, ETParam_t ETParam);
+
    // FAO Equation 3.35
-   ETCalc_Func_decl(R_s, ETParam_t ETParams);
+   ETCalc_Func_decl(R_s_hours, ETParam_t ETParams);
+
+	// FAO Equation 3.37ii
+	ETCalc_Func_decl(R_so_days, ETParam_t ETParam);
 
    // FAO Equation 3.37
-   ETCalc_Func_decl(R_so, ETParam_t ETParams);
+   ETCalc_Func_decl(R_so_hours, ETParam_t ETParams);
+
+	// FAO Equation 3.38ii
+	ETCalc_Func_decl(R_ns_days, ETParam_t ETParam);
 
    // FAO Equation 3.38
-   ETCalc_Func_decl(R_ns, ETParam_t ETParams); 
+   ETCalc_Func_decl(R_ns_hours, ETParam_t ETParams); 
+
+	// FAO Equation 3.39ii
+   ETCalc_Func_decl(R_nl_days, ETParam_t ETParams);
 
    // FAO Equation 3.39
-   ETCalc_Func_decl(R_nl, ETParam_t ETParams);
+   ETCalc_Func_decl(R_nl_hours, ETParam_t ETParams);
 
    // FAO Equation 3.40
-   ETCalc_Func_decl(NetRadiation, ETParam_t ETParams);
+   ETCalc_Func_decl(NetRadiation, ET_float_t R_ns, ET_float_t R_nl);
 
    // FAO Equation 3.42
    ETCalc_Func_decl(G_days);

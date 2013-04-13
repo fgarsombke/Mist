@@ -1,4 +1,4 @@
-#include "LawnSimStd.h"
+#include "MistStd.h"
 
 #include "ETCalc.h"
 
@@ -6,7 +6,7 @@
 
 
 // Separate namespace for calculations
-namespace Mist { namespace FAO_ET {   
+namespace Mist { namespace ETCalc {   
    // TODO: Modify based on current grass health
 
 
@@ -138,9 +138,9 @@ ETCalc_Func_def(e_a_RHMean, ETParam_t ETParam)
 }
 
 // Extraterrestrial radiation for daily periods
-// NOTE: This is only valid for time periods of a day
+// NOTE: This is only valid for time periods of a day or longer
 // FAO Equation 3.21
-ETCalc_Func_def(R_a_day, ETParam_t ETParam)
+ETCalc_Func_def(R_a_days, ETParam_t ETParam)
 {
    ET_float_t w_s = Omega_s(ETParam);
    ET_float_t delta = d_r(ETParam);
@@ -239,18 +239,17 @@ ETCalc_Func_def(S_c, ETParam_t ETParam)
    return 0.1645*sin(2*b)-0.1255*cos(b)-0.025*sin(b);
 }
 
-//// Daylight hours
-//// NOTE: This is only valid for time periods of a day
-//// FAO Equation 3.34
-//ETCalc_Func_def(N_duration, ETParam_t ETParam)
-//{
-//   return (24.0/PI)*Omega_s(ETParam);
-//}
+// Solar Radiation
+// FAO Equation 3.35ii
+ETCalc_Func_def(R_s_days, ETParam_t ETParam)
+{
+   return (a_s() + b_s()*ETParam.SunlightFraction())*R_a_days(ETParam);
+}
 
 // Solar Radiation
 // TODO: Figure out day/hourly discrepency
 // FAO Equation 3.35
-ETCalc_Func_def(R_s, ETParam_t ETParam)
+ETCalc_Func_def(R_s_hours, ETParam_t ETParam)
 {
    return (a_s() + b_s()*ETParam.SunlightFraction())*R_a_hours(ETParam);
 }
@@ -270,36 +269,58 @@ ETCalc_Func_def(b_s)
 }
 
 // Net solar or net shortwave radiation
-// TODO: Figure out day/hourly discrepency
+// FAO Equation 3.37ii
+ETCalc_Func_def(R_so_days, ETParam_t ETParam) 
+{
+   return (0.75 + 2e-5 * locale_.elevation())*R_a_days(ETParam);
+}
+
+// Net solar or net shortwave radiation
 // FAO Equation 3.37
-ETCalc_Func_def(R_so, ETParam_t ETParam) 
+ETCalc_Func_def(R_so_hours, ETParam_t ETParam) 
 {
    return (0.75 + 2e-5 * locale_.elevation())*R_a_hours(ETParam);
 }
 
 // Net solar or net shortwave radiation
-// FAO Equation 3.38
-ETCalc_Func_def(R_ns, ETParam_t ETParam) 
+// FAO Equation 3.38ii
+ETCalc_Func_def(R_ns_days, ETParam_t ETParam) 
 {
-   return (1.0 - Constants::albedo)*R_s(ETParam);
+   return (1.0 - Constants::albedo)*R_s_days(ETParam);
+}
+
+// Net solar or net shortwave radiation
+// FAO Equation 3.38
+ETCalc_Func_def(R_ns_hours, ETParam_t ETParam) 
+{
+   return (1.0 - Constants::albedo)*R_s_hours(ETParam);
 }
 
 // Net longwave radiation
-// TODO: Correct for the 24 hour temperature period requirement
-// FAO Equation 3.39
-ETCalc_Func_def(R_nl, ETParam_t ETParam) 
+// FAO Equation 3.39ii
+ETCalc_Func_def(R_nl_days, ETParam_t ETParam) 
 {
    return sigma*((pow(ETParam.MaxTemp(), 4) + pow(ETParam.MinTemp(),4))/2.0)*
       (0.34-0.14*sqrt(e_a(ETParam))*
-      (1.35*(R_s(ETParam)/R_so(ETParam)) - 0.35)
+      (1.35*(R_s_days(ETParam)/R_so_days(ETParam)) - 0.35)
+   );
+}
+
+// Net longwave radiation
+// FAO Equation 3.39
+ETCalc_Func_def(R_nl_hours, ETParam_t ETParam) 
+{
+   return sigma*((pow(ETParam.MaxTemp(), 4) + pow(ETParam.MinTemp(),4))/2.0)*
+      (0.34-0.14*sqrt(e_a(ETParam))*
+      (1.35*(R_s_hours(ETParam)/R_so_hours(ETParam)) - 0.35)
    );
 }
 
 // Difference between incoming and outgoing radiations
 // FAO Equation 3.40
-ETCalc_Func_def(NetRadiation, ETParam_t ETParam)
+ETCalc_Func_def(NetRadiation, ET_float_t R_ns, ET_float_t R_nl)
 {
-   return R_ns(ETParam) - R_nl(ETParam);
+   return R_ns - R_nl;
 }
 
 // Soil Heat Flux
@@ -368,31 +389,29 @@ double ETCalc::CalculateET_o(ETParam_t ETParam) const {
    ET_float_t G;
    ET_float_t e_s = MeanSaturationVapourPressure(ETParam);
 
+	R_n = NetRadiation(R_ns_hours(ETParam), R_nl_hours(ETParam));
    switch(ETParam.LengthType()) {
       case ETCalcLengthType::HoursDay:
-         R_n =;
+         R_n = NetRadiation(R_ns_hours(ETParam), R_nl_hours(ETParam));
          G = G_hours_day(R_n);
          break;
       case ETCalcLengthType::HoursNight:
-         R_n =;
+         R_n = NetRadiation(R_ns_hours(ETParam), R_nl_hours(ETParam));
          G = G_hours_night(R_n);
          break;
       case ETCalcLengthType::Days:
-         R_n =;
+         R_n = NetRadiation(R_ns_days(ETParam), R_nl_days(ETParam));
          G = G_days();
          break;
       case ETCalcLengthType::Months:
+			R_n = NetRadiation(R_ns_days(ETParam), R_nl_days(ETParam));
          G = G_months(ETParam);
          break;
    }
 
-   R_n = NetRadiation(ETParam);
-
-
    ET_float_t num_left = 0.408*delta*(R_n-G);
    ET_float_t num_right = gamma*(900/(CToK(ETParam.AvgTemp())))*u_2*(e_s - e_a(ETParam));
    ET_float_t den = delta + gamma*(1+0.34*u_2);
-
    ET_float_t ET_o = (num_left + num_right)/den;
 
    // TODO: Implementation of Eq 2.3

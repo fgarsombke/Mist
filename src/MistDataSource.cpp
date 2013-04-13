@@ -10,15 +10,25 @@ namespace Mist {
    static const std::string srcURL("www.quattrotap.com");
    static const std::string scheduleStr("/api/schedule?deviceID=");
 
+	// TODO: Ask what this should be
+	static const std::string weatherStr("/api/weatherData?");
+
    sPtrMistDataSource MistDataSource::GetDefaultDataSource()
    {
       return sPtrMistDataSource(new MistDataSource(srcURL));
    }
 
-   WeatherData MistDataSource::GetWeatherData(GeoLocale locale, pt::time_period period) 
+   WeatherData MistDataSource::GetWeatherData(GeoLocale locale, pt::time_period period,  unsigned int timeout) 
    {
-      // TODO: Implement
-      return WeatherData();
+      std::vector<std::string> headers;
+      std::stringstream weather_out;
+
+      int result = data_source_.GetHtml(weatherStr, weather_out, headers, timeout);
+      if (result != 200) {
+         throw std::logic_error(std::string("Error Getting HTML: ") + std::to_string(result));
+      } else {
+         return WeatherData::CreateFromJson(weather_out);
+      }
    }
 
    MistSchedule MistDataSource::GetSchedule(product_id_t id, unsigned int timeout) const

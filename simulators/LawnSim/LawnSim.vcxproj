@@ -22,9 +22,6 @@
     <ClInclude Include="inc\Constants.h" />
     <ClInclude Include="inc\DBHook.h" />
     <ClInclude Include="inc\DriftEntry.h" />
-    <ClInclude Include="inc\ETCalc.h" />
-    <ClInclude Include="inc\ETCalcParameters.h" />
-    <ClInclude Include="inc\ETCalcParametersBuilder.h" />
     <ClInclude Include="inc\InvalidOperationException.h" />
     <ClInclude Include="inc\LawnCoordinate.h" />
     <ClInclude Include="inc\LawnGenerator.h" />
@@ -42,8 +39,6 @@
   <ItemGroup>
     <ClCompile Include="src\Constants.cpp" />
     <ClCompile Include="src\DriftEntry.cpp" />
-    <ClCompile Include="src\ETCalc.cpp" />
-    <ClCompile Include="src\ETCalcParametersBuilder.cpp" />
     <ClCompile Include="src\LawnCoordinate.cpp" />
     <ClCompile Include="src\LawnGenerator.cpp" />
     <ClCompile Include="src\main.cpp" />
@@ -65,6 +60,9 @@
     </ProjectReference>
     <ProjectReference Include="..\Controllers\Controllers.vcxproj">
       <Project>{70497e49-3bec-4de0-87c8-f99e066f0a28}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\ETCalc\ETCalc.vcxproj">
+      <Project>{5fa15625-97e3-4c53-b112-07ab590a8145}</Project>
     </ProjectReference>
   </ItemGroup>
   <PropertyGroup Label="Globals">
@@ -141,7 +139,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Program Files (x86)\GnuWin32\lib;D:\Software\boost_1_52_0\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>D:\Software\boost_1_52_0\lib\x86;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>libgslcblas.a;libgsl.a;D:\Software\boost_1_52_0\lib\libboost_serialization-vc110-mt-s-1_52.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -151,7 +149,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;GSL_DISABLE_DEPRECATED%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Program Files (x86)\GnuWin32\include;D:\Software\boost;$(ProjectDir)inc;$(ProjectDir)../../inc;$(ProjectDir)../Controllers/inc</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\..\boost;$(ProjectDir)inc;$(ProjectDir)../../inc;$(ProjectDir)../ETCalc/inc;$(ProjectDir)../Controllers/inc</AdditionalIncludeDirectories>
       <SDLCheck>false</SDLCheck>
       <PrecompiledHeaderFile>LawnSimStd.h</PrecompiledHeaderFile>
       <AdditionalOptions>-D_SCL_SECURE_NO_WARNINGS -Zm126 %(AdditionalOptions)</AdditionalOptions>
@@ -161,7 +159,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>C:\Program Files (x86)\GnuWin32\lib;D:\Software\boost\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)..\..\boost\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>WINMM.LIB;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
@@ -198,7 +196,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>C:\Program Files (x86)\GnuWin32\include;D:\Software\boost;$(ProjectDir)inc;$(ProjectDir)../../inc;$(ProjectDir)../Controllers/inc</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(SolutionDir)..\..\boost\;$(ProjectDir)inc;$(ProjectDir)../../inc;$(ProjectDir)../Controllers/inc</AdditionalIncludeDirectories>
       <SDLCheck>false</SDLCheck>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <RuntimeTypeInfo>false</RuntimeTypeInfo>
@@ -212,7 +210,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalLibraryDirectories>C:\Program Files (x86)\GnuWin32\lib;D:\Software\boost\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(SolutionDir)..\..\boost\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>WINMM.LIB;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
