@@ -7,6 +7,6 @@ LIB = ETCalc
 SOURCE_NAMES = ETCalc.cpp ETCalcParameters.cpp ETCalcParametersBuilder.cpp ETCalcPython.cpp
 LSTATIC_LIBS:=mist_shared boost_python
 
-all : dirs $(OBJECTS) $(EXE)
+all : dirs $(OBJECTS) $(LIB)
 	
 include $(NESTING)/make/stdsuffix.mk
