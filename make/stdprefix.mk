@@ -13,6 +13,8 @@ BOOSTLIBx64_DIR=/usr/lib64
  
 BOOSTLIB_DIR=$(BOOSTLIBx86_DIR)
 
+PYTHONINC_DIR=/usr/include/python2.7
+
 LFLAGS= 
 
 LDIRS:=
