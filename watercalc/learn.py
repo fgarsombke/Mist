@@ -6,7 +6,7 @@ import math
 import numpy as np
 import MySQLdb
 from db import DBConfig
-import DailyET
+import ForecastET
 
 class LearningVector:
     def __init__(self, vectorID=0, deviceID=0, zoneNumber=0, ETo=0, score=0, feedback=[], vector=[]):
@@ -30,14 +30,14 @@ class LearningVector:
 def main():
     deviceID = 1
     zone = 1
-    numIterations = getNumIterations(deviceID)
+    numIterations = getNumIterations(deviceID, zone)
 
+    #don't execute this code on the first iteration of the algorithm
     if numIterations > 0:
+        #TODO: change to executedIrrigations, not queued
         event = getMostRecentIrrigationEventForDevice(deviceID)
         identifier = event[5]
         print "LearningID: %s (For most recent irrigation event for DeviceID: %s)" % (identifier, deviceID)
-
-        #check how many iterations we've done. 
 
         #grab the learning vector for that irrigation event
         vector = getLearningVector(identifier)
@@ -52,50 +52,51 @@ def main():
         score = scoreVector(feedback, vector)
         print "Vector Score: %s" % score
 
-        #create a new learning vetctor... pick new parameters via hill climbing and store in database
-        newVector = createNewLearningVector(numIterations)
-        print "~~New Generated Vector~~"
-        newVector.printLV()
+    #create a new learning vetctor... pick new parameters via hill climbing and store in database
+    newVector = createNewLearningVector(numIterations, deviceID, zone)
+    print "~~New Generated Vector~~"
+    newVector.printLV()
 
-        #predict the new ET prime
-        ETp = predictCorrectET(newVector)
-        print "Computed ETprime: %s" % ETp
+    #predict the new ET prime
+    ETp = predictCorrectET(newVector)
+    print "Computed ETprime: %s" % ETp
 
-        #generate a new schedule for the device
-        #and store it in the database
-        generateNewSchedule(ETp)
-        print "Generated Schedule"
-    else:
-        #this is the very first iteration.  
-        #we assume ETo = ETp
-        #create and store the first learning vector
-        newVector = createNewLearningVector(numIterations, deviceID, zone)
-        #then generate a schedule and store it
+    #generate a new schedule for the device
+    #and store it in the database
+    generateNewSchedule(ETp)
+    print "Generated Schedule"
 
-def getNumIterations(deviceID):
-    return 0
-
-def getStationIDforDevice(deviceID):
+def getNumIterations(deviceID, zone):
     conf = DBConfig.DBConfig()
     db = conf.connectToLocalConfigDatabase()
     cursor = db.cursor()
-    sqlString = "SELECT climateStationID FROM devices WHERE productID = %s" % deviceID
+    sqlString = "SELECT COUNT(*) FROM learning WHERE deviceID = %s AND zoneNumber = %s" % (deviceID, zone)
+    result = cursor.execute(sqlString)
+    return result
+
+def getLatLongforDevice(deviceID):
+    conf = DBConfig.DBConfig()
+    db = conf.connectToLocalConfigDatabase()
+    cursor = db.cursor()
+    sqlString = "SELECT latitude, longitude FROM devices WHERE productID = %s" % deviceID
+    print "yo"
     cursor.execute(sqlString)
-    station = cursor.fetchone()
-    return station
+    print "hi"
+    latlong = cursor.fetchone()
+    return latlong
 
 def getETo(deviceID):
     #Make ETo code modular and use that
-    station = getStationIDforDevice(deviceID)
-    value = DailyET.computeEToForStation(station[0])
+    latLong = getLatLongforDevice(deviceID)
+    print latLong[0]
+    print latLong[1]
+    datee = 0
+    #TODO:parameterize the date
+    value = ForecastET.forecastEToForStation(latLong[0], latLong[1], datee)
     return value[0]
 
-def generateNewSchedule(ETp):
-    #given an ET value, generate a schedule.
-    #the first question to answer is what time period is this ET value calculated for?
-    #let's assume the ET value is just for today.
-    #well, we need a function that translates ET into minutes of watering.
-    #TODO: THIS FUNCTION BRO
+def generateNewSchedule(ETp, time):
+    #given an ET value and time period, generate a schedule.
     return 0
 
 def predictCorrectET(vector):
@@ -106,6 +107,14 @@ def predictCorrectET(vector):
         correctET += math.pow(vector.ETo, count)*each
         count += 1
     return correctET
+
+def getWeightForScheduleDuration(vector):
+    #this is currently totally, linear.  could be improved.
+    numberOfDays = getNumDays(vector)
+    if numberOfDays < 28:
+        return numberOfDays/14.0
+    else:
+        return 2.0
 
 def computeDescent(vector1, vector2):
     #~~~NEWTON'S METHOD~~~
@@ -123,9 +132,8 @@ def computeDescent(vector1, vector2):
         inverseJacobian = 1.0/(jacobianApprox)
         updateJacob = inverseJacobian*lv1.score
 
-        #compute time constant TODO
-        scheduleDuration = .7
-        timeConstant = 1.3*scheduleDuration
+        #compute time weighting
+        timeConstant = getWeightForScheduleDuration(vector1)
 
         #next vector
         newVector = lv1.vector + (updateJacob)*timeConstant
@@ -134,29 +142,30 @@ def computeDescent(vector1, vector2):
 #case 0: 1st iteration of algorithm
 #case 1: 2nd iteration of algorithm
 #case 2: 3rd or greater iteration of algorithm
-def createNewLearningVector(case, deviceID, zoneNumber):
+def createNewLearningVector(iteration, deviceID, zoneNumber):
     newVector = []
     #pick parameters for new vector based on what iteration of algorithm it is
-    if case == 0:
+    if iteration == 0:
         #initially ETp = 0*ETo^2 + 1*ETo + 0
         newVector = [0.0, 1.0, 0.0]
 
-    if case == 1:
+    #update based on sign of score only
+    if iteration == 1:
         last = getLastXLearningVectors(deviceID, 1)
         if last[0].score > 0: #too little water, we are underpredicing ETp
             newVector = [0.1, 1.2, 0.1]
         else: #too much water, we are overpredicting ETp
             newVector = [-.05, .94, -.05]
 
-    if case == 2:
-        #do a descent, no randomness
+    #do a descent, no randomness
+    if iteration == 2:
         last = getLastXLearningVectors(deviceID, 2)
         lv1 = last[0]
         lv2 = last[1]
         newVector = computeDescent(lv1, lv2)
 
-    if case >= 3:
-        #do a descent, with randomness
+    #do a descent, with randomness
+    if iteration >= 3:
         last = getLastXLearningVectors(deviceID, 3)
         lv1 = last[0]
         lv2 = last[1]
@@ -187,6 +196,7 @@ def createNewLearningVector(case, deviceID, zoneNumber):
     cursor = db.cursor()
     sqlString = "INSERT INTO learning (deviceID, zoneNumber, ETo) VALUES (%s, %s, %s)" % (new.deviceID, new.zoneNumber, new.ETo)
     cursor.execute(sqlString)
+
     #get the ID
     new.vectorID = cursor.lastrowid
     db.commit()
@@ -277,11 +287,9 @@ def getLearningVector(vectorID):
     #create the Learning Vector object (no feedback or vectors yet)
     lv = LearningVector(v[0], v[1], v[2], v[3], v[4])
 
-    #lv.printLV()
     #assimilate the parameter vector from the vectors table
     for vector in vectors:
         lv.vector.append(vector[2])
-    #lv.printLV()
     return lv
 
 def getMostRecentIrrigationEventForDevice(deviceID):
