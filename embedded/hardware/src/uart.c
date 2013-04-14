@@ -36,7 +36,7 @@ void UART_Init(void) {
 }
   
 // Sends "count" characters from "buffer" over UART
-void UART_Send(const char *buffer, char count) {
+void UART_Send(const unsigned char *buffer, unsigned long count) {
     while(count--) {
         UARTCharPutNonBlocking(UART0_BASE, *buffer++);
     }
