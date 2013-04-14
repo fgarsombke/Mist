@@ -29,8 +29,8 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.cpp ./$(INC_DIR)/%.h
 	$(CXX) $(CFLAGS) -c $(ADTL_FLGS) -I$(INC_DIR) -I./$(NESTING)/$(INC_DIR) $< -o $@
 
 dirs:
-	mkdir -p $(OUT_DIR)
-	mkdir -p $(OBJ_DIR)
+	mkdir -p $(OUT_DIR)  
+	mkdir -p $(OBJ_DIR) 
 
 clean::
 	\rm -f *.o *~ *.sdf
