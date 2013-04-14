@@ -43,10 +43,11 @@ void WiFly_Init(void) {
     GPIO_PORTD_DIR_R |= (ADHOC_IO | RESET_IO);
     GPIO_PORTD_DEN_R |= (ADHOC_IO | RESET_IO);
     
-    WiFly_Adhoc_Off();
     UART_Init();
-    WiFly_Send(EXIT_CMD, NO_RSP);
+    delay250ms();
+    WiFly_Adhoc_Off();
     WiFly_Reset();
+    WiFly_Send_Cmd("time/r", NO_RSP);
 }
 
 // Searchs for a desired string by reading
@@ -144,7 +145,7 @@ tBoolean WiFly_Open(char *resp) {
   tBoolean status = false;
   char* resp_pt = resp;    
     
-  RxFifo_Flush(); // Flux the FIFO
+  RxFifo_Flush(); // Flush the FIFO
     
   status = WiFly_Send(CMD_CMD, CMD_RSP);
   if(status){ 
