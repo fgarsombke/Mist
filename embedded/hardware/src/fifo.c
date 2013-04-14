@@ -41,8 +41,7 @@ char volatile *RxGetPt;
 char static RxFifo[SIZE];   
 
 void RxFifo_Flush(void){
-  char c;
-  while(RxFifo_Get(&c));
+  RxPutPt = RxGetPt = &RxFifo[0];
 }
 
 void RxFifo_Init(void){
