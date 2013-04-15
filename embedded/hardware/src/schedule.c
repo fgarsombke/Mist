@@ -6,6 +6,7 @@
 #include "stdlib.h"
 #include "string.h"
 
+#include "schedule.h"
 #include "wifly.h"
 
 const char* ZONE_LABEL = "z";
@@ -15,6 +16,8 @@ const char* START_LABEL = "startTime";
 const char* END_LABEL = "endTime";
 const char* JSON_START = "\r\n\r\n";
 const char* JSON_END = "*CLOS*";
+
+schedule_entry_t day_schedule[40];
 
 
 // Extracts the JSON from HTTP data and returns it as a NULL terminated string.

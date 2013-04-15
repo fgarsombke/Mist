@@ -77,7 +77,7 @@ found:
 }
 
 /**
- * Filsl next token with JSON string.
+ * Fills next token with JSON string.
  */
 static jsmnerr_t jsmn_parse_string(jsmn_parser *parser, const char *js,
 		jsmntok_t *tokens, size_t num_tokens) {
