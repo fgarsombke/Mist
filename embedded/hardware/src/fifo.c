@@ -28,7 +28,7 @@
 #include "fifo.h"
 
 #define TYPE char
-#define SIZE 2048
+#define SIZE 3000
 #define FAIL 0
 #define SUCCESS 1
 
@@ -79,6 +79,15 @@ int RxFifo_Get (char *datapt){
     }
     return(SUCCESS);
 }
+
+int RxFifo_Peek (char *datapt){
+    if( RxPutPt == RxGetPt ){
+        return(FAIL);
+    }
+    *datapt = *RxGetPt;
+    return(SUCCESS);
+}
+
 unsigned short RxFifo_Size (void){
     if( RxPutPt < RxGetPt ){
         return ((unsigned short)( RxPutPt - RxGetPt + (SIZE*sizeof(char)))/sizeof(char));
