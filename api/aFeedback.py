@@ -10,16 +10,11 @@ import collections
 from jsonencode import MyEncoder
 
 
-def storeFeedback(deviceID, feedback):
+def storeFeedback(deviceID, zoneNumber, created, value):
     conf = DBConfig.DBConfig()
     db = conf.connectToLocalConfigDatabase()
     cursor = db.cursor()
-
-    #TODO: Need to associate with a vectorID - how?
-
-    for fbTuple in feedback:
-        cursor.execute("INSERT INTO feedback (vectorID, deviceID, created, value) VALUES (%s, %s, %s, %S)", (vectorID, deviceID, fbTuple.created, fbTuple.value))
-
+    cursor.execute("INSERT INTO feedback (deviceID, zoneNumber, created, value) VALUES (%s, %s, %s, %S)", (deviceID, zoneNumber, created, value))
     db.commit()
     return 0
 
@@ -29,8 +24,6 @@ class aFeedback:
         return 0
 
     def POST(self):
-        feedback_data = web.input()
-        feedbackArray = json.loads(feedback_data.jsonArray)
-
-        storeFeedback(deviceID, feedbackArray)
+        FBdata = web.input()
+        storeFeedback(FBdata.deviceID, FBdata.zoneNumber, FBdata.create, FBData.value)
         return 0
