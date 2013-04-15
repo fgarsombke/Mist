@@ -19,7 +19,8 @@ const char* JSON_END = "*CLOS*";
 // Global variable for storing a week of schedules
 #define SCHED_SIZE 40
 schedule_entry_t schedule[SCHED_SIZE];
-size_t schedule_idx = 0;
+// size_t schedule_idx = 0;
+unsigned long schedule_idx = 0;
 
 // Extracts the JSON from HTTP data and returns it as a NULL terminated string.
 // Does not create a new string because of RAM constraints.

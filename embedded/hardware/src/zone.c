@@ -52,10 +52,14 @@ void Zone_Init(void) {
 
 // Enables a zone
 void Zone_Enable(unsigned long zone) {
-    while(SSIBusy(SSI0_BASE)) {}
+	  if( zone != Current_Zone) {
+			Zone_Disable();
+      
+			while(SSIBusy(SSI0_BASE)) {}
 
-    // Zones numbered starting at 1, subtract to index
-    SSIDataPut(SSI0_BASE, (0x01 << (zone - 1)));
+      // Zones numbered starting at 1, subtract to index
+      SSIDataPut(SSI0_BASE, (0x01 << (zone - 1)));
+		}
 }
 
 // Disables a zone

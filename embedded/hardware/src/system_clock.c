@@ -6,6 +6,9 @@
 #include "driverlib/systick.h"
 #include "driverlib/sysctl.h"
 
+#include "zone.h"
+#include "file_system.h"
+
 #define MS 5000000 
 #define MS_TO_S 1000
 
@@ -30,7 +33,19 @@ void SystemClock_Init(void) {
 
 
 void SysTick_Handler(void){
-    SystemClock_MSec = (SystemClock_MSec++) % MS_TO_S;
+    int i = 0;
+	  SystemClock_MSec = (SystemClock_MSec++) % MS_TO_S;
     if(!SystemClock_MSec) SystemClock_Sec++;
+	
+	  while(i < ScheduleSize) {
+		    if((Schedule[i].start_time < SystemClock_Sec) && (Schedule[i].end_time > SystemClock_Sec)) {
+					Zone_Enable(Schedule[i].zone);
+				} else {
+				  Zone_Disable();
+			  }
+		}
+	  
+	  
+	  
 }
 
