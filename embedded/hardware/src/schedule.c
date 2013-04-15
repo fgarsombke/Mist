@@ -6,7 +6,6 @@
 #include "stdlib.h"
 #include "string.h"
 
-#include "cJSON.h"
 #include "wifly.h"
 
 const char* ZONE_LABEL = "z";
@@ -32,31 +31,4 @@ void scheduleExtract(char *http_data) {
 
 // Extracts the zones and times from a JSON formatted string
 void scheduleParse(char *json){
-    cJSON *schedule = cJSON_Parse(json);
-    
-    if (!schedule){/*error*/}
-    
-    else{
-        char debug[34]; 
-        int array_idx, time_idx;
-        
-        cJSON *zone_array = cJSON_GetObjectItem(schedule, ZONE_LABEL);
-       
-        for(array_idx = 0; array_idx < cJSON_GetArraySize(zone_array); array_idx++) {
-            cJSON *zone = cJSON_GetArrayItem(zone_array, array_idx);
-            int zone_num = cJSON_GetObjectItem(zone, ZONE_NUM_LABEL)->valueint;
-            
-            cJSON *timeArray = cJSON_GetObjectItem(zone, TIMES_ARRAY_LABEL);
-            for(time_idx = 0; time_idx < cJSON_GetArraySize(timeArray); time_idx++) {
-                cJSON *time = cJSON_GetArrayItem(timeArray, time_idx);
-                int start_time = cJSON_GetObjectItem(time, START_LABEL)->valueint;
-                int end_time = cJSON_GetObjectItem(time, END_LABEL)->valueint;
-                
-                sprintf(debug, "Zone %d = {%d, %d}\n", zone_num, start_time, end_time);
-                //RIT128x96x4StringDraw(debug, 0, (debug_idx++)*8, 15);
-            }
-        }
-        
-        cJSON_Delete(schedule);
-    }
 }
