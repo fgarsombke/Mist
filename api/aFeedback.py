@@ -27,8 +27,10 @@ class aFeedback:
         FBdata = web.input()
         if FBData.json:
             jsonFeedback = FBdata.json
-            string = json.dump(jsonFeedback)
-            storeFeedback(FBdata.deviceID, FBdata.zoneNumber, FBdata.create, FBData.value)
+            fb = json.loads(jsonFeedback)
+            for zone in fb:
+                for item in zone["feedback"]:
+                    storeFeedback(FBdata.deviceID, zone["zoneNumber"], item["time"], item["value"])
         else:
             storeFeedback(FBdata.deviceID, FBdata.zoneNumber, FBdata.create, FBData.value)
         return 0
