@@ -21,9 +21,6 @@ void UART_Init(void) {
         SysCtlPeripheralEnable(SYSCTL_PERIPH_UART0);
         SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);
     
-        // Enable interrupts
-        IntMasterEnable();
-    
         // PA0/PA1 are UART0
         GPIOPinTypeUART(GPIO_PORTA_BASE, GPIO_PIN_0 | GPIO_PIN_1);
     
