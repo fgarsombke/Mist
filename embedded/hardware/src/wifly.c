@@ -80,7 +80,8 @@ tBoolean WiFly_Open(char *resp) {
   if(status){ 
     status = WiFly_Send(OPEN_CMD, NO_RSP);
     if(status){
-      while(RxFifo_Size() <= 256);
+      //while(RxFifo_Size() <= 2000);
+      SysCtlDelay(SysCtlClockGet()*3);
       while(RxFifo_Get(resp_pt)) resp_pt++;
       *resp_pt = NULL;
     }
