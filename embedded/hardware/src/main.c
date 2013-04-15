@@ -7,7 +7,6 @@
 #include "driverlib/gpio.h"
 #include "driverlib/interrupt.h"
 #include "driverlib/sysctl.h"
-//#include "drivers/rit128x96x4.h"
 
 #include "stdio.h"
 #include "stdlib.h"
@@ -15,14 +14,15 @@
 
 #include "json.h"
 #include "schedule.h"
-#include "SystemClock.h"
+#include "system_clock.h"
 #include "wifly.h"
 
 #ifdef DEBUG
 void __error__(char *pcFilename, unsigned long ulLine){}
 #endif
     
-char resp[2100];
+// Stores a network response
+char resp[2500];
 
 int main(void){
     SysCtlClockSet(SYSCTL_SYSDIV_4 | SYSCTL_USE_PLL | SYSCTL_OSC_MAIN | SYSCTL_XTAL_6MHZ);
@@ -32,14 +32,17 @@ int main(void){
     
     // Enable Systick
     SystemClock_Init();
-    //RIT128x96x4Init(1000000);
-    //RIT128x96x4Clear();
+
+    // Initializes the WiFly module and UART communication
     WiFly_Init();
+    
+    // Gets POSIX time from NIST 
     SystemClock_Set(WiFly_Time());
+    
     for(;;) {
         WiFly_Open(resp);
         scheduleExtract(resp);
-        JSON_Parse(resp);
+        scheduleParse(resp);
     }
 }
 
