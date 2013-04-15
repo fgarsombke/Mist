@@ -1,6 +1,7 @@
 import random
 import sys
 import datetime
+from datetime import date
 import time
 import math
 import numpy as np
@@ -31,8 +32,9 @@ def main():
     #how do I choose the current /simulated time 
     deviceID = 1
     zone = 1
-    simulatedTime = 1
-
+    simulatedTime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    simulatedTime = datetime.datetime.strptime(simulatedTime, "%Y-%m-%d %H:%M:%S")
+    print simulatedTime
     numIterations = getNumIterations(deviceID, zone)
 
     #don't execute this code on the first iteration of the algorithm
@@ -65,9 +67,9 @@ def main():
 
     #generate a new schedule for the device
     #and store it in the database
-    intervalTime = 0 #duration of forecast
+    numDays = 7 #duration of forecast
     #time = current or simulated current time
-    generateNewSchedule(ETp, intervalTime, time)
+    generateNewSchedule(deviceID, zone, ETp, numDays, simulatedTime, newVector.vectorID)
     print "Generated Schedule"
 
 def getNumIterations(deviceID, zone):
@@ -96,9 +98,26 @@ def getETo(deviceID):
     value = ForecastET.forecastEToForStation(latLong[0], latLong[1], datee)
     return value
 
-def generateNewSchedule(ETp, interval, time):
+def generateNewSchedule(deviceID, zone, ETp, numDays, timer, vectorID):
     #given an ET value and time period, generate a schedule.
-    return 0
+    ETperDay = ETp/numDays
+    minutesPerMMofWater = 20 
+    minutesPerDay = ETperDay*minutesPerMMofWater
+    count = 0
+    #TODO
+    print timer
+    for i in range(numDays):
+        date = timer + datetime.timedelta(i, 0)
+        createIrrigationEvent(deviceID, zone, date, minutesPerDay, vectorID)
+
+def createIrrigationEvent(deviceID, zone, timer, duration, vectorID):
+    conf = DBConfig.DBConfig()
+    db = conf.connectToLocalConfigDatabase()
+    cursor = db.cursor()
+    print timer
+    sqlString = "INSERT INTO queuedIrrigations (productID, zoneNumber, startTime, duration, vectorID) VALUES (%s, %s, '%s', %s, %s)" % (deviceID, zone, timer, duration, vectorID)
+    cursor.execute(sqlString)
+    db.commit()
 
 def predictCorrectET(vector):
     #need to decide on the length of the vector and which coefficients are part of the equation
@@ -298,7 +317,7 @@ def getMostRecentIrrigationEventForDevice(deviceID, zone, time):
     conf = DBConfig.DBConfig()
     db = conf.connectToLocalConfigDatabase()
     cursor = db.cursor()
-    sqlString = "SELECT * FROM executedIrrigations WHERE productID = '%s' AND zoneNumber = '%s' AND startTime < '%s' ORDER BY startTime DESC" % (deviceID, time, zone)
+    sqlString = "SELECT * FROM executedIrrigations WHERE productID = '%s' AND zoneNumber = '%s' AND startTime < '%s' ORDER BY startTime DESC" % (deviceID, zone, time)
     cursor.execute(sqlString)
     event = cursor.fetchone()
     cursor.close()

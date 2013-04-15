@@ -25,5 +25,10 @@ class aFeedback:
 
     def POST(self):
         FBdata = web.input()
-        storeFeedback(FBdata.deviceID, FBdata.zoneNumber, FBdata.create, FBData.value)
+        if FBData.json:
+            jsonFeedback = FBdata.json
+            string = json.dump(jsonFeedback)
+            storeFeedback(FBdata.deviceID, FBdata.zoneNumber, FBdata.create, FBData.value)
+        else:
+            storeFeedback(FBdata.deviceID, FBdata.zoneNumber, FBdata.create, FBData.value)
         return 0

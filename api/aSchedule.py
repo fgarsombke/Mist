@@ -26,7 +26,7 @@ def queueIrrigation(event):
     startTime = event.date + " " + event.startTime
     print startTime
     timestamp = datetime.now() 
-    cursor.execute("INSERT INTO queuedIrrigations (productID, zoneNumber, startTime, duration, created) VALUES (%s, %s, %s, %s, %s)", (event.productID, event.zoneNumber, startTime, event.duration, timestamp))
+    cursor.execute("INSERT INTO executedIrrigations (productID, zoneNumber, startTime, duration, created) VALUES (%s, %s, %s, %s, %s)", (event.productID, event.zoneNumber, startTime, event.duration, timestamp))
     results = cursor.lastrowid
     db.commit()
     return results
