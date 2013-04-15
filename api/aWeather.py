@@ -28,17 +28,23 @@ def findNearestClimateStation(latitude, longitude):
     nearestStation = cursor.fetchone()
     return nearestStation[0]
 
-def getWeatherData(station, time):
+def getWeatherData(latitude, longitude, begintime, endtime):
 
-    conf = DBConfig.DBConfig()
-    db = conf.connectToLocalConfigDatabase()
-    cursor = db.cursor()
+    #figure out average data points over the length of interval + precipitation
+    currTime = beginTime
+    apiKey = "6d838d5df77d3f8650aee0d173fcad4b"
 
-    #TODO: PARAMETERIZE TIME INTERVAL!!!
-    sqlString = """SELECT * FROM hourlyClimateData WHERE climateStationID = '%s' AND hourlyClimateData.date > DATE_SUB(now(), INTERVAL 1 DAY)""" % (station)
-    cursor.execute(sqlString)
-    results = cursor.fetchall() 
-    cursor.close()
+    while currTime < endtime:
+        url = "http://api.forecast.io/forecast/%s/%s,%s,%s" % (apiKey, latitude, longitude, currTime)
+        req = urllib2.Request(url)
+
+        try:
+            response = json.loads(urllib2.urlopen(req).read())
+        except urllib2.URLError, e:
+            print e
+
+    hourlyData = response['hourly']
+    data = hourlyData['data']
 
     #compute WeatherData object
     avgTemp = 0
@@ -95,21 +101,22 @@ def getWeatherData(station, time):
     data = WeatherData(minTemp, maxTemp, avgTemp, avgWind, avgHumidity, avgPressure, avgDew, isoTime)
     return data
 
-
 class aWeather:
-    #TODO - make it work the way Michael wants
     #GET API FOR WEATHER
-    #RETURN weather data object: expetected parameter: latitude, longitude, time
+    #reroute to Forecast.io API
+    #RETURN weather data object: expetected parameter: latitude, longitude, POSIX time begin and end
     def GET(self):
         weather_data = web.input()
         devices = 0
 
         if weather_data:
-            #get nearest station
-            station = findNearestClimateStation(weather_data.latitude, weather_data.longitude)
-            #compute necessary data from that station
-            weatherData = getWeatherData(station, weather_data.time)
-            #JSONize
+            latitude = weather_data.latitude
+            longitude = weather_data.longitude
+            beginTime = weather_data.begin
+            endTime = weather_data.end
+            weatherData = getWeatherData(latitude, longitude, beginTime, endTime)
+
+            #JSON
             objects_list = []
             d = collections.OrderedDict()
             d['startTemp'] = weatherData.startTemp
@@ -119,6 +126,7 @@ class aWeather:
             d['avgHumidity'] = weatherData.avgHumidity
             d['avgPressure'] = weatherData.avgPressure
             d['avgDew'] = weatherData.avgDew
+            d['precipitation'] = weatherData.precipitation
             d['timestamp'] = weatherData.timestamp
             objects_list.append(d)
             j = json.dumps(objects_list, cls=MyEncoder)
