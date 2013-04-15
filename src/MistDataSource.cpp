@@ -18,6 +18,13 @@ namespace Mist {
       return sPtrMistDataSource(new MistDataSource(srcURL));
    }
 
+   int MistDataSource::SubmitFeedback(const std::vector<FeedbackList_t> feedback, unsigned int timeout) const
+   {
+      std::string fbStr = Feedback::PackFeedbackJson(feedback);
+
+      return -1;
+   }
+
    WeatherData MistDataSource::GetWeatherData(GeoLocale locale, pt::time_period period,  unsigned int timeout) 
    {
       std::vector<std::string> headers;
