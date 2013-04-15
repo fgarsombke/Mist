@@ -31,3 +31,6 @@ namespace bnu = boost::numeric::ublas;
 #include "ETCalc.h"
 
 typedef Mist::ETCalc::ET_float_t water_mm_t;
+
+// -100 is most undergrown, 0 perfect, 100 most overgrown
+typedef double health_t;

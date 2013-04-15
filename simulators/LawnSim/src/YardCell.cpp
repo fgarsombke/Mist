@@ -22,7 +22,6 @@ YardCell::YardCell()
 
 void YardCell::ResetState() 
 {
-   current_health_ = cell_info_.initial_health();
    absorbed_water_ = 0;
 }
 
