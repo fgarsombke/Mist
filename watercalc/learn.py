@@ -28,14 +28,16 @@ class LearningVector:
         print "Vector: %s" % self.vector
 
 def main():
+    #how do I choose the current /simulated time 
     deviceID = 1
     zone = 1
+    simulatedTime = 1
+
     numIterations = getNumIterations(deviceID, zone)
 
     #don't execute this code on the first iteration of the algorithm
     if numIterations > 0:
-        #TODO: change to executedIrrigations, not queued
-        event = getMostRecentIrrigationEventForDevice(deviceID)
+        event = getMostRecentIrrigationEventForDevice(deviceID, zone, simulatedTime)
         identifier = event[5]
         print "LearningID: %s (For most recent irrigation event for DeviceID: %s)" % (identifier, deviceID)
 
@@ -63,7 +65,9 @@ def main():
 
     #generate a new schedule for the device
     #and store it in the database
-    generateNewSchedule(ETp, 0)
+    intervalTime = 0 #duration of forecast
+    #time = current or simulated current time
+    generateNewSchedule(ETp, intervalTime, time)
     print "Generated Schedule"
 
 def getNumIterations(deviceID, zone):
@@ -71,7 +75,8 @@ def getNumIterations(deviceID, zone):
     db = conf.connectToLocalConfigDatabase()
     cursor = db.cursor()
     sqlString = "SELECT COUNT(*) FROM learning WHERE deviceID = %s AND zoneNumber = %s" % (deviceID, zone)
-    result = cursor.execute(sqlString)
+    cursor.execute(sqlString)
+    result = cursor.fetchone()[0]
     return result
 
 def getLatLongforDevice(deviceID):
@@ -79,23 +84,19 @@ def getLatLongforDevice(deviceID):
     db = conf.connectToLocalConfigDatabase()
     cursor = db.cursor()
     sqlString = "SELECT latitude, longitude FROM devices WHERE productID = %s" % deviceID
-    print "yo"
     cursor.execute(sqlString)
-    print "hi"
     latlong = cursor.fetchone()
     return latlong
 
 def getETo(deviceID):
     #Make ETo code modular and use that
     latLong = getLatLongforDevice(deviceID)
-    print latLong[0]
-    print latLong[1]
     datee = 0
     #TODO:parameterize the date
     value = ForecastET.forecastEToForStation(latLong[0], latLong[1], datee)
     return value
 
-def generateNewSchedule(ETp, time):
+def generateNewSchedule(ETp, interval, time):
     #given an ET value and time period, generate a schedule.
     return 0
 
@@ -144,6 +145,7 @@ def computeDescent(vector1, vector2):
 #case 2: 3rd or greater iteration of algorithm
 def createNewLearningVector(iteration, deviceID, zoneNumber):
     newVector = []
+    print iteration
     #pick parameters for new vector based on what iteration of algorithm it is
     if iteration == 0:
         #initially ETp = 0*ETo^2 + 1*ETo + 0
@@ -263,7 +265,7 @@ def getFeedbackForLearningVector(vector):
     conf = DBConfig.DBConfig()
     db = conf.connectToLocalConfigDatabase()
     cursor = db.cursor()
-    sqlString = """SELECT * FROM queuedIrrigations WHERE vectorID = '%s' ORDER BY startTime ASC""" % vector.vectorID
+    sqlString = """SELECT * FROM executedIrrigations WHERE vectorID = '%s' ORDER BY startTime ASC""" % vector.vectorID
     cursor.execute(sqlString)
     earliest = cursor.fetchone()
     sqlString = """SELECT * FROM feedback WHERE deviceID = '%s' AND created > '%s'""" % (earliest[1], earliest[2])
@@ -292,11 +294,11 @@ def getLearningVector(vectorID):
         lv.vector.append(vector[2])
     return lv
 
-def getMostRecentIrrigationEventForDevice(deviceID):
+def getMostRecentIrrigationEventForDevice(deviceID, zone, time):
     conf = DBConfig.DBConfig()
     db = conf.connectToLocalConfigDatabase()
     cursor = db.cursor()
-    sqlString = "SELECT * FROM queuedIrrigations WHERE productID = '%s' ORDER BY startTime DESC" % deviceID
+    sqlString = "SELECT * FROM executedIrrigations WHERE productID = '%s' AND zoneNumber = '%s' AND startTime < '%s' ORDER BY startTime DESC" % (deviceID, time, zone)
     cursor.execute(sqlString)
     event = cursor.fetchone()
     cursor.close()
