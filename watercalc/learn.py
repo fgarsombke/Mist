@@ -63,7 +63,7 @@ def main():
 
     #generate a new schedule for the device
     #and store it in the database
-    generateNewSchedule(ETp)
+    generateNewSchedule(ETp, 0)
     print "Generated Schedule"
 
 def getNumIterations(deviceID, zone):
@@ -93,7 +93,7 @@ def getETo(deviceID):
     datee = 0
     #TODO:parameterize the date
     value = ForecastET.forecastEToForStation(latLong[0], latLong[1], datee)
-    return value[0]
+    return value
 
 def generateNewSchedule(ETp, time):
     #given an ET value and time period, generate a schedule.
