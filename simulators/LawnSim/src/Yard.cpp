@@ -168,7 +168,7 @@ const bnu::unbounded_array<LawnCoordinate> Yard::InitHeightMap(YardInfo const &y
 
 void Yard::ResetState() 
 {
-   // Initialize each cell to its default state
+   // TODO: Reset each cells health to its initial values
    for (YardCell &cell : cells_.data()) {
       cell.ResetState();
    }
@@ -178,7 +178,9 @@ void Yard::ResetState()
 }
 
 
-void Yard::ElapseTime(pt::time_period tickPeriod, const WeatherData &wdata, const std::vector<pt::time_duration> sprinklerDurations) 
+void Yard::ElapseTime(pt::time_period tickPeriod, 
+                      const WeatherData &wdata, 
+                      const std::vector<pt::time_duration> sprinklerDurations) 
 {
    // TODO: Change the api so that sprinklerDurations cannot be accidentally resized
    using namespace bnu;
@@ -244,6 +246,12 @@ inline void Yard::DoGrow(ETCalc::ETParam_t ET_0, size_t startCell, size_t endCel
       // Calculate ETo metric
       cellET = et_calc_.CalculateET_o(cellETParams);
       cout << cellET << endl;
+
+      // Grow grass
+      surface_water_.data()[startCell] -= cellET;
+
+      
+
 		startCell++;
    }
 }

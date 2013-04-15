@@ -32,4 +32,24 @@ private:
 
 };
 
+class SprinklerLocation
+{
+public:
+   // Create a sprinkler that does no waterign
+   SprinklerLocation()
+      : sprinkler_(0.0)
+   {
+   }
+
+   SprinklerLocation(Sprinkler sprinkler, size_t row, size_t col)
+      : sprinkler_(sprinkler), row_(row), col_(col)
+   {
+   }
+
+private:
+   Sprinkler sprinkler_;
+   size_t row_;
+   size_t col_;
+};
+
 }}

@@ -38,7 +38,6 @@ private:
    YardCellType_t cell_type_;
    
    DriftEntry drift_entry_;
-   double current_health_;
    
    // The yard cell only gets water soaked into the soil
    double absorbed_water_;

@@ -8,7 +8,7 @@
 
 namespace Mist { namespace LawnSim {
 
-typedef bnu::unbounded_array<std::pair<Sprinkler, std::pair<size_t,size_t> > > SprinklersList_t;
+typedef bnu::unbounded_array<SprinklerLocation> SprinklersList_t;
 
 class YardInfo
 {

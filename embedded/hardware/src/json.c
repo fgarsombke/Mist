@@ -4,21 +4,27 @@
 #include <stdbool.h>
 
 #include "jsmn.h"
+#include "json.h"
 #include "schedule.h"
 #include "string.h"
 
+// Tokens must be a power of 2
 #define JSON_TOKENS 256
 
+// Constants for parsing
 const char* ROOT_KEY = "z";
 const char* ZONE_KEY = "zoneNumber";
-const char* TIME_KEY = "times";
 const char* START_KEY = "startTime";
 const char* END_KEY = "endTime";
 
+// Private functions for parsing
 bool json_token_streq(char*, jsmntok_t*, const char*);
-char * json_token_tostr(char*, jsmntok_t*);
+char* json_token_tostr(char*, jsmntok_t*);
 unsigned long json_token_toul(char*, jsmntok_t*);
 
+
+// This function parses and stores a JSON schedule
+// PERFORMS NO ERROR CHECKING OR HANDLING
 void JSON_Parse(char* json) {
     // Initialization variables
     jsmn_parser parser;
@@ -26,37 +32,39 @@ void JSON_Parse(char* json) {
     
     
     // State machine variables
-    typedef enum { START, ZONE, START_TIME, END_TIME, SKIP, STOP } parse_state;
+    typedef enum { START, ZONE, START_TIME, END_TIME, SKIP} parse_state;
     parse_state state;
     unsigned long current_zone = 0;
-    size_t object_tokens = 0, i , j, idx = 0;
+    size_t i , j;
     
+    // Initialize the JSMN parser
+    // Note that the tokens return indices
     jsmn_init(&parser);
     jsmn_parse(&parser, json, tokens, JSON_TOKENS);
 
-    // State Machine
+    // JSMN State Machine by example of 
     // https://github.com/alisdair/jsmn-example
     state = START;
     for (i = 0, j = 1; j > 0; i++, j--) {
         jsmntok_t *t = &tokens[i];
-
+        
+        // Continously redefines tokens left to be parsed
         if (t->type == JSMN_ARRAY || t->type == JSMN_OBJECT)
             j += t->size;
 
-        switch (state)
-        {
+        switch (state) {
+            // Start
             case START:
                 state = SKIP;
-                object_tokens = t->size;
-
-                //if (object_tokens == 0)
-                //    state = STOP;
+            
                 break;
 
+            // Skip over tokens we don't care about
             case SKIP:
-                object_tokens += (t->size-1);
+             
                 state = SKIP;
 
+                // Search for objects of importance
                 if (t->type == JSMN_STRING) {
                     if(json_token_streq(json, t, ZONE_KEY))
                         state = ZONE;
@@ -66,58 +74,56 @@ void JSON_Parse(char* json) {
                         state = END_TIME;
                 }    
                 
-                //if (object_tokens == 0)
-                //    state = STOP;
                 break;
 
+            // Parses a zone and stores it for use later
+            // Each call sets a new zone
             case ZONE:
-                object_tokens--;
+                
                 state = SKIP;
+            
                 current_zone = json_token_toul(json, t);
-
-                //if (object_tokens == 0)
-                //    state = STOP;
+            
                 break;
 
+            // Saves the start time and zone
             case START_TIME:
-                object_tokens--;
-                day_schedule[idx].zone = current_zone;
-                day_schedule[idx].start_time = json_token_toul(json, t);
-                state = SKIP;
 
-                //if (object_tokens == 0)
-                //    state = STOP;
+                state = SKIP;
+            
+                schedule[schedule_idx].zone = current_zone;
+                schedule[schedule_idx].start_time = json_token_toul(json, t);
+
                 break;
 
+            // Saves the end time moves to the next watering time
             case END_TIME:
-                object_tokens--;
-                day_schedule[idx].end_time = json_token_toul(json, t);
-                idx++;
+                
                 state = SKIP;
-
-                //if (object_tokens == 0)
-                //    state = STOP;
-                 break;
-
-            case STOP:
+            
+                schedule[schedule_idx].end_time = json_token_toul(json, t);
+                schedule_idx++;
+            
                 break;
-
             default:
                 break;
         }
     }
 }
 
+// strncmp for JSMN tokens
 bool json_token_streq(char *js, jsmntok_t *t, const char *s) {
     return (strncmp(js + t->start, s, t->end - t->start) == 0 && strlen(s) == (size_t) (t->end - t->start));
 }
 
+// Converts a JSMN token to a string
 char * json_token_tostr(char *js, jsmntok_t *t) {
     js[t->end] = '\0';
     return js + t->start;
 }
 
+// Converts a JSMN token to an unsigned long
 unsigned long json_token_toul(char *js, jsmntok_t *t) {
     js[t->end] = '\0';
-    return strtoul(js + t->start, NULL, 0);
+    return strtoul((js + t->start), NULL, 0);
 }

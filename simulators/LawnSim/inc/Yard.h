@@ -24,7 +24,9 @@ public:
 
    const bnu::matrix<YardCell> &cells() const { return cells_; }
 
-   void ElapseTime(pt::time_period tickPeriod, const WeatherData &data, const std::vector<pt::time_duration> sprinklerDurations);
+   void ElapseTime(pt::time_period tickPeriod, 
+                  const WeatherData &data, 
+                  const std::vector<pt::time_duration> sprinklerDurations);
 
    void ResetState();
 
@@ -57,6 +59,9 @@ private:
 
    // The water on the surface across the yard, which has not yet been absorbed into the soil
    bnu::matrix<water_mm_t> surface_water_;
+
+   // Matrix which holds the current health of each lawn cell
+   bnu::matrix<health_t> cell_health_;
 
    ETCalc::ETCalc et_calc_;
 
