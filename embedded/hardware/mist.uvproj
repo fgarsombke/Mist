@@ -417,11 +417,6 @@
               <FilePath>.\src\startup_rvmdk.S</FilePath>
             </File>
             <File>
-              <FileName>rit128x96x4.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>..\drivers\rit128x96x4.c</FilePath>
-            </File>
-            <File>
               <FileName>fifo.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\src\fifo.c</FilePath>
@@ -430,11 +425,6 @@
               <FileName>uart.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\src\uart.c</FilePath>
-            </File>
-            <File>
-              <FileName>SystemClock.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\src\SystemClock.c</FilePath>
             </File>
             <File>
               <FileName>json.c</FileName>
@@ -446,6 +436,21 @@
               <FileType>1</FileType>
               <FilePath>.\src\jsmn.c</FilePath>
             </File>
+            <File>
+              <FileName>system_clock.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\system_clock.c</FilePath>
+            </File>
+            <File>
+              <FileName>file_system.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\file_system.c</FilePath>
+            </File>
+            <File>
+              <FileName>flash_prog.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\flash_prog.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -455,11 +460,6 @@
               <FileName>zone.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\inc\zone.h</FilePath>
-            </File>
-            <File>
-              <FileName>FIFO.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\inc\FIFO.h</FilePath>
             </File>
             <File>
               <FileName>schedule.h</FileName>
@@ -482,11 +482,6 @@
               <FilePath>..\drivers\rit128x96x4.h</FilePath>
             </File>
             <File>
-              <FileName>SystemClock.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\inc\SystemClock.h</FilePath>
-            </File>
-            <File>
               <FileName>json.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\inc\json.h</FilePath>
@@ -495,6 +490,16 @@
               <FileName>jsmn.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\inc\jsmn.h</FilePath>
+            </File>
+            <File>
+              <FileName>system_clock.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\inc\system_clock.h</FilePath>
+            </File>
+            <File>
+              <FileName>fifo.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\inc\fifo.h</FilePath>
             </File>
           </Files>
         </Group>
