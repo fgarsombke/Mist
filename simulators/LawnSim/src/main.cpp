@@ -60,7 +60,7 @@ int main(int argc, char * argv[])
       
       options.release();
       
-      sim.Run();
+      sim.Start();
    } catch (std::exception& e) {
       cout << "Fatal Exception: " << e.what() << endl;
       return 1;

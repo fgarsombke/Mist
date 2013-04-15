@@ -22,9 +22,9 @@ public:
                unsigned int simTickPeriod,
                unsigned int simSpeedMultiplier);
 
-   void Run();
-
+   void Start();
    void Stop();
+   void Pause();
 
    const Yard &yard() const { return yard_; }
 
