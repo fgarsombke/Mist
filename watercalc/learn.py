@@ -91,7 +91,6 @@ def getLatLongforDevice(deviceID):
     return latlong
 
 def getETo(deviceID):
-    #Make ETo code modular and use that
     latLong = getLatLongforDevice(deviceID)
     datee = 0
     #TODO:parameterize the date
