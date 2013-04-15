@@ -12,7 +12,7 @@ namespace MistScheduleInteral{
    const char* END_LABEL = "endTime";
 }
 
-pt::ptime MistSchedule::LongTimeToPTime(json_time_parse_t seconds) 
+pt::ptime MistSchedule::LongTimeToPTime(MistScheduleInteral::json_time_parse_t seconds) 
 {
    const pt::ptime epoch(boost::gregorian::date(1970, 1, 1));
 
@@ -22,6 +22,8 @@ pt::ptime MistSchedule::LongTimeToPTime(json_time_parse_t seconds)
 MistSchedule MistSchedule::CreateFromPTree(boost::property_tree::ptree &scheduleTree)
 {
    using boost::property_tree::ptree;
+   using namespace MistScheduleInteral;
+   
    std::string idStr = scheduleTree.get<std::string>(ID_LABEL, EmptyUUIDString);
    std::vector<ZoneInfo> infos(8, ZoneInfo());
 
