@@ -19,12 +19,14 @@ const char* EXIT_RSP = "EXIT";
 const char* TIME_CMD = "show t t\r";
 const char* TIME_RSP = "RTC=";
 const char* OPEN_CMD = "open\r";
+const char* OPEN_FLG = "*OPEN*";
+const char* CLOS_FLG = "*CLOS*";
 
 #define ADHOC_IO 0x01
 #define RESET_IO 0x10
 
 // Delays 250ms based on the clock speed
-void delay250ms(void){ SysCtlDelay(SysCtlClockGet()/12); }
+void delay250ms(void){ SysCtlDelay(SysCtlClockGet()/12);}
 
 void WiFly_Adhoc_On(void) {
   GPIO_PORTD_DATA_R |= ADHOC_IO;
@@ -64,6 +66,28 @@ tBoolean WiFly_Match(const char * match) {
   }
   
   if(len == idx) status = true;
+  return status;
+}
+
+// Opens a network connection to the server
+tBoolean WiFly_Open(char *resp) {
+  tBoolean status = false;
+  char* resp_pt = resp;    
+    
+  RxFifo_Flush(); // Flush the FIFO
+    
+  status = WiFly_Send(CMD_CMD, CMD_RSP);
+  if(status){ 
+    status = WiFly_Send(OPEN_CMD, NO_RSP);
+    if(status){
+      while(RxFifo_Size() <= 256);
+      while(RxFifo_Get(resp_pt)) resp_pt++;
+      *resp_pt = NULL;
+    }
+  }
+  
+  WiFly_Send(EXIT_CMD, EXIT_RSP); 
+  
   return status;
 }
 
@@ -140,25 +164,4 @@ unsigned long WiFly_Time(void){
   return time;
 }
 
-// Opens a network connection to the server
-tBoolean WiFly_Open(char *resp) {
-  tBoolean status = false;
-  char* resp_pt = resp;    
-    
-  RxFifo_Flush(); // Flush the FIFO
-    
-  status = WiFly_Send(CMD_CMD, CMD_RSP);
-  if(status){ 
-    status = WiFly_Send(OPEN_CMD, NO_RSP);
-    if(status){
-      SysCtlDelay(SysCtlClockGet()*3); // Blocking wait
-      while(RxFifo_Get(resp_pt)) resp_pt++;
-      *resp_pt = NULL;
-    }
-  }
-  
-  WiFly_Send(EXIT_CMD, EXIT_RSP); 
-  
-  return status;
-}
 

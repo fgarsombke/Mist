@@ -397,11 +397,6 @@
               <FilePath>.\src\zone.c</FilePath>
             </File>
             <File>
-              <FileName>cJSON.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\src\cJSON.c</FilePath>
-            </File>
-            <File>
               <FileName>main.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\src\main.c</FilePath>
@@ -436,6 +431,11 @@
               <FileType>1</FileType>
               <FilePath>.\src\uart.c</FilePath>
             </File>
+            <File>
+              <FileName>SystemClock.c</FileName>
+              <FileType>1</FileType>
+              <FilePath>.\src\SystemClock.c</FilePath>
+            </File>
           </Files>
         </Group>
         <Group>
@@ -445,11 +445,6 @@
               <FileName>zone.h</FileName>
               <FileType>5</FileType>
               <FilePath>.\inc\zone.h</FilePath>
-            </File>
-            <File>
-              <FileName>cJSON.h</FileName>
-              <FileType>5</FileType>
-              <FilePath>.\inc\cJSON.h</FilePath>
             </File>
             <File>
               <FileName>FIFO.h</FileName>
@@ -475,6 +470,11 @@
               <FileName>rit128x96x4.h</FileName>
               <FileType>5</FileType>
               <FilePath>..\drivers\rit128x96x4.h</FilePath>
+            </File>
+            <File>
+              <FileName>SystemClock.h</FileName>
+              <FileType>5</FileType>
+              <FilePath>.\inc\SystemClock.h</FilePath>
             </File>
           </Files>
         </Group>
