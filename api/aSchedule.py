@@ -84,6 +84,7 @@ class aSchedule:
             output = collections.OrderedDict()
             output['z'] = schedule_list
             j = json.dumps(output, cls=MyEncoder)
+            j = "".join(str(j).split())
             print j
             return j
         else:

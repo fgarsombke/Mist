@@ -28,7 +28,7 @@
 ; <o> Stack Size (in Bytes) <0x0-0xFFFFFFFF:8>
 ;
 ;******************************************************************************
-Stack   EQU     0x0000100
+Stack   EQU     0x00000100
 
 ;******************************************************************************
 ;
@@ -102,7 +102,7 @@ __Vectors
         DCD     IntDefaultHandler           ; Debug monitor handler
         DCD     0                           ; Reserved
         DCD     IntDefaultHandler           ; The PendSV handler
-        DCD     IntDefaultHandler           ; The SysTick handler
+        DCD     SysTick_Handler             ; The SysTick handler
         DCD     IntDefaultHandler           ; GPIO Port A
         DCD     IntDefaultHandler           ; GPIO Port B
         DCD     IntDefaultHandler           ; GPIO Port C
@@ -193,6 +193,11 @@ FaultISR
 ;******************************************************************************
 IntDefaultHandler
         B       IntDefaultHandler
+        
+SysTick_Handler PROC
+    EXPORT  SysTick_Handler           [WEAK]
+    B       .
+    ENDP
 
 ;******************************************************************************
 ;

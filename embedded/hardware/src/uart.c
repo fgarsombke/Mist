@@ -21,9 +21,6 @@ void UART_Init(void) {
         SysCtlPeripheralEnable(SYSCTL_PERIPH_UART0);
         SysCtlPeripheralEnable(SYSCTL_PERIPH_GPIOA);
     
-        // Enable interrupts
-        IntMasterEnable();
-    
         // PA0/PA1 are UART0
         GPIOPinTypeUART(GPIO_PORTA_BASE, GPIO_PIN_0 | GPIO_PIN_1);
     
@@ -36,7 +33,7 @@ void UART_Init(void) {
 }
   
 // Sends "count" characters from "buffer" over UART
-void UART_Send(const char *buffer, char count) {
+void UART_Send(const unsigned char *buffer, unsigned long count) {
     while(count--) {
         UARTCharPutNonBlocking(UART0_BASE, *buffer++);
     }
