@@ -14,6 +14,12 @@ public:
    {
    }
 
+   int PostHtml(const std::string & urlPath, 
+               const std::string &contentType,
+               const std::string &data, 
+               std::vector<std::string> &responseHeaders,
+               unsigned int timeout) const;
+
    int GetHtml(const std::string & urlPath, 
                std::ostream &out, 
                std::vector<std::string> &headers,

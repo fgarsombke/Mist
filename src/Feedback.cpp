@@ -12,7 +12,7 @@ namespace Mist {
       const char* VALUE_LABEL = "value";
    }
 
-   const std::string Feedback::PackFeedbackJson(const std::vector<FeedbackList_t> feedbackByZone)
+   const std::string Feedback::PackFeedbackJson(const ZoneFeedback_t &feedbackByZone)
    {
       using namespace FeedbackInternal;
       using boost::property_tree::ptree;
@@ -25,13 +25,13 @@ namespace Mist {
       ptree fbTree;
       std::stringstream ss;
 
-      for (size_t z = ZONE_OFFSET; z < feedbackByZone.size() + ZONE_OFFSET; ++z) {
+      for (size_t z = 0; z < feedbackByZone.size(); ++z) {
          FeedbackList_t zoneFeedback = feedbackByZone[z];
          
          if (!zoneFeedback.empty()) {
             ptree currZoneTree;
 
-            currZoneTree.put(ZONE_NUM_LABEL, z);
+            currZoneTree.add(ZONE_NUM_LABEL, z + ZONE_OFFSET);
             
             ptree feedbackChildListTree;
             for(const FeedbackEntry& f: zoneFeedback) {
@@ -41,11 +41,11 @@ namespace Mist {
 
                feedbackChildListTree.push_back(std::make_pair("", feedbackEntryTree));
             }
-            currZoneTree.add_child("", feedbackChildListTree);
+            currZoneTree.push_back(std::make_pair("", feedbackChildListTree));
 
 
             // ptree does array as anonymous children
-            fbTree.add_child("", currZoneTree);
+            fbTree.push_back(std::make_pair("", currZoneTree));
          }
       }
 

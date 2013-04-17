@@ -180,7 +180,8 @@ void Yard::ResetState()
 
 void Yard::ElapseTime(pt::time_period tickPeriod, 
                       const WeatherData &wdata, 
-                      const std::vector<pt::time_duration> sprinklerDurations) 
+                      const std::vector<pt::time_duration> &sprinklerDurations,
+                      ZoneFeedback_t &feedbackByZone) 
 {
    // TODO: Change the api so that sprinklerDurations cannot be accidentally resized
    using namespace bnu;
@@ -223,6 +224,11 @@ void Yard::ElapseTime(pt::time_period tickPeriod,
    // Grow
    // TODO: Parallelize
    DoGrow(baseETBuilder.Build(), 0, cells_.data().size());
+
+   FeedbackEntry ex;
+   ex.Time = tickPeriod.begin();
+   ex.Value = FeebackValue::Overgrown;
+   feedbackByZone[0].push_back(ex);
 }
 
 inline void Yard::DoGrow(ETCalc::ETParam_t ET_0, size_t startCell, size_t endCell)
@@ -249,8 +255,6 @@ inline void Yard::DoGrow(ETCalc::ETParam_t ET_0, size_t startCell, size_t endCel
 
       // Grow grass
       surface_water_.data()[startCell] -= cellET;
-
-      
 
 		startCell++;
    }

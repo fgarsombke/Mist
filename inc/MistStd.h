@@ -42,13 +42,18 @@ extern const char* EmptyUUIDString;
 
 namespace Mist {
    typedef boost::uuids::uuid uuid;
+   
+   const int ZONE_OFFSET = 1;
+
    typedef size_t product_id_t;
 }
+
 
 #include "GeoLocale.h"
 #include "ScheduleSource.h"
 #include "WeatherData.h"
 #include "WeatherDataSource.h"
+#include "Feedback.h"
 
 #if defined(_MSC_VER)
   #define JL_SIZE_T_SPECIFIER    "%Iu"

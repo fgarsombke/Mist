@@ -156,6 +156,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="inc\DataSetOptional.h" />
+    <ClInclude Include="inc\Feedback.h" />
     <ClInclude Include="inc\FeedbackSink.h" />
     <ClInclude Include="inc\GeoLocale.h" />
     <ClInclude Include="inc\HTMLSource.h" />
@@ -167,6 +168,7 @@
     <ClInclude Include="inc\WeatherDataSource.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="src\Feedback.cpp" />
     <ClCompile Include="src\HtmlSource.cpp" />
     <ClCompile Include="src\MistDataSource.cpp" />
     <ClCompile Include="src\MistSchedule.cpp" />
