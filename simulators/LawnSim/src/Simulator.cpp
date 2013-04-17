@@ -2,6 +2,7 @@
 
 #include "Simulator.h"
 
+
 #ifdef _MSC_VER 
 
 #include <Windows.h>
@@ -66,9 +67,13 @@ void DbgPrintDurations(const std::vector<time_duration> &durations)
 namespace Mist { namespace LawnSim {
 
 Simulator::Simulator(const YardInfo &yardInfo, 
-                     uPtrController &controller, 
+                     uPtrController &controller,
+                     sPtrFeedbackSink feedbackSink,
                      sPtrWeatherDataSource weatherSource)
-   : yard_(yardInfo), controller_(std::move(controller)), weather_source_(weatherSource)
+   : yard_(yardInfo), 
+      controller_(std::move(controller)), 
+      feedback_sink_(feedbackSink), 
+      weather_source_(weatherSource)
 {
    // Set start time ahead of end time so the sim won't run
    sim_start_time_ = ptime(boost::gregorian::date(1970,1,2));
@@ -107,6 +112,7 @@ void DoGiveFeedback()
 void Simulator::Start() 
 {
    std::vector<time_duration> sprinklerDurations = std::vector<pt::time_duration>(yard_.SprinklersCount());
+   ZoneFeedback_t zoneFeedback = ZoneFeedback_t(yard_.ZoneCount());
 
    // Basic logic: 
    //    -Do one tick
@@ -140,11 +146,12 @@ void Simulator::Start()
 		// Send the sprinkler times to the yard
 		// Here is where actual watering and growing takes place
       // STAGE 3
-      yard_.ElapseTime(tick_period, weatherData, sprinklerDurations);
+      yard_.ElapseTime(tick_period, weatherData, sprinklerDurations, zoneFeedback);
 
 		// Determine whether or not to give feedback to the server
       // STAGE 4
-
+      // TODO: Get controller id
+      feedback_sink_->SubmitFeedback(1, zoneFeedback);
 
       // Compute next tick time
       nextTickTime += tick_period_ms_;

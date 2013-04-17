@@ -5,6 +5,8 @@
 #include "YardInfo.h"
 #include "Yard.h"
 #include "Controller.h"
+#include "Feedback.h"
+#include "FeedbackSink.h"
 
 using namespace boost::posix_time;
 using namespace Mist::Controllers;
@@ -15,6 +17,7 @@ class Simulator {
 public:
    Simulator(const YardInfo &yardInfo, 
              uPtrController &controller,
+             sPtrFeedbackSink feedbackSink,
              sPtrWeatherDataSource weatherSource);
 
    void Reset(ptime simStartTime, 
@@ -42,6 +45,7 @@ private:
    Yard yard_;
    
    uPtrController controller_;
+   sPtrFeedbackSink feedback_sink_;
    sPtrWeatherDataSource weather_source_;
 
    unsigned int real_start_time_;      // Last Real world (simulator) start time 

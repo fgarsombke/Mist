@@ -47,6 +47,7 @@
 Icon?
 ehthumbs.db
 Thumbs.db
+boost
 
 # Repository Specific Files #
 *.pyc

@@ -1,14 +1,16 @@
 #pragma once
 #include "MistStd.h"
 
+#include "Feedback.h"
+
 namespace Mist {
 	class FeedbackSink;
-	typedef std::unique_ptr<FeedbackSink> uPtrWeatherDataSource;
-	typedef std::shared_ptr<FeedbackSink> sPtrWeatherDataSource;
+	typedef std::unique_ptr<FeedbackSink> uPtrFeedbackSink;
+	typedef std::shared_ptr<FeedbackSink> sPtrFeedbackSink;
 
 	class FeedbackSink {
 	public:
-		virtual WeatherData SubmitFeedback(const std::forward_list<int> feedback, pt::time_period period, unsigned int timeout = -1) = 0;
+		virtual int SubmitFeedback(product_id_t id, const std::vector<FeedbackList_t> feedback, unsigned int timeout = -1) const = 0;
 		virtual ~FeedbackSink() { };
 	};
 }

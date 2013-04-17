@@ -6,9 +6,9 @@ namespace Mist {
 
 enum class FeebackValue
 {
-   Overgrown = -1,
+   Undergrown = -1,
    Okay = 0,
-   Undergrown = 1,
+   Overgrown = 1,
 };
 
 class FeedbackEntry
@@ -18,13 +18,13 @@ public:
    pt::ptime Time;
 };
 
-typedef std::forward_list<FeedbackEntry> FeedbackList_t;
+typedef std::vector<FeedbackEntry> FeedbackList_t;
 typedef std::vector<FeedbackList_t> ZoneFeedback_t;
 
 class Feedback
 {
 public:
-   static const std::string PackFeedbackJson(const ZoneFeedback_t feedbackByZone);
+   static const std::string PackFeedbackJson(const ZoneFeedback_t &feedbackByZone);
 };
 
 }

@@ -11,6 +11,7 @@ namespace Mist {
    static const std::string scheduleStr("/api/schedule?deviceID=");
 
 	// TODO: Ask what this should be
+   static const std::string feedbackStr("/api/feedback?deviceID=");
 	static const std::string weatherStr("/api/weatherData?");
 
    sPtrMistDataSource MistDataSource::GetDefaultDataSource()
@@ -18,11 +19,18 @@ namespace Mist {
       return sPtrMistDataSource(new MistDataSource(srcURL));
    }
 
-   int MistDataSource::SubmitFeedback(const std::vector<FeedbackList_t> feedback, unsigned int timeout) const
+   int MistDataSource::SubmitFeedback(product_id_t id, const std::vector<FeedbackList_t> feedback, unsigned int timeout) const
    {
+      std::vector<std::string> headers;
       std::string fbStr = Feedback::PackFeedbackJson(feedback);
 
-      return -1;
+      int result = data_source_.PostHtml(feedbackStr + std::to_string(id),
+         "application/json", fbStr, headers, timeout);
+      if (result != 200) {
+         throw std::logic_error(std::string("Error Posting HTML: ") + std::to_string(result));
+      } else {
+         return 0;
+      }
    }
 
    WeatherData MistDataSource::GetWeatherData(GeoLocale locale, pt::time_period period,  unsigned int timeout) 
@@ -30,6 +38,8 @@ namespace Mist {
       std::vector<std::string> headers;
       std::stringstream weather_out;
 
+      return WeatherData();
+      // TODO: Finish
       int result = data_source_.GetHtml(weatherStr, weather_out, headers, timeout);
       if (result != 200) {
          throw std::logic_error(std::string("Error Getting HTML: ") + std::to_string(result));

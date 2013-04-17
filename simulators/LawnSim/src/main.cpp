@@ -50,7 +50,7 @@ int main(int argc, char * argv[])
 
       Mist::Controllers::uPtrController controller = Controller::GetControllerByName("MistReal", std::move(cConfig));
 
-      Simulator sim(*yardInfo, controller, mistDataSource);
+      Simulator sim(*yardInfo, controller, mistDataSource, mistDataSource);
       yardInfo.release();
 
       pt::ptime start(options->start_time());

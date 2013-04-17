@@ -1,11 +1,7 @@
 #pragma once
 #include "MistStd.h"
 
-
 namespace Mist {
-
-const int ZONE_OFFSET = 1;
-
 
 namespace MistScheduleInteral {
    extern const char* ID_LABEL;
@@ -23,8 +19,6 @@ class ZoneInfo
 public:
    std::forward_list<pt::time_period> OnTimes;
 };
-
-using namespace MistScheduleInteral;
 
 class MistSchedule 
 {
@@ -68,7 +62,7 @@ public:
 
    bool operator==(const MistSchedule &other) {return schedule_id_ == other.schedule_id_;}
 
-   static pt::ptime LongTimeToPTime(json_time_parse_t ms);
+   static pt::ptime LongTimeToPTime(MistScheduleInteral::json_time_parse_t ms);
 private:
    uuid schedule_id_;
 

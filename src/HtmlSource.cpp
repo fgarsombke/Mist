@@ -81,8 +81,8 @@ int HTMLSource::GetHtml(const std::string &urlPath,
 }
 
 int HTMLSource::PostHtml(const std::string & urlPath, 
-               std::string &contentType,
-               std::string &data, 
+               const std::string &contentType,
+               const std::string &data, 
                std::vector<std::string> &responseHeaders,
                unsigned int timeout) const
 {

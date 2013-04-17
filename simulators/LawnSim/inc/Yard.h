@@ -17,7 +17,6 @@ typedef bnu::compressed_matrix<double> SprinklerMask_t;
 typedef bnu::unbounded_array<SprinklerMask_t> SprinklerMaskList_t;
 
 
-
 class Yard {
 public:
    explicit Yard(const YardInfo& yardInfo);
@@ -26,10 +25,12 @@ public:
 
    void ElapseTime(pt::time_period tickPeriod, 
                   const WeatherData &data, 
-                  const std::vector<pt::time_duration> sprinklerDurations);
+                  const std::vector<pt::time_duration> &sprinklerDurations, 
+                  ZoneFeedback_t &feedbackByZone);
 
    void ResetState();
 
+   size_t ZoneCount() const { return 1; }
    size_t SprinklersCount() const { return sprinklers_.size(); }
    const GeoLocale locale() const { return locale_; }
 
