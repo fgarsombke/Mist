@@ -29,6 +29,9 @@ unsigned long ScheduleSize, TempScheduleSize;
 
 schedule_entry_t *Schedule, *TempSchedule;
 
+long StartCritical(void);
+void EndCritical(long);
+
 // TODO schedule_entry_t Schedule_Get_Entry(...)
 
 void Schedule_Init(void)
@@ -91,17 +94,19 @@ int Schedule_Enter(schedule_entry_t *entry_ptr)
 }
 
 void Schedule_Refresh(void) 
-{
+{    
+    unsigned long sr = StartCritical();                
     if(ScheduleRegistrySize == 256) {
         Flash_Erase(SCHEDULE_REGISTRY_ADDR);
-			  ScheduleRegistrySize = 0;
+        ScheduleRegistrySize = 0;
     }
-		
-		Flash_Write((unsigned long) &ScheduleRegistry[ScheduleRegistrySize], (unsigned long) TempSchedule);
-		TempSchedule = Schedule;
-	  Schedule = (schedule_entry_t *) ScheduleRegistry[ScheduleRegistrySize];
-		ScheduleRegistrySize++;
-	  
-		ScheduleSize = TempScheduleSize;
-	  TempScheduleSize = 0;
+
+    Flash_Write((unsigned long) &ScheduleRegistry[ScheduleRegistrySize], (unsigned long) TempSchedule);
+    TempSchedule = Schedule;
+    Schedule = (schedule_entry_t *) ScheduleRegistry[ScheduleRegistrySize];
+    ScheduleRegistrySize++;
+
+    ScheduleSize = TempScheduleSize;
+    TempScheduleSize = 0;
+    EndCritical(sr); 
 }
