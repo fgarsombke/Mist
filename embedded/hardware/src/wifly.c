@@ -70,9 +70,9 @@ tBoolean WiFly_Match(const char * match) {
 }
 
 // Opens a network connection to the server
-tBoolean WiFly_Open(char *resp) {
+tBoolean WiFly_Open(void) {
   tBoolean status = false;
-  char* resp_pt = resp;    
+  //char* resp_pt = resp;    
     
   RxFifo_Flush(); // Flush the FIFO
     
@@ -82,12 +82,12 @@ tBoolean WiFly_Open(char *resp) {
     if(status){
       //while(RxFifo_Size() <= 2000);
       SysCtlDelay(SysCtlClockGet()*6);
-      while(RxFifo_Get(resp_pt)) resp_pt++;
-      *resp_pt = NULL;
-    }
-  }
+      //while(RxFifo_Get(resp_pt)) resp_pt++;
+      //*resp_pt = NULL;
+    } else { WiFly_Send(EXIT_CMD, EXIT_RSP);  }
+  } else { WiFly_Send(EXIT_CMD, EXIT_RSP); }
   
-  WiFly_Send(EXIT_CMD, EXIT_RSP); 
+  
   
   return status;
 }
@@ -161,6 +161,7 @@ unsigned long WiFly_Time(void){
   }
   
   WiFly_Send(EXIT_CMD, EXIT_RSP); 
+  RxFifo_Flush();
   
   return time;
 }

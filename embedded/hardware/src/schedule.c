@@ -42,7 +42,7 @@ void scheduleExtract(char *http_data) {
 }
 // Parses a JSON schedule into the global variable
 // schedule and sorts it
-void scheduleParse(char *json) {
+void scheduleParse(void) {
     char key[11];
     enum key_t i;
     unsigned long value, current_zone;

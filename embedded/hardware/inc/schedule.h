@@ -18,5 +18,5 @@ void scheduleSort(void);
 
 // Parses a JSON schedule into the global variable
 // schedule and sorts it
-void scheduleParse(char *);
+void scheduleParse(void);
 
