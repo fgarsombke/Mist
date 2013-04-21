@@ -427,16 +427,6 @@
               <FilePath>.\src\uart.c</FilePath>
             </File>
             <File>
-              <FileName>json.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\src\json.c</FilePath>
-            </File>
-            <File>
-              <FileName>jsmn.c</FileName>
-              <FileType>1</FileType>
-              <FilePath>.\src\jsmn.c</FilePath>
-            </File>
-            <File>
               <FileName>system_clock.c</FileName>
               <FileType>1</FileType>
               <FilePath>.\src\system_clock.c</FilePath>
