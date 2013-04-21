@@ -55,7 +55,7 @@ void Schedule_Init(void)
 			  ScheduleRegistrySize = 1;
     } else {
         Schedule = (schedule_entry_t *) ScheduleRegistry[ScheduleRegistrySize-1];
-        ScheduleSize = TempScheduleSize;
+        ScheduleSize = 0;
 			  TempScheduleSize = 0;
         if(Schedule == (schedule_entry_t *) SCHEDULE_BUFFER_A_ADDR)  {
             TempSchedule = (schedule_entry_t *) SCHEDULE_BUFFER_B_ADDR;
@@ -63,6 +63,8 @@ void Schedule_Init(void)
         else {  
             TempSchedule = (schedule_entry_t *) SCHEDULE_BUFFER_A_ADDR;
         }
+				while((Schedule[ScheduleSize].zone != 0xFFFFFFFF) && (ScheduleSize < 1024)) ScheduleSize++;
+				
     }
 }
 

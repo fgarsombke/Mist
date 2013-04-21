@@ -15,6 +15,8 @@
 #include "schedule.h"
 #include "system_clock.h"
 #include "wifly.h"
+#include "file_system.h"
+#include "zone.h"
 
 #ifdef DEBUG
 void __error__(char *pcFilename, unsigned long ulLine){}
@@ -32,6 +34,12 @@ int main(void){
     // Enable Systick
     SystemClock_Init();
 
+	  // Enable Sprinkler Zone Interface
+	  Zone_Init();
+	
+	  // Initialize flash schedule storage
+		Schedule_Init();
+	
     // Initializes the WiFly module and UART communication
     WiFly_Init();
     
@@ -40,7 +48,6 @@ int main(void){
     
     for(;;) {
         WiFly_Open();
-        //scheduleExtract(resp);
         scheduleParse();
     }
 }
