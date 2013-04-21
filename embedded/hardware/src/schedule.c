@@ -12,7 +12,7 @@
 // Global variable for storing a week of schedules
 #define SCHED_SIZE 40
 schedule_entry_t schedule[SCHED_SIZE];
-size_t schedule_idx = 0;
+unsigned long schedule_idx = 0;
 
 // Constants used for parsing
 const char* HTTP_JSON_START = "\r\n\r\n";

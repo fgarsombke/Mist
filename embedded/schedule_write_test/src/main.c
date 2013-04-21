@@ -39,7 +39,7 @@ char resp[2500];
 
 // only workds for April 2013
 #define BEGIN_TIME_DAY  21
-#define BEGIN_TIME_HOUR 17
+#define BEGIN_TIME_HR 17
 #define BEGIN_TIME_MIN  0
 
 #define RUN_HR 1
@@ -56,20 +56,17 @@ char resp[2500];
 #define NUM_ZONES 8
 
 int main(void){
-    unsigned long i;
+    unsigned long i, current_time;
     schedule_entry_t temp;
-
-    unsigned int errors = 0;
-
+	
     SysCtlClockSet(SYSCTL_SYSDIV_4 | SYSCTL_USE_PLL | SYSCTL_OSC_MAIN | SYSCTL_XTAL_6MHZ);
 
     // Enable interrupts
     //IntMasterEnable();
-    for(i = 0; i < NUM_INTERVALS; i++) {
-
+    
     Schedule_Init();
     
-    unsigned long current_time = BEGIN_TIME_TIMESTAMP;
+    current_time = BEGIN_TIME_TIMESTAMP;
 
     for(i = 0; i < RUN_INTERVALS_TOTAL; i++) {
         temp.zone = i % NUM_ZONES;

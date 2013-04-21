@@ -6,8 +6,15 @@
 #include "driverlib/systick.h"
 #include "driverlib/sysctl.h"
 
+#include "zone.h"
+#include "file_system.h"
+
 #define MS 5000000 
 #define MS_TO_S 1000
+
+
+long StartCritical(void);
+void EndCritical(long);
 
 unsigned long static SystemClock_Sec = 0;
 unsigned long static SystemClock_MSec = 0;
@@ -17,7 +24,9 @@ unsigned long SystemClock_Get(void) {
 }
 
 void SystemClock_Set(unsigned long time) {
+		unsigned long sr = StartCritical();                
     SystemClock_Sec = time;
+	  EndCritical(sr);    
 }
 
 void SystemClock_Init(void) {
@@ -30,7 +39,16 @@ void SystemClock_Init(void) {
 
 
 void SysTick_Handler(void){
+	  unsigned long i = 0;
     SystemClock_MSec = (SystemClock_MSec++) % MS_TO_S;
     if(!SystemClock_MSec) SystemClock_Sec++;
+	  while(i < ScheduleSize) {
+			if((Schedule[i].start_time < SystemClock_Sec) &&
+				 (Schedule[i].end_time   > SystemClock_Sec)) {
+				Zone_Enable(Schedule[i].zone);
+			} else {
+				Zone_Disable();
+			}
+    }
 }
 
