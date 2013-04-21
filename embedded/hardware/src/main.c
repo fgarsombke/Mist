@@ -47,8 +47,14 @@ int main(void){
     SystemClock_Set(WiFly_Time());
     
     for(;;) {
+        size_t i;
         WiFly_Open();
         scheduleParse();
+        for(i = 0; i < schedule_idx; i++) {
+            Schedule_Enter(&schedule[i]);
+        }
+        schedule_idx = 0;
+        Schedule_Refresh();
     }
 }
 

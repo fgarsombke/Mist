@@ -12,7 +12,6 @@
 #define MS 5000000 
 #define MS_TO_S 1000
 
-
 long StartCritical(void);
 void EndCritical(long);
 
