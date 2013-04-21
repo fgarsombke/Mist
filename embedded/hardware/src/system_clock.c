@@ -24,9 +24,9 @@ unsigned long SystemClock_Get(void) {
 }
 
 void SystemClock_Set(unsigned long time) {
-		unsigned long sr = StartCritical();                
+    unsigned long sr = StartCritical();                
     SystemClock_Sec = time;
-	  EndCritical(sr);    
+    EndCritical(sr);    
 }
 
 void SystemClock_Init(void) {
@@ -39,16 +39,19 @@ void SystemClock_Init(void) {
 
 
 void SysTick_Handler(void){
-	  unsigned long i = 0;
+    unsigned long i = 0;
     SystemClock_MSec = (SystemClock_MSec++) % MS_TO_S;
-    if(!SystemClock_MSec) SystemClock_Sec++;
-	  while(i < ScheduleSize) {
-			if((Schedule[i].start_time < SystemClock_Sec) &&
-				 (Schedule[i].end_time   > SystemClock_Sec)) {
-				Zone_Enable(Schedule[i].zone);
-			} else {
-				Zone_Disable();
-			}
+    if(!SystemClock_MSec) {
+        SystemClock_Sec++;
+        while(i < ScheduleSize) {
+            if((Schedule[i].start_time < SystemClock_Sec) &&
+                 (Schedule[i].end_time   > SystemClock_Sec)) {
+                Zone_Enable(Schedule[i].zone);
+                break;
+            }
+            i++;
+        }
+        if(i == ScheduleSize) Zone_Disable();
     }
 }
 
