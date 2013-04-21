@@ -43,23 +43,22 @@ void Zone_Init(void) {
 
     SSIEnable(SSI0_BASE);
   
-    while(SSIBusy(SSI0_BASE)) {} // Blocking Wait
+    while(SSIBusy(SSI0_BASE)); // Blocking Wait
 
     SSIDataPut(SSI0_BASE, ZONE_NONE);
 }
 
 // Enables a zone
 void Zone_Enable(unsigned long zone) {
-	  
-			while(SSIBusy(SSI0_BASE)) {}
+    while(SSIBusy(SSI0_BASE));
 
-      // Zones numbered starting at 1, subtract to index
-     SSIDataPut(SSI0_BASE, (0x01 << (zone - 1)));
+    // Zones numbered starting at 1, subtract to index
+    SSIDataPut(SSI0_BASE, (0x01 << (zone - 1)));
 }
 
 // Disables a zone
 void Zone_Disable(void) {
-    while(SSIBusy(SSI0_BASE)) {}
+    while(SSIBusy(SSI0_BASE));
         
     SSIDataPut(SSI0_BASE, ZONE_NONE);
 }
