@@ -22,84 +22,68 @@
 #ifdef DEBUG
 void __error__(char *pcFilename, unsigned long ulLine){}
 #endif
-    
+
 // Stores a network response
 char resp[2500];
 
+#define CONST_SEC_PER_MIN  60
+#define CONST_MIN_PER_HR 60
+#define CONST_SEC_PER_HR (CONST_SEC_PER_MIN * CONST_MIN_PER_HR)
+#define CONST_HR_PER_DAY    24
+#define CONST_SEC_PER_DAY (CONST_SEC_PER_HR * CONST_HR_PER_DAY)
+
+#define REF_TIME_DAY  21
+#define REF_TIME_HOUR 0
+#define REF_TIME_MIN  0
+#define REF_TIME_TIMESTAMP 1366524000
+
+// only workds for April 2013
+#define BEGIN_TIME_DAY  21
+#define BEGIN_TIME_HOUR 17
+#define BEGIN_TIME_MIN  0
+
+#define RUN_HR 1
+#define RUN_MIN 0
+#define RUN_INTERVALS_PER_MIN 2
+#define RUN_SEC_PER_INTERVAL (CONST_SEC_PER_MIN / RUN_INTERVALS_PER_MIN)
+#define RUN_INTERVALS_TOTAL ((RUN_HR * CONST_MIN_PER_HR) + RUN_MIN)
+
+#define BEGIN_TIME_TIMESTAMP (REF_TIME_TIMESTAMP + \
+                  ((BEGIN_TIME_DAY - REF_TIME_DAY) * CONST_SEC_PER_DAY) +\
+                  (BEGIN_TIME_HR * CONST_SEC_PER_HR) +\
+                   (BEGIN_TIME_MIN * CONST_SEC_PER_MIN))
+
+#define NUM_ZONES 8
+
 int main(void){
-	  int i;
-	  schedule_entry_t temp;
-	
-	  unsigned int errors = 0;
-	
+    unsigned long i;
+    schedule_entry_t temp;
+
+    unsigned int errors = 0;
+
     SysCtlClockSet(SYSCTL_SYSDIV_4 | SYSCTL_USE_PLL | SYSCTL_OSC_MAIN | SYSCTL_XTAL_6MHZ);
-    
+
     // Enable interrupts
     //IntMasterEnable();
-    
+    for(i = 0; i < NUM_INTERVALS; i++) {
+
     Schedule_Init();
-	
-	  // Schedule is pointed to buffer A
-	  for(i = 0; i < ( 0x4000 / sizeof(schedule_entry_t)); i++) {
-		   if(Schedule[i].zone != 0xFFFFFFFF) errors++;
-	     if(Schedule[i].start_time != 0xFFFFFFFF) errors++;
-	     if(Schedule[i].end_time != 0xFFFFFFFF) errors++;
-	     if(Schedule[i].not_completed != 0xFFFFFFFF) errors++;
-		}
-		
-		Schedule_Refresh();
-		
-		// Schedule is pointed to buffer B
-		for(i = 0; i < ( 0x4000 / sizeof(schedule_entry_t)); i++) {
-		   if(Schedule[i].zone != 0xFFFFFFFF) errors++;
-	     if(Schedule[i].start_time != 0xFFFFFFFF) errors++;
-	     if(Schedule[i].end_time != 0xFFFFFFFF) errors++;
-	     if(Schedule[i].not_completed != 0xFFFFFFFF) errors++;
-		}
-	
-	  temp.zone = 0x55555555;
-	  temp.start_time = 0xAAAAAAAA;
-	  temp.end_time = 0x55555555;
-	  temp.not_completed = 0xAAAAAAAA;
-	
-		// Load buffer A with test vector
-	  for(i = 0; i < 0x4000; i += sizeof(schedule_entry_t)) {
-        Schedule_Enter(&temp);		
+    
+    unsigned long current_time = BEGIN_TIME_TIMESTAMP;
+
+    for(i = 0; i < RUN_INTERVALS_TOTAL; i++) {
+        temp.zone = i % NUM_ZONES;
+        temp.start_time = current_time;
+        current_time += RUN_SEC_PER_INTERVAL;
+        temp.end_time = current_time;
+        temp.not_completed = 0xFFFFFFFF;
+        Schedule_Enter(&temp);
     }
-		
-		Schedule_Refresh();
-		
-		if(ScheduleSize != ( i / sizeof(schedule_entry_t)))
-			errors++;
-		
-		// Check buffer A for valid schedule store
-		for(i = 0; i < ( 0x4000 / sizeof(schedule_entry_t)); i++) {
-		   if(Schedule[i].zone != 0x55555555) errors++;
-	     if(Schedule[i].start_time != 0xAAAAAAAA) errors++;
-	     if(Schedule[i].end_time != 0x55555555) errors++;
-	     if(Schedule[i].not_completed != 0xAAAAAAAA) errors++;
-		}
-		
-		// Load buffer B with test vector
-	  for(i = 0; i < 0x4000; i += sizeof(schedule_entry_t)) {
-        Schedule_Enter(&temp);		
-    }
-		
-		if(ScheduleSize != ( i / sizeof(schedule_entry_t)))
-			errors++;
-		
-		Schedule_Refresh();
-		
-		// Check buffer B for valid schedule store
-		for(i = 0; i < ( 0x4000 / sizeof(schedule_entry_t)); i++) {
-		   if(Schedule[i].zone != 0x55555555) errors++;
-	     if(Schedule[i].start_time != 0xAAAAAAAA) errors++;
-	     if(Schedule[i].end_time != 0x55555555) errors++;
-	     if(Schedule[i].not_completed != 0xAAAAAAAA) errors++;
-		}
-				
-	  while(1)
-		{
+
+    Schedule_Refresh();
+
+    while(1)
+    {
     }
 }
 
