@@ -21,7 +21,12 @@ void MistController::ElapseTime(pt::time_period interval,
 {
    using namespace pt;
 
-   size_t numSprinklers = sprinklerOnDurations.size();
+   size_t numSprinklers = current_schedule_.zone_data().size();
+
+	if (sprinklerOnDurations.size() < numSprinklers) {
+		throw std::logic_error("sprinklerOnDurations is smaller than numSprinklers");
+	}
+
    for (size_t i = 0; i < numSprinklers; ++i) {
       ZoneInfo &zone = current_schedule_.zone_data()[i];
       sprinklerOnDurations[i] = seconds(0);
