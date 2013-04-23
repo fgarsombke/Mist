@@ -14,7 +14,6 @@ namespace Mist { namespace LawnSim {
 
 typedef bnu::compressed_matrix<double> SprinklerMask_t;
 typedef bnu::unbounded_array<SprinklerMask_t> SprinklerMaskList_t;
-typedef Mist::ETCalc::ET_float_t water_mm_t;
 
 class Yard {
 public:
@@ -67,7 +66,11 @@ private:
 
    SprinklerMaskList_t InitSprinklerMasks(const YardInfo &yardInfo);
 
-   void DoGrow(ETCalc::ETParam_t ET_0, size_t startCell, size_t count);
+   void DoGrow(ETCalc::ETParam_t ET_0, 
+               double periodLengthSeconds, 
+               double growthFactor,
+               size_t startCell, 
+               size_t count);
 
    template<class T>
    static void DebugPrintMatrix(const bnu::matrix<T> &toPrint, std::string fileName);

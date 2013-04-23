@@ -4,7 +4,14 @@
 
 namespace Mist { 
 
-#define WDATA_VALUES (Rainfall)(StartTemp)(EndTemp)(AvgTemp)(WindVelocity)(AvgRH)(AvgPressure)(ENUM_COUNT)
+#define WDATA_VALUES (Rainfall)\
+                     (MinTemp)(MaxTemp)(AvgTemp)\
+                     (MinRH)(MaxRH)\
+                     (StartTemp)(EndTemp)\
+                     (AvgPressure)\
+                     (WindSpeed)\
+                     (ENUM_COUNT)
+
 // Effective precipitation in mm
 // All in celcius
 
