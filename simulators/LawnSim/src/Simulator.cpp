@@ -67,18 +67,30 @@ void Simulator::Start()
 	// Breath of life
 	for (size_t t_i = 0; t_i < pipeThreads.size(); ++t_i) {
 		pipeThreads[t_i] = std::move(
-			std::thread(&Simulator::DoTickWork, this, simStartTime+sim_tick_duration_*((int)t_i))
+			std::thread([this, t_i](pt::ptime firstTickTime) {
+            try {
+               DoTickWork(firstTickTime);
+            } catch(std::exception e) {
+               async_exceptions_[t_i] = std::current_exception();
+            }
+         }, 
+         simStartTime+sim_tick_duration_*((int)t_i))
 		);
 	}
 	
 	// Death comes for us all
 	for (size_t t_i = 0; t_i < pipeThreads.size(); ++t_i) {
 		pipeThreads[t_i].join();
+
+      if (async_exceptions_[t_i] != nullptr) {
+         std::rethrow_exception(async_exceptions_[t_i]);
+      }
 	}
 }
 
 void Simulator::DoTickWork(pt::ptime firstTickTime)
 {
+
 	WeatherData weatherData;
 	sprinkler_durations_t sprinklerDurations = sprinkler_durations_t(yard_.SprinklersCount());
    ZoneFeedback_t zoneFeedback = ZoneFeedback_t(yard_.ZoneCount());
@@ -144,7 +156,7 @@ inline void Simulator::ProcessYard(pt::time_period tickPeriod,
 								ZoneFeedback_t &zoneFeedback)
 {
 	std::lock_guard<std::mutex> lock(process_controller_lock_);
-	yard_.ElapseTime(tickPeriod, weatherData, sprinklerDurations, zoneFeedback);
+	yard_.ElapseTime(tickPeriod, weatherData, sprinklerDurations, true, zoneFeedback);
 }
 
 
@@ -152,7 +164,7 @@ inline void Simulator::ProcessFeedback(pt::time_period tickPeriod,
 													const ZoneFeedback_t &zoneFeedback) const
 {
 	std::lock_guard<std::mutex> lock(process_controller_lock_);
-	feedback_sink_->SubmitFeedback(1, zoneFeedback);
+	feedback_sink_->SubmitFeedback(controller_->id(), zoneFeedback);
 }
 
 inline void  Simulator::ProcessWait()

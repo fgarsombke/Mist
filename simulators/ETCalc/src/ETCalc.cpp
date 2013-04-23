@@ -378,7 +378,7 @@ ET_float_t ETCalc::CalculateET_o(ETParam_t ETParam) const
 	// Implementation of Eq 2.6
 	ET_float_t delta = SaturationVapourPressureSlope(ETParam.AvgTemp());
 	ET_float_t gamma = GammaFromPressure(ETParam.AvgPressure());
-	ET_float_t u_2 = ETParam.WindSpeed();
+	ET_float_t u_2 = ETParam.AvgWindSpeed();
 	ET_float_t R_n;
 	ET_float_t G;
 	ET_float_t e_s = MeanSaturationVapourPressure(ETParam);
@@ -412,7 +412,7 @@ ET_float_t ETCalc::CalculateET_o(ETParam_t ETParam) const
 
 	// TODO: Implementation of Eq 2.3
 
-
+   // Units of mm/day
 	return ET_o;
 }
 

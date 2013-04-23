@@ -1,7 +1,7 @@
 #pragma once
 
 #include "MistStd.h"
-#include "ETCalcParametersBuilder.h"
+#include "ETCalcParameters.h"
 
 namespace Mist { namespace ETCalc {
 

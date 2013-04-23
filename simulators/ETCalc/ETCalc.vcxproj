@@ -158,13 +158,11 @@
   <ItemGroup>
     <ClCompile Include="src\ETCalc.cpp" />
     <ClCompile Include="src\ETCalcParameters.cpp" />
-    <ClCompile Include="src\ETCalcParametersBuilder.cpp" />
     <ClCompile Include="src\ETCalcPython.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="inc\ETCalc.h" />
     <ClInclude Include="inc\ETCalcParameters.h" />
-    <ClInclude Include="inc\ETCalcParametersBuilder.h" />
     <ClInclude Include="inc\ETCalcPython.h" />
   </ItemGroup>
   <ItemGroup>

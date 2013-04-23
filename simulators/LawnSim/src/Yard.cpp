@@ -12,7 +12,8 @@ Yard::Yard(const YardInfo& yardInfo)
    : locale_(yardInfo.locale()), cells_(InitCells(yardInfo)), 
      cells_by_height_(InitHeightMap(yardInfo)),
      sprinklers_(std::move(yardInfo.sprinklers())),
-	 surface_water_(cells_.size1(), cells_.size2(), 1),
+	 surface_water_(cells_.size1(), cells_.size2(), 0),
+    cell_health_(cells_.size1(), cells_.size2(), 0),
     et_calc_(locale_)
 {
    // Zero everything out and
@@ -180,6 +181,7 @@ void Yard::ResetState()
 void Yard::ElapseTime(pt::time_period tickPeriod, 
                       const WeatherData &wdata, 
                       const std::vector<pt::time_duration> &sprinklerDurations,
+                      bool addFeedback,
                       ZoneFeedback_t &feedbackByZone) 
 {
    // TODO: Change the api so that sprinklerDurations cannot be accidentally resized
@@ -190,9 +192,7 @@ void Yard::ElapseTime(pt::time_period tickPeriod,
 
    //static int ticknum = 0;
    //DebugPrintMatrix(surface_water_, "SurfaceWaterVals/SurfaceWater" + std::to_string(ticknum++) + ".csv");
-   
-   double periodLengthSeconds = tickPeriod.length().ticks()/((double)tickPeriod.length().ticks_per_second());
-
+  
    // Add sprinkler water to the surface
    for (size_t i = 0; i < sprinkler_masks_.size(); ++i) {
       pt::time_duration dt_s = sprinklerDurations[i];
@@ -218,27 +218,28 @@ void Yard::ElapseTime(pt::time_period tickPeriod,
 
    // Calculate ET_0
 	using namespace ETCalc;
-   ETCalcParametersBuilder baseETBuilder(tickPeriod);
+   ETCalcParameters ETBaseParams(tickPeriod, wdata);
 
    // Grow
    // TODO: Parallelize
    double growthFactor = 1.0;
-   DoGrow(baseETBuilder.Build(), periodLengthSeconds, growthFactor , 0, cells_.data().size());
+   DoGrow(ETBaseParams, growthFactor , 0, cells_.data().size());
 
-	// TODO: Actually compute feedback metric
-   FeedbackEntry ex;
-   ex.Time = tickPeriod.begin();
-   ex.Value = FeebackValue::Overgrown;
-   feedbackByZone[0].push_back(ex);
+	if (addFeedback) {
+      FeedbackEntry ex;
+      ex.Time = tickPeriod.begin();
+      ex.Value = FeebackValue::Overgrown;
+      feedbackByZone[0].push_back(ex);
+   }
 }
 
 inline void Yard::DoGrow(ETCalc::ETParam_t etParams, 
-                         double periodLengthSeconds,
                          double growthFactor,
                          size_t startCell, 
                          size_t endCell)
 {
    using namespace ETCalc;
+   using namespace Constants;
 
    ETCalcParameters cellETParams = etParams;
    ET_float_t cellWater;
@@ -246,6 +247,8 @@ inline void Yard::DoGrow(ETCalc::ETParam_t etParams,
 
 	auto cellData = cells_.data();
    auto cellHealthData = cell_health_.data();
+
+   double periodLengthDays = etParams.Interval().length().ticks()/(((double)etParams.Interval().length().ticks_per_second())*24*60*60);
 
    // Grow the grass in the yard
    while (startCell < endCell) {  
@@ -260,15 +263,16 @@ inline void Yard::DoGrow(ETCalc::ETParam_t etParams,
 			// TODO: Blow wind
 
 			// Calculate Cell Water available 
-			// TOOD: Figure out why we're getting infinities
-			cellWater = surface_water_.data()[startCell] - cellData[startCell].ET_K()*et_calc_.CalculateET_o(cellETParams);
-			cout << "Cell Water: " << cellWater << endl;
+         double cellET = cellData[startCell].ET_K()*et_calc_.CalculateET_o(cellETParams);
+
+         // Water deficit is ET_0 * Time
+			cellWater = surface_water_.data()[startCell] - periodLengthDays*cellET;
 
 			// With the water amount calculated, we compute the health delta
-         nextCellHealth = YardCell::ComputeHealthMetric(cellHealthData[startCell], cellWater, periodLengthSeconds, growthFactor);
+         nextCellHealth = YardCell::ComputeHealthMetric(cellHealthData[startCell], cellWater, periodLengthDays, growthFactor);
 
          // Kill the grass if it was at minimum health for too long.
-         if (((int)nextCellHealth) + ((int)cellHealthData[startCell])  == -2*MaxHealth) {
+         if (((int)nextCellHealth) + ((int)cellHealthData[startCell]) == -2*MaxHealth) {
             cellData[startCell].Kill();
          } else {
             cellHealthData[startCell] = nextCellHealth;
@@ -283,7 +287,7 @@ inline void Yard::DoGrow(ETCalc::ETParam_t etParams,
             surface_water_.data()[startCell] = 0.1*cellWater;
          }
 		} else {
-			// Remove surface water from non grass cells
+			// Remove surface water from non-grass cells
 			surface_water_.data()[startCell] = 0.0;
 		}
 

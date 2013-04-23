@@ -21,9 +21,6 @@
     <ClCompile Include="src\ETCalcParameters.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="src\ETCalcParametersBuilder.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="src\ETCalcPython.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -33,9 +30,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="inc\ETCalcParameters.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="inc\ETCalcParametersBuilder.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="inc\ETCalcPython.h">
