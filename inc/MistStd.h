@@ -37,6 +37,9 @@ namespace dt = boost::date_time;
 namespace bJP = boost::property_tree::json_parser;
 namespace bUUID = boost::uuids;
 
+#define _DEBUG_DATA 1
+#define _DEBUG_NO_PIPES 1
+
 typedef boost::uuids::uuid uuid;
 extern const char* EmptyUUIDString;
 

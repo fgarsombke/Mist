@@ -107,7 +107,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(SolutionDir)..\..\boost\;$(ProjectDir)/inc</AdditionalIncludeDirectories>
       <PrecompiledHeaderFile>MistStd.h</PrecompiledHeaderFile>
-      <AdditionalOptions>-D_SCL_SECURE_NO_WARNINGS -Zm110 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalOptions>-D_SCL_SECURE_NO_WARNINGS -Zm110 -D_WIN32_WINNT=0x0501 %(AdditionalOptions)</AdditionalOptions>
       <DisableLanguageExtensions>false</DisableLanguageExtensions>
     </ClCompile>
     <Link>
@@ -145,6 +145,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(SolutionDir)..\..\boost\;$(ProjectDir)/inc</AdditionalIncludeDirectories>
+      <AdditionalOptions>-D_WIN32_WINNT=0x0501 -Zm110 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -156,6 +157,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="inc\DataSetOptional.h" />
+    <ClInclude Include="inc\DbgDataSource.h" />
     <ClInclude Include="inc\Feedback.h" />
     <ClInclude Include="inc\FeedbackSink.h" />
     <ClInclude Include="inc\GeoLocale.h" />
@@ -163,6 +165,7 @@
     <ClInclude Include="inc\MistDataSource.h" />
     <ClInclude Include="inc\MistSchedule.h" />
     <ClInclude Include="inc\MistStd.h" />
+    <ClInclude Include="inc\PAL.h" />
     <ClInclude Include="inc\ScheduleSource.h" />
     <ClInclude Include="inc\WeatherData.h" />
     <ClInclude Include="inc\WeatherDataSource.h" />
@@ -175,6 +178,7 @@
     <ClCompile Include="src\MistStd.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="src\PAL.cpp" />
     <ClCompile Include="src\WeatherData.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

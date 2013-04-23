@@ -12,9 +12,6 @@ namespace Constants{
    const char * SimMultDoesNotDivide = 
       "The simulated tick period must be a multiple of the simulator speed multiplier.\n";
    
-
-
-
 }
 
 }
