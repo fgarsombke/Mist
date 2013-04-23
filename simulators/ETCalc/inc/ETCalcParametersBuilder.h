@@ -17,7 +17,15 @@ public:
 
 	void AddWeatherData(const WeatherData& data);
 
-   ETCalcParameters Build() const;
+   inline ETCalcParameters Build() const
+	{
+		ETCalcParameters retVal(interval_);
+
+
+
+
+		return retVal;
+	}
 
 private:
    pt::time_period interval_;

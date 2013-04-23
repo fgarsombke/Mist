@@ -3,7 +3,6 @@
 #include "Yard.h"
 #include "WeatherData.h"
 #include "ETCalc.h"
-#include "ETCalcParametersBuilder.h"
 
 #define EdgeProject 1
 
@@ -225,6 +224,7 @@ void Yard::ElapseTime(pt::time_period tickPeriod,
    // TODO: Parallelize
    DoGrow(baseETBuilder.Build(), 0, cells_.data().size());
 
+	// TODO: Actually compute feedback metric
    FeedbackEntry ex;
    ex.Time = tickPeriod.begin();
    ex.Value = FeebackValue::Overgrown;
@@ -238,23 +238,38 @@ inline void Yard::DoGrow(ETCalc::ETParam_t ET_0, size_t startCell, size_t endCel
    ETCalcParameters cellETParams = ET_0;
    ET_float_t cellET;
 
+	auto cellData = cells_.data();
+
    // Grow the grass in the yard
    while (startCell < endCell) {  
-      // Shine sunlight
-		cellETParams.SetSunlightFraction(1.0);
+		if (cellData[startCell].cell_type() == YardCellType_t::Grass) {
+			// Shine sunlight
+			cellETParams.SetSunlightFraction(1.0);
 
-      // Apply heat
+			// TODO: Apply heat
    
-      // Apply humidity
+			// TODO: Apply humidity
    
-      // Blow wind
+			// TODO: Blow wind
 
-      // Calculate ETo metric
-      cellET = et_calc_.CalculateET_o(cellETParams);
-      cout << cellET << endl;
+			// Calculate ETo metric
+			// TOOD: Figure out why we're getting infinities
+			cellET = cellData[startCell].ET_K()*et_calc_.CalculateET_o(cellETParams);
+			surface_water_.data()[startCell] -= cellET;
+			//cout << "Cell ET: " << cellET << endl;
 
-      // Grow grass
-      surface_water_.data()[startCell] -= cellET;
+			// With the ET value calculated, we compute the health delta
+
+
+			// Grow grass
+			
+
+			// Reduce remaining surface water
+			surface_water_.data()[startCell] *= 0.1;
+		} else {
+			// Remove surface water from non grass cells
+			surface_water_.data()[startCell] = 0;
+		}
 
 		startCell++;
    }

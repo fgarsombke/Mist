@@ -1,7 +1,7 @@
 #pragma once
 
 #include "MistStd.h"
-#include "ETCalcParameters.h"
+#include "ETCalcParametersBuilder.h"
 
 namespace Mist { namespace ETCalc {
 
@@ -12,10 +12,12 @@ public:
 	{
 	}
 
-   explicit ETCalc(GeoLocale locale);
+   explicit ETCalc(GeoLocale locale)
+	   : locale_(locale)
+	{	// Precompute solar parameters 
+	}
 
-
-   double CalculateET_o(ETParam_t ETParams) const;
+   ET_float_t CalculateET_o(ETParam_t ETParam) const;
 
 private:
    GeoLocale locale_;

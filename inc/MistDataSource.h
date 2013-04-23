@@ -18,11 +18,13 @@ class MistDataSource
 {
 public:
    static sPtrMistDataSource GetDefaultDataSource();
+	static sPtrMistDataSource GetNullSource();
 
    virtual int SubmitFeedback(product_id_t id, const std::vector<FeedbackList_t> feedback, unsigned int timeout = -1) const override;
    virtual WeatherData GetWeatherData(GeoLocale locale, pt::time_period period, unsigned int timeout = -1) override;
    virtual MistSchedule GetSchedule(product_id_t id, unsigned int timeout = -1) const override;
-private:
+
+protected:
    explicit MistDataSource(const std::string &host)
       : data_source_(host, "8080")
    {

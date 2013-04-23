@@ -9,8 +9,9 @@
 #include "zone.h"
 #include "file_system.h"
 
-#define MS 5000000 
+#define MS 50000
 #define MS_TO_S 1000
+#define MS_DIV 1000
 
 long StartCritical(void);
 void EndCritical(long);
@@ -29,17 +30,17 @@ void SystemClock_Set(unsigned long time) {
 }
 
 void SystemClock_Init(void) {
-    SysTickIntDisable();
-    SysTickDisable();
-    SysTickPeriodSet(MS);
-    SysTickEnable();
+  	SysTickIntDisable();
+    SysTickDisable(); 
+    SysTickPeriodSet(SysCtlClockGet()/MS_DIV);
     SysTickIntEnable();
+	  SysTickEnable();
 }
 
 
 void SysTick_Handler(void){
     unsigned long i = 0;
-    SystemClock_MSec = (SystemClock_MSec++) % MS_TO_S;
+    SystemClock_MSec = (++SystemClock_MSec) % MS_TO_S;
     if(!SystemClock_MSec) {
         SystemClock_Sec++;
         while(i < ScheduleSize) {
