@@ -1,6 +1,8 @@
 #include "MistStd.h"
 #include "MistDataSource.h"
 
+#include "DbgDataSource.h"
+
 using std::string;
 using std::ostream;
 using std::vector;
@@ -8,9 +10,8 @@ using std::vector;
 
 namespace Mist {
    static const std::string srcURL("www.quattrotap.com");
-   static const std::string scheduleStr("/api/schedule?deviceID=");
 
-	// TODO: Ask what this should be
+   static const std::string scheduleStr("/api/schedule?deviceID=");
    static const std::string feedbackStr("/api/feedback?deviceID=");
 	static const std::string weatherStr("/api/weatherData?");
 
@@ -18,6 +19,11 @@ namespace Mist {
    {
       return sPtrMistDataSource(new MistDataSource(srcURL));
    }
+
+	sPtrMistDataSource MistDataSource::GetNullSource()
+	{
+		return sPtrMistDataSource(new DbgDataSource());
+	}
 
    int MistDataSource::SubmitFeedback(product_id_t id, const std::vector<FeedbackList_t> feedback, unsigned int timeout) const
    {
@@ -38,8 +44,6 @@ namespace Mist {
       std::vector<std::string> headers;
       std::stringstream weather_out;
 
-      return WeatherData();
-      // TODO: Finish
       int result = data_source_.GetHtml(weatherStr, weather_out, headers, timeout);
       if (result != 200) {
          throw std::logic_error(std::string("Error Getting HTML: ") + std::to_string(result));

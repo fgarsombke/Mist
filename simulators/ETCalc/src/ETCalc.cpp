@@ -363,13 +363,6 @@ ETCalc_Func_def(DewPoint, double temp, double rh)
    return dp_c*gam/(dp_b - gam);
 }
 
-ETCalc::ETCalc(GeoLocale locale) 
-   : locale_(locale)
-{
-   // Precompute solar parameters
-}
-
-
 // Calculates ET_o for the parameters given.
 //
 // The function processes
@@ -380,46 +373,47 @@ ETCalc::ETCalc(GeoLocale locale)
 // Temperature is in celcius
 // Wind Speed is in m/s.
 // 
-double ETCalc::CalculateET_o(ETParam_t ETParam) const {
-   // Implementation of Eq 2.6
-   ET_float_t delta = SaturationVapourPressureSlope(ETParam.AvgTemp());
-   ET_float_t gamma = GammaFromPressure(ETParam.Pressure());
-   ET_float_t u_2 = ETParam.WindSpeed();
-   ET_float_t R_n;
-   ET_float_t G;
-   ET_float_t e_s = MeanSaturationVapourPressure(ETParam);
+ET_float_t ETCalc::CalculateET_o(ETParam_t ETParam) const
+{		
+	// Implementation of Eq 2.6
+	ET_float_t delta = SaturationVapourPressureSlope(ETParam.AvgTemp());
+	ET_float_t gamma = GammaFromPressure(ETParam.Pressure());
+	ET_float_t u_2 = ETParam.WindSpeed();
+	ET_float_t R_n;
+	ET_float_t G;
+	ET_float_t e_s = MeanSaturationVapourPressure(ETParam);
 
 	R_n = NetRadiation(R_ns_hours(ETParam), R_nl_hours(ETParam));
-   switch(ETParam.LengthType()) {
-      case ETCalcLengthType::HoursDay:
-         R_n = NetRadiation(R_ns_hours(ETParam), R_nl_hours(ETParam));
-         G = G_hours_day(R_n);
-         break;
-      case ETCalcLengthType::HoursNight:
-         R_n = NetRadiation(R_ns_hours(ETParam), R_nl_hours(ETParam));
-         G = G_hours_night(R_n);
-         break;
-      case ETCalcLengthType::Days:
-         R_n = NetRadiation(R_ns_days(ETParam), R_nl_days(ETParam));
-         G = G_days();
-         break;
-      case ETCalcLengthType::Months:
+	switch(ETParam.LengthType()) {
+		case ETCalcLengthType::HoursDay:
+			R_n = NetRadiation(R_ns_hours(ETParam), R_nl_hours(ETParam));
+			G = G_hours_day(R_n);
+			break;
+		case ETCalcLengthType::HoursNight:
+			R_n = NetRadiation(R_ns_hours(ETParam), R_nl_hours(ETParam));
+			G = G_hours_night(R_n);
+			break;
+		case ETCalcLengthType::Days:
 			R_n = NetRadiation(R_ns_days(ETParam), R_nl_days(ETParam));
-         G = G_months(ETParam);
-         break;
+			G = G_days();
+			break;
+		case ETCalcLengthType::Months:
+			R_n = NetRadiation(R_ns_days(ETParam), R_nl_days(ETParam));
+			G = G_months(ETParam);
+			break;
 		default:
 				return 0;
-   }
+	}
 
-   ET_float_t num_left = 0.408*delta*(R_n-G);
-   ET_float_t num_right = gamma*(900/(CToK(ETParam.AvgTemp())))*u_2*(e_s - e_a(ETParam));
-   ET_float_t den = delta + gamma*(1+0.34*u_2);
-   ET_float_t ET_o = (num_left + num_right)/den;
+	ET_float_t num_left = 0.408*delta*(R_n-G);
+	ET_float_t num_right = gamma*(900/(CToK(ETParam.AvgTemp())))*u_2*(e_s - e_a(ETParam));
+	ET_float_t den = delta + gamma*(1+0.34*u_2);
+	ET_float_t ET_o = (num_left + num_right)/den;
 
-   // TODO: Implementation of Eq 2.3
+	// TODO: Implementation of Eq 2.3
 
 
-   return ET_o;
+	return ET_o;
 }
 
 }}

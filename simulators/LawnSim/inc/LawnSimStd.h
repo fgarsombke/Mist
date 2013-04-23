@@ -8,6 +8,8 @@
 #include <iostream>
 #include <algorithm>
 #include <array>
+#include <thread>
+#include <mutex>
 
 // Boost Headers
 #include <boost/numeric/ublas/matrix.hpp>
@@ -24,13 +26,13 @@ namespace pt = boost::posix_time;
 namespace dt = boost::date_time;
 namespace bnu = boost::numeric::ublas;
 
+#ifdef _DEBUG
+//#define _DEBUG_SPRINKLER_DURATIONS
+#endif
+
 // My Headers
 #include "MistStd.h"
 #include "Constants.h"
-#include "GeoLocale.h"
-#include "ETCalc.h"
-
-typedef Mist::ETCalc::ET_float_t water_mm_t;
 
 // -100 is most undergrown, 0 perfect, 100 most overgrown
 typedef double health_t;
