@@ -27,9 +27,6 @@ void __error__(char *pcFilename, unsigned long ulLine){}
 
 int main(void){
     SysCtlClockSet(SYSCTL_SYSDIV_4 | SYSCTL_USE_PLL | SYSCTL_OSC_MAIN | SYSCTL_XTAL_6MHZ);
-    
-    // Enable Systick
-    SystemClock_Init();
 
     // Enable Sprinkler Zone Interface
     Zone_Init();
@@ -38,16 +35,21 @@ int main(void){
     Schedule_Init();
 	
     // Initializes the WiFly module and UART communication
-    WiFly_Init();
-    
+    //WiFly_Init();
+	    
+    // Gets POSIX time from NIST 
+    //SystemClock_Set(WiFly_Time());
+    SystemClock_Set(1366679725);
+	
+	  // Enable Systick
+    SystemClock_Init();
+	
     // Enable interrupts
     IntMasterEnable();
-    
-    // Gets POSIX time from NIST 
-    SystemClock_Set(WiFly_Time());
-    
+	  
     for(;;) {
-        size_t i;
+        /*
+			size_t i;
         WiFly_Open();
         scheduleParse();
         for(i = 0; i < schedule_idx; i++) {
@@ -55,6 +57,7 @@ int main(void){
         }
         schedule_idx = 0;
         Schedule_Refresh();
+			*/
     }
 }
 
