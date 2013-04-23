@@ -34,7 +34,6 @@ def main():
     zone = 1
     simulatedTime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     simulatedTime = datetime.datetime.strptime(simulatedTime, "%Y-%m-%d %H:%M:%S")
-    print simulatedTime
     numIterations = getNumIterations(deviceID, zone)
 
     #don't execute this code on the first iteration of the algorithm
@@ -103,8 +102,6 @@ def generateNewSchedule(deviceID, zone, ETp, numDays, timer, vectorID):
     minutesPerMMofWater = 20 
     minutesPerDay = ETperDay*minutesPerMMofWater
     count = 0
-    #TODO
-    print timer
     for i in range(numDays):
         date = timer + datetime.timedelta(i, 0)
         createIrrigationEvent(deviceID, zone, date, minutesPerDay, vectorID)
