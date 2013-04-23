@@ -86,6 +86,8 @@ private:
 		5;
 #endif
 
+   std::array<std::exception_ptr, num_tick_pipes_> async_exceptions_;
+
 	static const int SleepModConstant = 0;
 };
 

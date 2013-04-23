@@ -41,12 +41,14 @@ double sign(double num)
 
 health_t YardCell::ComputeHealthMetric(health_t currentHealth, 
                                        water_mm_t waterAvailable,
-                                       double periodLengthSeconds,
+                                       double periodLengthDays,
                                        double growthFactor)
 {
    // We compute the health metric by following a logistic curve.
    // http://en.wikipedia.org/wiki/Logistic_function
    // See also matlab/HealthMetric.m
+
+   using namespace Constants;
 
    // TODO: Figure out how to do this analytically
    const double K = MaxHealth;
@@ -54,11 +56,11 @@ health_t YardCell::ComputeHealthMetric(health_t currentHealth,
    const double B = 1/8.0;
    const double C = 0;
 
-   const double T = 1/(24*60*60);
+   const double T = 1.0;
 
-   double yp = -sign(currentHealth)*B*(K-A)*exp(-B*(currentHealth-C))/pow(1+exp(-B*(currentHealth-C)),2);
+   double yp = sign(currentHealth)*B*(K-A)*exp(-B*(currentHealth-C))/pow(1+exp(-B*(currentHealth-C)),2);
 
-   double dHealth = yp*periodLengthSeconds*waterAvailable*T;
+   double dHealth = yp*periodLengthDays*waterAvailable*T;
 
    double newHealth = currentHealth + growthFactor*dHealth;
 

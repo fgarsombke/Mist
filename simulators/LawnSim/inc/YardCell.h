@@ -25,9 +25,9 @@ public:
    static YardCell CreateIsolated(YardCellInfo info);
 
    static health_t ComputeHealthMetric(health_t currentHealth, 
-                                              water_mm_t waterAvailable, 
-                                              double periodLengthSeconds,
-                                              double growthFactor);
+                                       water_mm_t waterAvailable, 
+                                       double periodLengthDays,
+                                       double growthFactor);
 
    // Default Constructor
    YardCell();

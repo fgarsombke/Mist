@@ -25,7 +25,7 @@ public:
                            std::vector<pt::time_duration> &sprinklerOnDurations) override;
 
 
-   const product_id_t id() const { return id_; }
+   const product_id_t id() const override { return id_; }
    const MistSchedule &current_schedule() const { return current_schedule_; }
    const pt::time_duration update_period() const { return update_period_; }
    const pt::ptime last_update_time() const { return last_update_time_; }
@@ -48,6 +48,10 @@ protected:
    template<class strT>
    void ReadInNewSchedule(strT &inSchedule);
 private:
+   // Reference class only
+   MistController &operator=(MistController other);
+   MistController(const MistController &other);
+
    const product_id_t id_;
    const pt::time_duration update_period_;
 
