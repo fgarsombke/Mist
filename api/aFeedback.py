@@ -25,12 +25,14 @@ class aFeedback:
 
     def POST(self):
         FBdata = web.input()
-        if FBData.json:
-            jsonFeedback = FBdata.json
-            fb = json.loads(jsonFeedback)
-            for zone in fb:
-                for item in zone["feedback"]:
-                    storeFeedback(FBdata.deviceID, zone["zoneNumber"], item["time"], item["value"])
-        else:
-            storeFeedback(FBdata.deviceID, FBdata.zoneNumber, FBdata.create, FBData.value)
-        return 0
+        print web.input()
+        print FBdata.deviceID
+        #if FBData.json:
+        #    jsonFeedback = FBdata.json
+        #    fb = json.loads(jsonFeedback)
+        #    for zone in fb:
+        #        for item in zone["feedback"]:
+        #            storeFeedback(FBdata.deviceID, zone["zoneNumber"], item["time"], item["value"])
+        #else:
+        #    storeFeedback(FBdata.deviceID, FBdata.zoneNumber, FBdata.create, FBData.value)
+        #return 0
