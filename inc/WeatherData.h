@@ -21,8 +21,10 @@ namespace WeatherDataInteral {
    extern const char* ID_LABEL;
 }
 
+typedef double WeatherDataNumeric_t;
+
 class WeatherData 
-	: public DataSetOptional<double, WeatherDataValue_t, static_cast<size_t>(WeatherDataValue_t::ENUM_COUNT)>
+	: public DataSetOptional<WeatherDataNumeric_t, WeatherDataValue_t, static_cast<size_t>(WeatherDataValue_t::ENUM_COUNT)>
 {
 public:
 	template<class strT>

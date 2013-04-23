@@ -7,7 +7,6 @@
 #include "DriftEntry.h"
 #include "WeatherData.h"
 #include "LawnCoordinate.h"
-#include "ETCalcParameters.h"
 
 #include "Controller.h"
 
@@ -15,7 +14,7 @@ namespace Mist { namespace LawnSim {
 
 typedef bnu::compressed_matrix<double> SprinklerMask_t;
 typedef bnu::unbounded_array<SprinklerMask_t> SprinklerMaskList_t;
-
+typedef Mist::ETCalc::ET_float_t water_mm_t;
 
 class Yard {
 public:
@@ -67,9 +66,6 @@ private:
    ETCalc::ETCalc et_calc_;
 
    SprinklerMaskList_t InitSprinklerMasks(const YardInfo &yardInfo);
-
-
-   void Absorb();
 
    void DoGrow(ETCalc::ETParam_t ET_0, size_t startCell, size_t count);
 

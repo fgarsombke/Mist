@@ -1,55 +1,12 @@
 #include "LawnSimStd.h"
 
 #include "Simulator.h"
+#include "PAL.h"
 
 
-#ifdef _MSC_VER 
+#if _DEBUG_SPRINKLER_DURATIONS
 
-#include <Windows.h>
-//#include <mmsystem.h>
-
-// In Milliseconds
-inline unsigned int GetSystemTimeMS() 
-{
-   return GetTickCount(); //timeGetTime();
-}
-
-inline int SleepForMS(int x) { 
-   return SleepEx(x, false);
-}
-
-#else
-
-#include <time.h>
-
-// In Milliseconds
-inline unsigned int GetSystemTimeMS() 
-{
-   struct timespec ts;
-   if(clock_gettime(CLOCK_MONOTONIC,&ts) != 0) {
-      throw std::logic_error("clock_gettime failed.");//error
-   }
-   
-   return ts.tv_sec*1000 + ts.tv_nsec/1000000;
-}
-
-inline int SleepForMS(int x) 
-{  
-   struct timespec tim; 
-   int sleepSec = (x)/1000; 
-   int sleepRem = (x)%1000; 
-   tim.tv_sec = sleepSec; 
-   tim.tv_nsec = sleepRem * 1000000L; 
-
-   return nanosleep(&tim, NULL);
-}
-
-#endif
-
-
-#if _DEBUG
-
-void DbgPrintDurations(const std::vector<time_duration> &durations) 
+void DbgPrintDurations(const sprinkler_durations_t &durations) 
 {
    cout << "Sprinkler Durations:" << endl;
    for (auto t : durations) {
@@ -73,121 +30,156 @@ Simulator::Simulator(const YardInfo &yardInfo,
    : yard_(yardInfo), 
       controller_(std::move(controller)), 
       feedback_sink_(feedbackSink), 
-      weather_source_(weatherSource)
+      weather_source_(weatherSource),
+		sim_period_(ptime(boost::gregorian::date(1970,1,2)), ptime(boost::gregorian::date(1970,1,1)))
 {
    // Set start time ahead of end time so the sim won't run
-   sim_start_time_ = ptime(boost::gregorian::date(1970,1,2));
-   sim_end_time_ = ptime(boost::gregorian::date(1970,1,1));
 }
 
-
-void Simulator::Reset(ptime simStartTime, 
-                      ptime simEndTime,
-                      unsigned int simTickPeriod,
-                      unsigned int simSpeedMultiplier
-) {
+void Simulator::Reset(time_period simPeriod,
+							 unsigned int simTickDuration,
+                      unsigned int simSpeedMultiplier) 
+{
    // TODO: Reset the running simulation
-   Stop();
+   sim_period_ = simPeriod;
+   sim_tick_duration_ = time_duration(pt::milliseconds(simTickDuration));
 
-   sim_start_time_ = simStartTime;
-   sim_end_time_ = simEndTime;
-   sim_tick_duration_ = time_duration(pt::milliseconds(simTickPeriod));
-
-   if (simTickPeriod%simSpeedMultiplier != 0) {
+   if (simTickDuration%simSpeedMultiplier != 0) {
       throw std::invalid_argument(Constants::SimMultDoesNotDivide);
    }
 
-   tick_period_ms_ = simTickPeriod/simSpeedMultiplier;
+   real_tick_period = simTickDuration/simSpeedMultiplier;
 
    // Put the yard into it's initial state
-   controller_->Reset(simStartTime);
+   controller_->Reset(sim_period_.begin());
    yard_.ResetState();
-}
-
-void DoGiveFeedback()
-{
-
 }
 
 void Simulator::Start() 
 {
-   std::vector<time_duration> sprinklerDurations = std::vector<pt::time_duration>(yard_.SprinklersCount());
+	// The world was void and witout form
+	std::array<std::thread, num_tick_pipes_> pipeThreads;
+
+	ptime simStartTime = sim_period_.begin();
+	real_start_time_ = GetSystemTimeMS();
+	next_real_tick_end_target_ = real_start_time_ + real_tick_period;
+
+	// Breath of life
+	for (size_t t_i = 0; t_i < pipeThreads.size(); ++t_i) {
+		pipeThreads[t_i] = std::move(
+			std::thread(&Simulator::DoTickWork, this, simStartTime+sim_tick_duration_*((int)t_i))
+		);
+	}
+	
+	// Death comes for us all
+	for (size_t t_i = 0; t_i < pipeThreads.size(); ++t_i) {
+		pipeThreads[t_i].join();
+	}
+}
+
+void Simulator::DoTickWork(pt::ptime firstTickTime)
+{
+	WeatherData weatherData;
+	sprinkler_durations_t sprinklerDurations = sprinkler_durations_t(yard_.SprinklersCount());
    ZoneFeedback_t zoneFeedback = ZoneFeedback_t(yard_.ZoneCount());
 
    // Basic logic: 
    //    -Do one tick
    //    -Set time for next tick
    //    -Sleep until it's time to tick again
-
-   real_start_time_ = GetSystemTimeMS();
-   int nextTickTime = real_start_time_;       // Set so that computation below will work
-
-   pt::ptime this_tick_sim_time = sim_start_time_;
-   
-   while(this_tick_sim_time <= sim_end_time_) {
-      time_period tick_period = time_period(this_tick_sim_time, sim_tick_duration_);
-
-      // TODO: Add boost Logging
-      // TODO: Precompute WeatherData for the next tick
-      // Do the tick work
+   pt::ptime thisTickSimTime = firstTickTime;
+	ptime simEndTime = sim_period_.end();
+	
+   while(thisTickSimTime <= simEndTime) {
+      time_period tickPeriod = time_period(thisTickSimTime, sim_tick_duration_);
 
       // The process below is a pipline in several independent steps
-      // Each 
+      // Each step occurs concurrently with that of the (n-Ns+1)th stage.
 
       // Get weather data from the server
       // STAGE 1
-      WeatherData weatherData = weather_source_->GetWeatherData(yard_.locale(), tick_period);
+      ProcessWeather(tickPeriod, weatherData);
       
       // Allow the controller to report sprinkler on durations
       // STAGE 2
-      controller_->ElapseTime(tick_period, sprinklerDurations);
-      DbgPrintDurations(sprinklerDurations);
+      ProcessController(tickPeriod, sprinklerDurations);
 
 		// Send the sprinkler times to the yard
 		// Here is where actual watering and growing takes place
       // STAGE 3
-      yard_.ElapseTime(tick_period, weatherData, sprinklerDurations, zoneFeedback);
+      ProcessYard(tickPeriod, weatherData, sprinklerDurations, zoneFeedback);
 
 		// Determine whether or not to give feedback to the server
       // STAGE 4
       // TODO: Get controller id
-      feedback_sink_->SubmitFeedback(1, zoneFeedback);
+      ProcessFeedback(tickPeriod, zoneFeedback);
 
-      // Compute next tick time
-      nextTickTime += tick_period_ms_;
-
-      // Compute the simulated time
-      this_tick_sim_time += sim_tick_duration_;
-
-      int sysTime = GetSystemTimeMS();
-      int sleepTime = nextTickTime - sysTime;
-
-      // Don't sleep if we're already behind
-      // TODO: Figure out a better way to handle slowdown
-     if (sleepTime > 0) {
-         SleepForMS(sleepTime);
-         tick_period_ms_ -= 1;
-      } else {
-         std::cout << "Tick Period: " << tick_period_ms_ << std::endl;
-         // Slow down a little
-         nextTickTime = sysTime;
-         tick_period_ms_ = (unsigned int)(ceil(tick_period_ms_ * 1.1f));
-      }
+		// Wait until tick time is over
+		// STAGE 5
+		// Compute the simulated time
+      thisTickSimTime += (sim_tick_duration_*num_tick_pipes_);
+		ProcessWait();
    }
-  
 }
 
-void Simulator::Stop() 
+inline void Simulator::ProcessWeather(const pt::time_period tickPeriod,
+															WeatherData &weatherData) const
 {
-   // TODO: Implement
-   // Sets a signal to stop all the threads involved in Run()
+	std::lock_guard<std::mutex> lock(process_weather_lock_);
+	weatherData = weather_source_->GetWeatherData(yard_.locale(), tickPeriod);
+}
 
 
+inline void Simulator::ProcessController(const pt::time_period tickPeriod, 
+										sprinkler_durations_t sprinklerDurations)
+{
+	std::lock_guard<std::mutex> lock(process_controller_lock_);
+	controller_->ElapseTime(tickPeriod, sprinklerDurations);
+   DbgPrintDurations(sprinklerDurations);
+}
+
+inline void Simulator::ProcessYard(pt::time_period tickPeriod,
+								const WeatherData &weatherData,
+								const sprinkler_durations_t &sprinklerDurations,
+								ZoneFeedback_t &zoneFeedback)
+{
+	std::lock_guard<std::mutex> lock(process_controller_lock_);
+	yard_.ElapseTime(tickPeriod, weatherData, sprinklerDurations, zoneFeedback);
+}
+
+
+inline void Simulator::ProcessFeedback(pt::time_period tickPeriod,
+													const ZoneFeedback_t &zoneFeedback) const
+{
+	std::lock_guard<std::mutex> lock(process_controller_lock_);
+	feedback_sink_->SubmitFeedback(1, zoneFeedback);
+}
+
+inline void  Simulator::ProcessWait()
+{
+	std::lock_guard<std::mutex> lock(process_wait_lock_);
+
+	int now = GetSystemTimeMS();
+	int sleepTime = (next_real_tick_end_target_ - now) - SleepModConstant;
+
+	// Don't sleep if we're already behind
+	// TODO: Figure out a better way to handle slowdown
+	if (sleepTime > 0) {
+		SleepForMS(sleepTime);
+		real_tick_period -= 1;
+		std::cout << "Sped Tick Period: " << real_tick_period << std::endl;
+		next_real_tick_end_target_ += real_tick_period;
+	} else {
+		// Slow down a little
+		real_tick_period = static_cast<unsigned int>(ceil(real_tick_period * 1.1f));
+		std::cout << "Slowed Tick Period: " << real_tick_period << std::endl;
+		next_real_tick_end_target_ = now + real_tick_period;
+	}
 }
 
 void Simulator::Pause()
 {
-
+	// TODO: Implement
 }
 
 }}

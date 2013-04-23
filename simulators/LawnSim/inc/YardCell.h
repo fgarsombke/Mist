@@ -31,6 +31,10 @@ public:
 
    const YardCellInfo cell_info() const { return cell_info_; }
    YardCellType_t cell_type() const { return cell_type_; }
+
+	// Cell K value
+	double ET_K() const { return 1.0; }
+
    const DriftEntry drift_entry() const;
 private:
    YardCellInfo cell_info_;
