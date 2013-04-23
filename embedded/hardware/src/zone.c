@@ -23,6 +23,8 @@ typedef enum zone_e {
     ZONE_EIGHT,
 } zone_t;
 
+static unsigned long Current_Zone = 0;
+
 // Initializes zone control using SSI0
 void Zone_Init(void) {
     // Gating configuration
@@ -50,14 +52,21 @@ void Zone_Init(void) {
 
 // Enables a zone
 void Zone_Enable(unsigned long zone) {
-    while(SSIBusy(SSI0_BASE));
+	  if(zone != Current_Zone) {
+			Zone_Disable();
+			Current_Zone = zone;
+			
+			while(SSIBusy(SSI0_BASE));
 
-    // Zones numbered starting at 1, subtract to index
-    SSIDataPut(SSI0_BASE, (0x01 << (zone - 1)));
+			// Zones numbered starting at 1, subtract to index
+			SSIDataPut(SSI0_BASE, (0x01 << (zone - 1)));
+		}
 }
 
 // Disables a zone
 void Zone_Disable(void) {
+	  Current_Zone = 0;
+	
     while(SSIBusy(SSI0_BASE));
         
     SSIDataPut(SSI0_BASE, ZONE_NONE);
