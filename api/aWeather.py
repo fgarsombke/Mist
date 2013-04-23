@@ -69,8 +69,8 @@ def forecastAPI(latitude, longitude, thetime, interval):
    return response[interval]
 
 def getWeatherData(latitude, longitude, begin, end):
-    begintime = datetime.datetime.fromtimestamp(begin) 
-    endtime = datetime.datetime.fromtimestamp(end)
+    begintime = datetime.datetime.fromtimestamp(int(begin)) 
+    endtime = datetime.datetime.fromtimestamp(int(end))
     
     #count # of minutes til next hour
     numMinutes = 60 - begintime.minute
@@ -250,7 +250,7 @@ def createWeatherDataObjectFromDictionary(dictionary):
 
 def main():
     #huh
-    result = getWeatherData(30, -100, 1366699176, 1366439974)
+    result = getWeatherData(30, -100, "1366699176", "1366439974")
     result.printWD()
 
 if __name__ == '__main__':
