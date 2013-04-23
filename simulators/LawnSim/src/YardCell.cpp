@@ -29,14 +29,56 @@ void YardCell::ResetState()
 void YardCell::ChangeHeight(double delta) {
    if (cell_type_ == YardCellType_t::Void) {
       cell_info_ = YardCellInfo(cell_info_.initial_health(), cell_info_.rel_height() + delta);
+   } else {
+      throw std::logic_error("Cannot change the height of a non void cell");
    }
 }
 
+double sign(double num)
+{
+   return num >=0?1:-1;
+}
+
+health_t YardCell::ComputeHealthMetric(health_t currentHealth, 
+                                       water_mm_t waterAvailable,
+                                       double periodLengthSeconds,
+                                       double growthFactor)
+{
+   // We compute the health metric by following a logistic curve.
+   // http://en.wikipedia.org/wiki/Logistic_function
+   // See also matlab/HealthMetric.m
+
+   // TODO: Figure out how to do this analytically
+   const double K = MaxHealth;
+   const double A = -MaxHealth;
+   const double B = 1/8.0;
+   const double C = 0;
+
+   const double T = 1/(24*60*60);
+
+   double yp = -sign(currentHealth)*B*(K-A)*exp(-B*(currentHealth-C))/pow(1+exp(-B*(currentHealth-C)),2);
+
+   double dHealth = yp*periodLengthSeconds*waterAvailable*T;
+
+   double newHealth = currentHealth + growthFactor*dHealth;
+
+   if (newHealth < -MaxHealth) {
+      return -MaxHealth;
+   } else if (newHealth > MaxHealth) {
+      return MaxHealth;
+   } else {
+      return newHealth;
+   }
+}
+
+
+
+///////////////////////////////////////////////////////////////////////////
+// Static Factory Methods
 YardCell YardCell::CreateVoid(double relHeight)
 {
    return YardCell(YardCellInfo(FP_NAN, relHeight), YardCellType_t::Void);
 }
-
 
 YardCell YardCell::CreateGrass(YardCellInfo info, NeighborHeightDiffs_t &heightDiffs)
 {
@@ -47,6 +89,8 @@ YardCell YardCell::CreateIsolated(YardCellInfo info)
 {
    return YardCell(info, YardCellType_t::Isolated);
 }
+///////////////////////////////////////////////////////////////////////////
+
 
 void YardCell::UnIsolate(NeighborHeightDiffs_t heightDiffs) {   
    if (cell_type_ == YardCellType_t::Isolated) {
@@ -59,6 +103,7 @@ void YardCell::UnIsolate(NeighborHeightDiffs_t heightDiffs) {
 }
 
 
+///////////////////////////////////////////////////////////////////////////
 // Debug Methods
 #ifdef _DEBUG
 
@@ -78,5 +123,6 @@ const DriftEntry YardCell::drift_entry() const {
 
 
 #endif
+///////////////////////////////////////////////////////////////////////////
 
 }}

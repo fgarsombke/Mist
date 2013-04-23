@@ -11,15 +11,13 @@ namespace Mist {
 	using boost::property_tree::ptree;
 
 	namespace WeatherDataInternal {
+      #define LIST_MAP(r, data, elem) ("elem", data::elem)
+
 		const std::map<std::string, WeatherDataValue_t> WeatherDataMap = map_list_of
-			("AvgPressure", WeatherDataValue_t::AvgPressure)
-			("AvgRH", WeatherDataValue_t::AvgRH)
-			("AvgTemp", WeatherDataValue_t::AvgTemp)
-			("EndTemp", WeatherDataValue_t::EndTemp)
-			("Rainfall", WeatherDataValue_t::Rainfall)
-			("StartTemp", WeatherDataValue_t::StartTemp)
-			("WindVelocity", WeatherDataValue_t::WindVelocity)
+         BOOST_PP_SEQ_FOR_EACH(LIST_MAP,WeatherDataValue_t,WDATA_VALUES)
 		;
+
+      #undef LIST_MAP
 	}
 
 	using namespace WeatherDataInternal;

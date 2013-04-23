@@ -5,6 +5,7 @@
 #include <memory>
 #include <stdexcept>
 
+#include <math.h>
 #include <iostream>
 #include <algorithm>
 #include <array>
@@ -36,3 +37,4 @@ namespace bnu = boost::numeric::ublas;
 
 // -100 is most undergrown, 0 perfect, 100 most overgrown
 typedef double health_t;
+const health_t MaxHealth = 100;

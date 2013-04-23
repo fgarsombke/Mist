@@ -377,7 +377,7 @@ ET_float_t ETCalc::CalculateET_o(ETParam_t ETParam) const
 {		
 	// Implementation of Eq 2.6
 	ET_float_t delta = SaturationVapourPressureSlope(ETParam.AvgTemp());
-	ET_float_t gamma = GammaFromPressure(ETParam.Pressure());
+	ET_float_t gamma = GammaFromPressure(ETParam.AvgPressure());
 	ET_float_t u_2 = ETParam.WindSpeed();
 	ET_float_t R_n;
 	ET_float_t G;

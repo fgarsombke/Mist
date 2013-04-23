@@ -42,6 +42,4 @@ namespace Mist { namespace ETCalc {
       }
    }
 
-
-
 }}
