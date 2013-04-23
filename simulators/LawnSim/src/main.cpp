@@ -1,8 +1,5 @@
 #include "LawnSimStd.h"
 
-#include "main.h"
-
-
 #include "GeoLocale.h"
 #include "YardInfo.h"
 #include "Yard.h"
@@ -39,7 +36,11 @@ int main(int argc, char * argv[])
 
 
       // Use Mist Data for everything
+#if _DEBUG_DATA == 1
+		Mist::sPtrMistDataSource mistDataSource = Mist::MistDataSource::GetNullSource();
+#else
       Mist::sPtrMistDataSource mistDataSource = Mist::MistDataSource::GetDefaultDataSource();
+#endif
 
       // Build controller configuration
       Mist::Controllers::ControllerConfig cConfig;
@@ -56,7 +57,7 @@ int main(int argc, char * argv[])
       pt::ptime start(options->start_time());
       pt::ptime end(options->end_time());
 
-      sim.Reset(start, end, options->sim_tick_period(), options->sim_speed_ratio());
+      sim.Reset(pt::time_period(start, end), options->sim_tick_period(), options->sim_speed_ratio());
       
       options.release();
       
