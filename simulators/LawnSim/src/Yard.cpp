@@ -10,9 +10,9 @@ namespace Mist { namespace LawnSim {
 
 Yard::Yard(const YardInfo& yardInfo)
    : locale_(yardInfo.locale()), 
+     sprinklers_(std::move(yardInfo.sprinklers())),
      cells_(InitCells(yardInfo)), 
      cells_by_height_(InitHeightMap(yardInfo)),
-     sprinklers_(std::move(yardInfo.sprinklers())),
      cells_per_zone_(std::move(yardInfo.cells_per_zone())),
 	  surface_water_(cells_.size1(), cells_.size2(), 0),
      cell_health_(cells_.size1(), cells_.size2(), 0),
@@ -68,7 +68,6 @@ const bnu::matrix<YardCell> Yard::InitCells(const YardInfo& yardInfo)
 
    // At this point each void cell has a height equal to its next "inner" neighbor
    // We could stop assigning here and that would be enough for the "EdgeWall" case
-
    #if EdgeProject == 1
 
    // We continue by extrapolating slope into the void

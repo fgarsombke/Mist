@@ -7,6 +7,7 @@
 #include "Simulator.h"
 #include "LawnGenerator.h"
 #include "MistDataSource.h"
+#include "ETCalcPython.h"
 
 #include "Controller.h"
 
@@ -31,6 +32,10 @@ int main(int argc, char * argv[])
          cerr << "Error: " << e.what() << endl;
          return 1;
       }
+
+      double results = CalculateET_0(
+         30.0, -100.0, 136666666, 136666667, 30.0, 40.0, 35.0, .2, .8, 32.0, 38.0, 10.0, 10.0, .6        
+      );
 
       auto yardInfo = LawnGenerator().Generate(options->geo_locale(), 5, 5);
 

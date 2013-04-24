@@ -54,7 +54,6 @@ private:
    YardCellInfo cell_info_;  
    YardCellType_t cell_type_; 
    DriftEntry drift_entry_;
-   zone_number_t zone_;
    
    // The yard cell only gets water soaked into the soil
    double absorbed_water_;
