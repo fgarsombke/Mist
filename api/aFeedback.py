@@ -26,10 +26,10 @@ class aFeedback:
     def POST(self):
         data = web.data()
         print data
-        deviceID = data.deviceID
-        zoneNumber = data.zoneNumber
-        created = data.created
-        value = data.value
+        deviceID = data['deviceID']
+        zoneNumber = data['zoneNumber']
+        created = data['created']
+        value = data['value']
         storeFeedback(deviceID, zoneNumber, created, value)
         
         #print web.input()
