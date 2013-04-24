@@ -123,7 +123,6 @@ void Simulator::DoTickWork(pt::ptime firstTickTime)
 
 		// Determine whether or not to give feedback to the server
       // STAGE 4
-      // TODO: Get controller id
       ProcessFeedback(tickPeriod, zoneFeedback);
 
 		// Wait until tick time is over

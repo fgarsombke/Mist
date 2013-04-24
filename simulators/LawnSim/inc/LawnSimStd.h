@@ -32,6 +32,7 @@ namespace bnu = boost::numeric::ublas;
 #endif
 
 typedef double health_t;
+typedef size_t zone_number_t;
 
 
 // My Headers

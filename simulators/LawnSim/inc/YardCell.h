@@ -21,7 +21,6 @@ class YardCell {
 public:
    // Static factory methods
    static YardCell CreateVoid(double relHeight);
-   static YardCell CreateGrass(YardCellInfo info, NeighborHeightDiffs_t &heightDiffs);
    static YardCell CreateIsolated(YardCellInfo info);
 
    static health_t ComputeHealthMetric(health_t currentHealth, 
@@ -32,7 +31,7 @@ public:
    // Default Constructor
    YardCell();
 
-   void UnIsolate(NeighborHeightDiffs_t heightDiffs);
+   void UnIsolate(NeighborHeightDiffs_t heightDiffs, zone_number_t zone);
 
    // Increase height by delta
    void ChangeHeight(double delta);
@@ -53,6 +52,8 @@ private:
    YardCellType_t cell_type_;
    
    DriftEntry drift_entry_;
+
+   zone_number_t zone_;
    
    // The yard cell only gets water soaked into the soil
    double absorbed_water_;
@@ -60,9 +61,6 @@ private:
    YardCell(YardCellInfo info, YardCellType_t type);
 
    YardCell(YardCellInfo info, YardCellType_t type, NeighborHeightDiffs_t &heightDiffs);
-
-   // Returns the amount of water lost from the soil
-   double Grow(double waterSupplied, const ETCalc::ETCalcParameters &etParams);
 };
 
 
