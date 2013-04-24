@@ -17,7 +17,7 @@ import time
 from collections import defaultdict
 
 class WeatherData:
-    def __init__(self, startTemp, endTemp, avgTemp, avgWind, avgPressure, minRH, maxRH, minTemp, maxTemp):
+    def __init__(self, startTemp, endTemp, avgTemp, avgWind, avgPressure, minRH, maxRH, minTemp, maxTemp, srStart, srEnd, ssStart, ssEnd):
         self.startTemp = startTemp
         self.endTemp = endTemp
         self.avgTemp = avgTemp
@@ -27,6 +27,10 @@ class WeatherData:
         self.maxRH = maxRH
         self.minTemp = minTemp
         self.maxTemp = maxTemp
+        self.srStart = srStart
+        self.srEnd = srEnd
+        self.ssStart = ssStart
+        self.ssEnd = ssEnd
 
     def printWD(self):
         if self.avgTemp:
@@ -47,6 +51,14 @@ class WeatherData:
             print "Start Temp: %s" % self.startTemp
         if self.endTemp:
             print "End Temp: %s" % self.endTemp
+        if self.srStart:
+            print "Sunrise First Day: %s" % self.srStart
+        if self.srEnd:
+            print "Sunrise Last Day: %s" % self.srEnd
+        if self.ssStart:
+            print "Sunset First Day: %s" % self.ssStart
+        if self.ssEnd:
+            print "Sunset Last Day: %s" % self.ssEnd
 
 def findNearestClimateStation(latitude, longitude):
     conf = DBConfig.DBConfig()
@@ -77,7 +89,7 @@ def getWeatherData(latitude, longitude, begin, end):
     #count # of hours til midnight
     numHours = 24 - begintime.hour
     #count # of days til end day
-    numDays = endtime.day - begintime.day #what if new yaer?
+    numDays = endtime.day - begintime.day #TODO: THIS IS day of month...
     #count # of hours til hour of end day
     numEndHours = endtime.hour
     #count # of minutes til minute of end day
@@ -162,15 +174,12 @@ def createWeatherDataObjectFromDictionary(dictionary):
     avgTempSum = 0
     avgPressureSum = 0
     avgWindSum = 0
-    #srStart
-    #srEnd
-    #ssStart
-    #ssEnd
+    srStart = 0
+    srEnd = 0
+    ssStart = 0
+    ssEnd = 0
     #rainfall
-
     for minute in beginMinutes:
-        if count == 0:
-            startTemp = minute['temperature']
         if minute['temperature'] < minTemp:
             minTemp = minute['temperature']
         if minute['temperature'] > maxTemp:
@@ -184,7 +193,11 @@ def createWeatherDataObjectFromDictionary(dictionary):
         avgWindSum += minute['windSpeed']
         count += 1.0
 
+    numHour = 0 
     for hour in beginHours:
+        if numHour == 0:
+            startTemp = hour['temperature']
+            numHour += 1
         if hour['temperature'] < minTemp:
             minTemp = hour['temperature']
         if hour['temperature'] > maxTemp:
@@ -198,7 +211,15 @@ def createWeatherDataObjectFromDictionary(dictionary):
         avgWindSum += hour['windSpeed']*60.0
         count += 60.0
 
+    numDay = 0
     for day in days:
+        if numDay == 0:
+            srStart = day['sunriseTime']
+            ssStart = day['sunsetTime']
+        numDay+=1
+        if numDay == len(days):
+            srEnd = day['sunriseTime']
+            ssEnd = day['sunsetTime']
         if day['temperatureMin'] < minTemp:
             minTemp = day['temperatureMin']
         if day['temperatureMax'] > maxTemp:
@@ -212,7 +233,11 @@ def createWeatherDataObjectFromDictionary(dictionary):
         avgWindSum += day['windSpeed']*60.0*24.0
         count += 60.0*24.0
 
+    numHour = 0
     for hour in endHours:
+        numHour += 1
+        if numHour == len(endHours):
+            endTemp = hour['temperature']
         if hour['temperature'] < minTemp:
             minTemp = hour['temperature']
         if hour['temperature'] > maxTemp:
@@ -244,13 +269,13 @@ def createWeatherDataObjectFromDictionary(dictionary):
     avgPressure = avgPressureSum/count
     avgWind = avgWindSum/count
     
-    wd = WeatherData(startTemp, endTemp, avgTemp, avgWind, avgPressure, minRH, maxRH, minTemp, maxTemp)
+    wd = WeatherData(startTemp, endTemp, avgTemp, avgWind, avgPressure, minRH, maxRH, minTemp, maxTemp, srStart, srEnd, ssStart, ssEnd)
     return wd
 
 
 def main():
     #huh
-    result = getWeatherData(30, -100, "1366699176", "1366439974")
+    result = getWeatherData(30, -100, "1366439974", "1366699176")
     result.printWD()
 
 if __name__ == '__main__':
@@ -277,7 +302,7 @@ class aWeather:
             d['StartTemp'] = weatherData.startTemp
             d['EndTemp'] = weatherData.endTemp
             d['AvgTemp'] = weatherData.avgTemp
-            d['AvgWind'] = weatherData.avgWind
+            d['AvgWindSpeed'] = weatherData.avgWind
             d['AvgPressure'] = weatherData.avgPressure
             d['MinRH'] = weatherData.minRH
             d['MaxRH'] = weatherData.maxRH
