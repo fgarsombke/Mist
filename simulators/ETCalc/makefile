@@ -5,8 +5,8 @@ OUT_DIR := ../../lib
 
 SHLIB = ETCalc
 SOURCE_NAMES = ETCalc.cpp ETCalcParameters.cpp ETCalcPython.cpp 
-LSHARED_LIBS:=mist_shared python2.7 boost_python boost_system
-ADTL_FLGS := -fpic -I$(PYTHONINC_DIR)
+LSHARED_LIBS:=mist_shared boost_system
+ADTL_FLGS := -fpic
 LFLAGS:=-shared -fpic
 
 all : dirs $(OBJECTS) $(SHLIB)

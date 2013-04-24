@@ -61,6 +61,15 @@ private:
    
    const CellPerZoneList_t cells_per_zone_;
 
+   
+   // The water on the surface across the yard, which has not yet been absorbed into the soil
+   bnu::matrix<water_mm_t> surface_water_;
+
+   // Matrix which holds the current health of each lawn cell
+   bnu::matrix<health_t> cell_health_;
+
+   ETCalc::ETCalc et_calc_;
+
    // The sprinkler "masks" which indicate how much water is to be delivered to each cell
    // The units are mm/s, so each matrix needs to be multiplied by time duration when watering
    // We assume here that any deviation from ideal in the sprinkler spray pattern is time invariant
@@ -70,15 +79,8 @@ private:
    // TODO: Possibly get a more sophistocated mask
    bnu::scalar_matrix<double> rain_mask_;
 
-   // The water on the surface across the yard, which has not yet been absorbed into the soil
-   bnu::matrix<water_mm_t> surface_water_;
-
-   // Matrix which holds the current health of each lawn cell
-   bnu::matrix<health_t> cell_health_;
 
 
-
-   ETCalc::ETCalc et_calc_;
 
    SprinklerMaskList_t InitSprinklerMasks(const YardInfo &yardInfo);
 
