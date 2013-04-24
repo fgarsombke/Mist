@@ -237,6 +237,7 @@ def createWeatherDataObjectFromDictionary(dictionary):
         count += 60.0*24.0
 
     if numDay == 0:
+        print "no daily data"
         #TODO: get current days sunrise time because time interval is less than one day
 
     numHour = 0
