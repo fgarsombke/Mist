@@ -34,6 +34,24 @@ class WeatherData:
         self.ssEnd = ssEnd
         self.rainfall = rainfall
 
+    def jsonize(self):
+       d = collections.OrderedDict()
+       d['StartTemp'] = self.startTemp
+       d['EndTemp'] = self.endTemp
+       d['AvgTemp'] = self.avgTemp
+       d['AvgWindSpeed'] = self.avgWind
+       d['AvgPressure'] = self.avgPressure
+       d['MinRH'] = self.minRH
+       d['MaxRH'] = self.maxRH
+       d['minTemp'] = self.minTemp
+       d['maxTemp'] = self.maxTemp
+       d['srStart'] = self.srStart
+       d['srEnd'] = self.srEnd
+       d['ssStart'] = self.ssStart
+       d['ssEnd'] = self.ssEnd
+       d['rainfall'] = self.rainfall
+       j = json.dumps(d, cls=MyEncoder)
+
     def printWD(self):
         if self.avgTemp:
             print "Average Temperature: %s" % self.avgTemp
@@ -297,7 +315,6 @@ class aWeather:
     #RETURN weather data object: expetected parameter: latitude, longitude, POSIX time begin and end
     def GET(self):
         weather_data = web.input()
-        devices = 0
 
         if weather_data:
             latitude = weather_data.latitude
@@ -307,22 +324,13 @@ class aWeather:
             weatherData = getWeatherData(latitude, longitude, beginTime, endTime)
 
             #JSONize WeatherData object
-            objects_list = []
-            d = collections.OrderedDict()
-            d['StartTemp'] = weatherData.startTemp
-            d['EndTemp'] = weatherData.endTemp
-            d['AvgTemp'] = weatherData.avgTemp
-            d['AvgWindSpeed'] = weatherData.avgWind
-            d['AvgPressure'] = weatherData.avgPressure
-            d['MinRH'] = weatherData.minRH
-            d['MaxRH'] = weatherData.maxRH
-            objects_list.append(d)
-            j = json.dumps(objects_list, cls=MyEncoder)
+            weatherJSON = weatherData.jsonize()
+
             #return JSONized data
-            return j
+            return weatherJSON
         else:
             return 0
 
     #POST API for WeatherData
     def POST(self):
-        return deviceId
+        return 0

@@ -91,9 +91,10 @@ def getLatLongforDevice(deviceID):
 
 def getETo(deviceID):
     latLong = getLatLongforDevice(deviceID)
-    datee = 0
     #TODO:parameterize the date
-    value = ForecastET.forecastEToForStation(latLong[0], latLong[1], datee)
+    begin = 0
+    end = 0
+    value = ForecastET.forecastETo(latLong[0], latLong[1], begin, end)
     return value
 
 def generateNewSchedule(deviceID, zone, ETp, numDays, timer, vectorID):
