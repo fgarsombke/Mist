@@ -1,5 +1,3 @@
-#include "MistStd.h"
-
 #include "ETCalc.h"
 
 #include <cmath>
@@ -373,7 +371,7 @@ ETCalc_Func_def(DewPoint, double temp, double rh)
 // Temperature is in celcius
 // Wind Speed is in m/s.
 // 
-ET_float_t ETCalc::CalculateET_o(ETParam_t ETParam) const
+ET_float_t ETCalc::CalculateET_0(ETParam_t ETParam) const
 {		
 	// Implementation of Eq 2.6
 	ET_float_t delta = SaturationVapourPressureSlope(ETParam.AvgTemp());

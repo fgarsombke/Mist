@@ -18,9 +18,10 @@ public:
    std::unique_ptr<YardInfo> Generate(GeoLocale locale, size_t rows, size_t cols) const;
 
 private:
-   bnu::matrix<YardCellInfo> GenerateCells(size_t rows, 
-                                         size_t cols,
-                                         FillHeightFunc_t hFunc = FillHeightsDiagonally) const;
+   inline bnu::matrix<YardCellInfo> GenerateCells(size_t rows, 
+                                                  size_t cols,
+                                                  const SprinklersList_t &sprinklers,
+                                                  FillHeightFunc_t hFunc = FillHeightsDiagonally) const;
 
    static void FillHeightsDiagonally(bnu::matrix<double> &heights);
    static void FillHeightsPerlin(bnu::matrix<double> &heights);

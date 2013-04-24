@@ -9,12 +9,14 @@
 namespace Mist { namespace LawnSim {
 
 Yard::Yard(const YardInfo& yardInfo)
-   : locale_(yardInfo.locale()), cells_(InitCells(yardInfo)), 
+   : locale_(yardInfo.locale()), 
+     cells_(InitCells(yardInfo)), 
      cells_by_height_(InitHeightMap(yardInfo)),
      sprinklers_(std::move(yardInfo.sprinklers())),
-	 surface_water_(cells_.size1(), cells_.size2(), 0),
-    cell_health_(cells_.size1(), cells_.size2(), 0),
-    et_calc_(locale_)
+     cells_per_zone_(std::move(yardInfo.cells_per_zone())),
+	  surface_water_(cells_.size1(), cells_.size2(), 0),
+     cell_health_(cells_.size1(), cells_.size2(), 0),
+     et_calc_(locale_)
 {
    // Zero everything out and
    // Generate a height sorted view of the Yard
@@ -102,10 +104,10 @@ const bnu::matrix<YardCell> Yard::InitCells(const YardInfo& yardInfo)
    }
 
    // To each corner we add the average difference between the inner point and the edges
-   cells(0,0).ChangeHeight((cells(1,0).cell_info().rel_height() + cells(0,1).cell_info().rel_height() - 2*cells(0,0).cell_info().rel_height())/3);
-   cells(0,lstCol).ChangeHeight((cells(1,lstCol).cell_info().rel_height() + cells(0,lstCol-1).cell_info().rel_height() - 2*cells(0,lstCol).cell_info().rel_height())/3);
-   cells(lstRow,0).ChangeHeight((cells(lstRow,1).cell_info().rel_height() + cells(lstRow-1,0).cell_info().rel_height() - 2*cells(lstRow,0).cell_info().rel_height())/3);
-   cells(lstRow,lstCol).ChangeHeight((cells(lstRow-1,lstCol).cell_info().rel_height() + cells(lstRow,lstCol-1).cell_info().rel_height() - 2*cells(lstRow,lstCol).cell_info().rel_height())/3);
+   cells(0,0).ChangeHeight((cells(1,0).rel_height() + cells(0,1).rel_height() - 2*cells(0,0).rel_height())/3);
+   cells(0,lstCol).ChangeHeight((cells(1,lstCol).rel_height() + cells(0,lstCol-1).rel_height() - 2*cells(0,lstCol).rel_height())/3);
+   cells(lstRow,0).ChangeHeight((cells(lstRow,1).rel_height() + cells(lstRow-1,0).rel_height() - 2*cells(lstRow,0).rel_height())/3);
+   cells(lstRow,lstCol).ChangeHeight((cells(lstRow-1,lstCol).rel_height() + cells(lstRow,lstCol-1).rel_height() - 2*cells(lstRow,lstCol).rel_height())/3);
 
    // Fill the center of the map with heights but bogus cells
    for (size_t row = 1; row < lstRow; ++row) {
@@ -122,18 +124,17 @@ const bnu::matrix<YardCell> Yard::InitCells(const YardInfo& yardInfo)
    for (size_t row = 1; row < lstRow; ++row) {
       for (size_t col = 1; col < lstCol; ++col) {
          YardCell myCell = cells(row, col);
-         const YardCellInfo myInfo = myCell.cell_info();
 
-         rh.Right() = cells(row, col+1).cell_info().rel_height() - myInfo.rel_height();
-         rh.TopRight() = cells(row - 1, col + 1).cell_info().rel_height() - myInfo.rel_height();
-         rh.Top() = cells(row - 1, col).cell_info().rel_height() - myInfo.rel_height();
-         rh.TopLeft() = cells(row - 1, col - 1).cell_info().rel_height() - myInfo.rel_height();
-         rh.Left() = cells(row, col - 1).cell_info().rel_height() - myInfo.rel_height();
-         rh.BottomLeft() = cells(row + 1, col - 1).cell_info().rel_height() - myInfo.rel_height();
-         rh.Bottom() = cells(row + 1, col).cell_info().rel_height() - myInfo.rel_height();
-         rh.BottomRight() = cells(row + 1, col + 1).cell_info().rel_height() - myInfo.rel_height();
+         rh.Right() = cells(row, col+1).rel_height() - myCell.rel_height();
+         rh.TopRight() = cells(row - 1, col + 1).rel_height() - myCell.rel_height();
+         rh.Top() = cells(row - 1, col).rel_height() - myCell.rel_height();
+         rh.TopLeft() = cells(row - 1, col - 1).rel_height() - myCell.rel_height();
+         rh.Left() = cells(row, col - 1).rel_height() - myCell.rel_height();
+         rh.BottomLeft() = cells(row + 1, col - 1).rel_height() - myCell.rel_height();
+         rh.Bottom() = cells(row + 1, col).rel_height() - myCell.rel_height();
+         rh.BottomRight() = cells(row + 1, col + 1).rel_height() - myCell.rel_height();
 
-         cells(row, col).UnIsolate(rh, 0+ZONE_OFFSET);
+         cells(row, col).UnIsolate(rh);
          rh = 0;
       }
    }
@@ -226,10 +227,7 @@ void Yard::ElapseTime(pt::time_period tickPeriod,
    DoGrow(ETBaseParams, growthFactor , 0, cells_.data().size());
 
 	if (addFeedback) {
-      FeedbackEntry ex;
-      ex.Time = tickPeriod.begin();
-      ex.Value = FeebackValue::Overgrown;
-      feedbackByZone[0].push_back(ex);
+      ComputeFeedback(tickPeriod, feedbackByZone);
    }
 }
 
@@ -254,7 +252,7 @@ inline void Yard::DoGrow(ETCalc::ETParam_t etParams,
    while (startCell < endCell) {  
 		if (cellData[startCell].cell_type() == YardCellType_t::Grass) {
 			// Shine sunlight
-			cellETParams.SetSunlightFraction(1.0);
+			cellETParams.SetSunlightFraction(cellData[startCell].sunlight_fraction());
 
 			// TODO: Apply heat
    
@@ -263,7 +261,7 @@ inline void Yard::DoGrow(ETCalc::ETParam_t etParams,
 			// TODO: Blow wind
 
 			// Calculate Cell Water available 
-         double cellET = cellData[startCell].ET_K()*et_calc_.CalculateET_o(cellETParams);
+         double cellET = cellData[startCell].ET_K()*et_calc_.CalculateET_0(cellETParams);
 
          // Water deficit is ET_0 * Time
 			cellWater = surface_water_.data()[startCell] - periodLengthDays*cellET;
@@ -293,6 +291,49 @@ inline void Yard::DoGrow(ETCalc::ETParam_t etParams,
 
 		startCell++;
    }
+}
+
+inline void Yard::ComputeFeedback(pt::time_period tickPeriod, ZoneFeedback_t &feedbackByZone) const
+{
+   // A zone is considered over(under)-watered if
+   //    the mean of the square error (with sign preserved)
+   //    is greater than the square (again sign preserved)
+   //    of the maximum(minimum) threshhold value.
+   using namespace Constants;
+   std::vector<health_t> msePerZone(ZoneCount(), 0);
+
+   DbgAssertLogic(feedbackByZone.size() != ZoneCount(), "Feedback array zone count mismatch.");
+
+   auto cellData = cells_.data();
+   auto cellHealthData = cell_health_.data();
+   
+   size_t currCellIndx = 0;
+
+   while (currCellIndx < cellData.size()) { 
+      YardCell& currentCell = cellData[currCellIndx];
+
+      if (currentCell.HasHealth()) {
+         health_t currCellHealth = cellHealthData[currCellIndx];
+         msePerZone[currentCell.zone()] += currCellHealth*abs(currCellHealth)/cells_per_zone_[currentCell.zone()];
+      }
+      ++currCellIndx;
+   }
+
+   for(size_t i = 0; i < ZoneCount(); ++i) {
+      health_t zoneAggregateHealth = msePerZone[i];
+      FeedbackEntry ex;
+      ex.Time = tickPeriod.end();
+      
+      if (zoneAggregateHealth > OverGrownThreshhold*abs(OverGrownThreshhold)) {
+         ex.Value = FeedbackValue::Overgrown;
+      } else if (zoneAggregateHealth > UnderGrownThreshhold*abs(UnderGrownThreshhold)) {
+         ex.Value = FeedbackValue::Okay;
+      } else {
+         ex.Value = FeedbackValue::Undergrown;
+      }
+
+      feedbackByZone[i].push_back(ex);
+   } 
 }
 
 #ifdef _DEBUG
@@ -344,10 +385,10 @@ void Yard::DebugPrintHeights(std::string fileName) const
 
    for(unsigned int i = 0; i < cells_.size1(); ++i) {
       for(unsigned int j = 0; j < cells_.size2() - 1; ++j) {
-         dbgFile << cells_(i,j).cell_info().rel_height() << ", ";
+         dbgFile << cells_(i,j).rel_height() << ", ";
       }
 
-      dbgFile << cells_(i,cells_.size2() - 1).cell_info().rel_height() << endl;
+      dbgFile << cells_(i,cells_.size2() - 1).rel_height() << endl;
    }
 
    dbgFile.close();

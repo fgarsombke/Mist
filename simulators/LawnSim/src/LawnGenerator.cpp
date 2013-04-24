@@ -22,14 +22,18 @@ unique_ptr<YardInfo> LawnGenerator::Generate(GeoLocale locale, size_t rows, size
 
    // Place 4 sprinklers at each corner
    SprinklersList_t sprinklers = SprinklersList_t(8);
+   CellPerZoneList_t cellsPerZone = CellPerZoneList_t(8);
 
-
-   return unique_ptr<YardInfo>(new YardInfo(locale, GenerateCells(rows, cols, FillHeightsDiagonally), sprinklers));
+   return unique_ptr<YardInfo>(
+      new YardInfo(locale, GenerateCells(rows, cols, sprinklers, FillHeightsDiagonally)
+      , sprinklers)
+   );
 }
 
 
-bnu::matrix<YardCellInfo> LawnGenerator::GenerateCells(size_t rows, 
+inline bnu::matrix<YardCellInfo> LawnGenerator::GenerateCells(size_t rows, 
                                                   size_t cols, 
+                                                  const SprinklersList_t &sprinklers,
                                                   FillHeightFunc_t hFunc) const 
 {
    bnu::matrix<YardCellInfo> cells(rows, cols, YardCellInfo());
@@ -39,9 +43,10 @@ bnu::matrix<YardCellInfo> LawnGenerator::GenerateCells(size_t rows,
    // Generate the heights
    hFunc(heights);
 
+   //TODO URGENT: Compute actual zone!!!!
    for (unsigned int i = 0; i < rows; ++i) {
       for (unsigned int j = 0; j < cols; ++j) {
-         cells(i,j) = YardCellInfo(0, heights(i,j));
+         cells(i,j) = YardCellInfo(0, heights(i,j), 0);
       }
    }
 

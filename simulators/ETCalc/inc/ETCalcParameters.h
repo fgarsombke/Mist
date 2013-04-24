@@ -6,12 +6,14 @@ namespace Mist { namespace ETCalc {
 
 typedef double ET_float_t;
 
-#define ETDATA_VALUES (MinTemp)(MaxTemp)(AvgTemp)\
+#define ETDATA_PARAMS (MinTemp)(MaxTemp)(AvgTemp)\
                       (MinRH)(MaxRH)\
                       (StartTemp)(EndTemp)\
                       (AvgPressure)\
                       (AvgWindSpeed)\
                       (SunlightFraction)\
+
+#define ETDATA_VALUES ETDATA_PARAMS\
                       (ENUM_COUNT)
 	
 enum class ETCalcData_t
@@ -41,7 +43,7 @@ public:
 #if _DEBUG
    #define CHECK_IS_SET(x, data, elem)  if (!IsSet(data::elem)) { throw std::logic_error("ETCalc Value " BOOST_PP_STRINGIZE_I(elem) " used but not set."); }
 #else
-   #define CHECK_IS_SET(x)
+   #define CHECK_IS_SET(x, data, elem)
 #endif
 
    // Use this regex s/\(([\w\d_]+?)\)/inline ET_float_t $1() const { return GetValue(ETCalcData_t::$1); }\n/g

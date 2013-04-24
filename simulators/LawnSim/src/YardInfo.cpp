@@ -7,6 +7,34 @@
 
 namespace Mist { namespace LawnSim {
 
+CellPerZoneList_t YardInfo::InitCellsPerZone(const bnu::matrix<YardCellInfo> &yardCells)
+{
+   CellPerZoneList_t cellsPerZone;
+
+   // Find the number of zones
+   size_t numZones = 0;
+   for(const YardCellInfo &cell : yardCells.data()) {
+      if (cell.zone() > numZones) {
+         numZones = cell.zone();
+      }
+   }
+
+   cellsPerZone.resize(numZones+1);
+   // Compute the number of cells in each zone
+   for(const YardCellInfo &cell : yardCells.data()) {
+      ++cellsPerZone[cell.zone()];
+   }
+
+   return cellsPerZone;
+}
+
+
+
+
+
+
+
+
 #ifdef _DEBUG
 void YardInfo::DebugPrint(const std::string &fileName) const
 {
