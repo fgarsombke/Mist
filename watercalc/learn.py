@@ -92,9 +92,9 @@ def getLatLongforDevice(deviceID):
 def getETo(deviceID):
     latLong = getLatLongforDevice(deviceID)
     #TODO:parameterize the date
-    begin = 0
-    end = 0
-    value = ForecastET.forecastETo(latLong[0], latLong[1], begin, end)
+    begin = int(time.time())
+    end = int(time.time())
+    value = ForecastET.forecastETo(latLong[0], latLong[1], 1366768754, 1366779536)
     return value
 
 def generateNewSchedule(deviceID, zone, ETp, numDays, timer, vectorID):
@@ -212,6 +212,9 @@ def createNewLearningVector(iteration, deviceID, zoneNumber):
     conf = DBConfig.DBConfig()
     db = conf.connectToLocalConfigDatabase()
     cursor = db.cursor()
+    print new.ETo
+    print deviceID
+    print zoneNumber
     sqlString = "INSERT INTO learning (deviceID, zoneNumber, ETo) VALUES (%s, %s, %s)" % (new.deviceID, new.zoneNumber, new.ETo)
     cursor.execute(sqlString)
 
