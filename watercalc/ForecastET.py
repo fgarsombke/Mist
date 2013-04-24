@@ -29,19 +29,21 @@ def getForecastForLocationAndDate(latitude, longitude, begin, end):
 
 def forecastETo(latitude, longitude, begin, end):
     wd = getForecastForLocationAndDate(latitude, longitude, begin, end)
-    print wd['MaxRH']
+
     #CALL C++ ET CODE
     ET = ctypes.cdll.LoadLibrary('/Users/makilian/Mist/lib/libETCalc.so')
     ETCalc = ET.CalculateET_0
-    ETCalc.argtypes = [c_double, c_double, c_ulonglong, c_ulonglong, c_double, c_double, c_double, c_double, c_double, c_double, c_double, c_double, c_double, c_double]
-    eto = ETCalc(latitude, longitude, long(begin), long(end), 30.0, 40.0, 35.0, .2, .8, 32.0, 39.0, 100.0, 25.0, .7)
 
-    print eto
+    ETCalc.argtypes = [c_double, c_double, c_ulonglong, c_ulonglong, c_double, c_double, c_double, c_double, c_double, c_double, c_double, c_double, c_double, c_double]
+    ETCalc.restype = c_double
+
+    eto = ETCalc(latitude, longitude, long(begin), long(end), wd['minTemp'], wd['maxTemp'], wd['AvgTemp'], wd['MinRH'], wd['MaxRH'], wd['StartTemp'], wd['EndTemp'], wd['AvgPressure'], wd['AvgWindSpeed'], .6)
 
     return eto
 
 def main():
-    forecastETo(40.0, -90.0, "1366768754", "1366779536")
+    ETo = forecastETo(40.0, -90.0, "1366768754", "1366779536")
+    print ETo
 
 if __name__ == '__main__':
     main()  
