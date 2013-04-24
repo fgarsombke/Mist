@@ -15,6 +15,7 @@ import urllib2
 import urllib
 import time
 from collections import defaultdict
+import calendar
 
 class WeatherData:
     def __init__(self, startTemp, endTemp, avgTemp, avgWind, avgPressure, minRH, maxRH, minTemp, maxTemp, srStart, srEnd, ssStart, ssEnd, rainfall):
@@ -86,17 +87,7 @@ def forecastAPI(latitude, longitude, thetime, interval):
 def getWeatherData(latitude, longitude, begin, end):
     begintime = datetime.datetime.fromtimestamp(int(begin)) 
     endtime = datetime.datetime.fromtimestamp(int(end))
-    
-    #count # of minutes til next hour
-    numMinutes = 60 - begintime.minute
-    #count # of hours til midnight
-    numHours = 24 - begintime.hour
-    #count # of days til end day
-    numDays = endtime.day - begintime.day #TODO: THIS IS day of month...
-    #count # of hours til hour of end day
-    numEndHours = endtime.hour
-    #count # of minutes til minute of end day
-    numEndMinutes = endtime.minute
+
     dataDict = {'beginMinutes': [], 'beginHours': [], 'days': [], 'endHours': [], 'endMinutes': []}
     #this will create an array of [4, 10, 15, 10 ,4] which is # of calls of each kind to API
 
@@ -109,6 +100,7 @@ def getWeatherData(latitude, longitude, begin, end):
     #    dataRes = results['data']   
     #    dataDict['beginMinutes'].append(dataRes[i])
     #    i+=1
+
     i = begintime.hour
     while i < 24:
         #call API, hour resolution
@@ -117,24 +109,38 @@ def getWeatherData(latitude, longitude, begin, end):
         dataRes = results['data']
         dataDict['beginHours'].append(dataRes[i])
         i+=1
-    i = 0
-    while i < numDays:
+
+    i = begintime.day
+    m = begintime.month
+    y = begintime.year
+    while i < endtime.day or m < endtime.month or y < endtime.year:
+        print "call"
         #call API, day resolution
         aTime = begintime + timedelta(days=i)
         results = forecastAPI(latitude, longitude, aTime, 'daily')
         dataRes = results['data']
         dataDict['days'].append(dataRes[0])
-        i+=1
+        #update day/month/year
+        if i == calendar.monthrange(y, m)[1]: # last day of month
+            i=0
+            m+=1
+        else:
+            i+=1
+        if m == 12: #last month of year
+            m=0
+            y+=1
+
     i = 0
-    while i < numEndHours:
+    while i < endtime.hour:
         #call API, hours resolution
         aTime = begintime - timedelta(hours=i)
         results = forecastAPI(latitude, longitude, aTime, 'hourly')
         dataRes = results['data']
         dataDict['endHours'].append(dataRes[i])
         i+=1
+
     i = 0
-    #while i < numEndMinutes:
+    #while i < endtime.minute:
     #    #call API, days resolution
     #    aTime = endTime - timedelta(minutes=i)
     #    results = forecastAPI(latitude, longitude, aTime, 'minutely')
@@ -186,8 +192,9 @@ def createWeatherDataObjectFromDictionary(dictionary):
 
     numHour = 0
     for hour in beginHours:
-        if hour['precipIntensity'] > .001:
-            rainfall += hour['precipIntensity']*hour['precipProbability']
+        if 'precipIntensity' in hour:
+            if 'precipProbability' in hour:
+                rainfall += hour['precipIntensity']*hour['precipProbability']
         if numHour == 0:
             startTemp = hour['temperature']
             numHour += 1
@@ -206,8 +213,9 @@ def createWeatherDataObjectFromDictionary(dictionary):
 
     numDay = 0
     for day in days:
-        if day['precipIntensity'] > .001:
-            rainfall += day['precipIntensity']*day['precipProbability']*24
+        if 'precipIntensity' in day:
+            if 'precipProbability' in day:
+                rainfall += day['precipIntensity']*day['precipProbability']*24
         if numDay == 0:
             srStart = day['sunriseTime']
             ssStart = day['sunsetTime']
@@ -228,10 +236,14 @@ def createWeatherDataObjectFromDictionary(dictionary):
         avgWindSum += day['windSpeed']*60.0*24.0
         count += 60.0*24.0
 
+    if numDay == 0:
+        #TODO: get current days sunrise time because time interval is less than one day
+
     numHour = 0
     for hour in endHours:
-        if hour['precipIntensity'] > .001:
-            rainfall += hour['precipIntensity']*hour['precipProbability']
+        if 'precipIntensity' in hour:
+            if 'precipProbability' in hour:
+                rainfall += hour['precipIntensity']*hour['precipProbability']
         numHour += 1
         if numHour == len(endHours):
             endTemp = hour['temperature']
@@ -272,7 +284,7 @@ def createWeatherDataObjectFromDictionary(dictionary):
 
 def main():
     #huh
-    result = getWeatherData(40, -82, "1366256841", "1366699176")
+    result = getWeatherData(40, -90, "1366768754", "1366779536")
     result.printWD()
 
 if __name__ == '__main__':
