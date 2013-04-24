@@ -31,7 +31,7 @@ public:
    // Default Constructor
    YardCell();
 
-   void UnIsolate(NeighborHeightDiffs_t heightDiffs, zone_number_t zone);
+   void UnIsolate(NeighborHeightDiffs_t heightDiffs);
 
    // Increase height by delta
    void ChangeHeight(double delta);
@@ -39,20 +39,21 @@ public:
 
    void Kill() { cell_type_ = YardCellType_t::Dead; }
 
-   const YardCellInfo cell_info() const { return cell_info_; }
    const YardCellType_t cell_type() const { return cell_type_; }
+   zone_number_t zone() const { return cell_info_.zone(); }
+   double rel_height() const { return cell_info_.rel_height(); }
+   double sunlight_fraction() const { return cell_info_.sunlight_fraction(); }
+
 
 	// Cell K value
-	double ET_K() const { return 1.0; }
+	double ET_K() const;
+   bool HasHealth() const;
 
    const DriftEntry drift_entry() const;
 private:
-   YardCellInfo cell_info_;
-   
-   YardCellType_t cell_type_;
-   
+   YardCellInfo cell_info_;  
+   YardCellType_t cell_type_; 
    DriftEntry drift_entry_;
-
    zone_number_t zone_;
    
    // The yard cell only gets water soaked into the soil

@@ -17,7 +17,7 @@ public:
 	{	// Precompute solar parameters 
 	}
 
-   ET_float_t CalculateET_o(ETParam_t ETParam) const;
+   ET_float_t CalculateET_0(ETParam_t ETParam) const;
 
 private:
    GeoLocale locale_;

@@ -28,7 +28,10 @@ void YardCell::ResetState()
 // Increase height by delta
 void YardCell::ChangeHeight(double delta) {
    if (cell_type_ == YardCellType_t::Void) {
-      cell_info_ = YardCellInfo(cell_info_.initial_health(), cell_info_.rel_height() + delta);
+      cell_info_ = YardCellInfo(cell_info_.initial_health(), 
+                                cell_info_.rel_height() + delta, 
+                                cell_info_.zone()
+      );
    } else {
       throw std::logic_error("Cannot change the height of a non void cell");
    }
@@ -73,13 +76,22 @@ health_t YardCell::ComputeHealthMetric(health_t currentHealth,
    }
 }
 
+bool YardCell::HasHealth() const 
+{
+   return (cell_type_ == YardCellType_t::Grass) | 
+          (cell_type_ == YardCellType_t::Dead);
+}
 
+double YardCell::ET_K() const
+{
+   return 1.0;
+}
 
 ///////////////////////////////////////////////////////////////////////////
 // Static Factory Methods
 YardCell YardCell::CreateVoid(double relHeight)
 {
-   return YardCell(YardCellInfo(FP_NAN, relHeight), YardCellType_t::Void);
+   return YardCell(YardCellInfo(FP_NAN, relHeight, 0), YardCellType_t::Void);
 }
 
 YardCell YardCell::CreateIsolated(YardCellInfo info)
@@ -89,10 +101,9 @@ YardCell YardCell::CreateIsolated(YardCellInfo info)
 ///////////////////////////////////////////////////////////////////////////
 
 
-void YardCell::UnIsolate(NeighborHeightDiffs_t heightDiffs, zone_number_t zone) {   
+void YardCell::UnIsolate(NeighborHeightDiffs_t heightDiffs) {   
    if (cell_type_ == YardCellType_t::Isolated) {
       drift_entry_ = DriftEntry(heightDiffs);
-      zone_ = zone;
       cell_type_ = YardCellType_t::Grass;
    } else {
       throw Exceptions::InvalidOperationException("Can only unisolate a YardCell of type Isolated.");

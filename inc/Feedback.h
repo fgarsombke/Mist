@@ -4,7 +4,7 @@
 
 namespace Mist {
 
-enum class FeebackValue
+enum class FeedbackValue
 {
    Undergrown = -1,
    Okay = 0,
@@ -14,7 +14,7 @@ enum class FeebackValue
 class FeedbackEntry
 {
 public:
-   FeebackValue Value;
+   FeedbackValue Value;
    pt::ptime Time;
 };
 

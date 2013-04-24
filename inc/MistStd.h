@@ -40,6 +40,12 @@ namespace bUUID = boost::uuids;
 #define _DEBUG_DATA 1
 #define _DEBUG_NO_PIPES 1
 
+#ifdef _DEBUG
+#define DbgAssertLogic(p, m) if(p) { throw std::logic_error((m)); }
+#else
+#define DbgAssertLogic(p,m) 
+#endif
+
 typedef boost::uuids::uuid uuid;
 extern const char* EmptyUUIDString;
 

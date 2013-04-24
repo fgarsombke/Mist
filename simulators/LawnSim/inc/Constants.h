@@ -18,7 +18,6 @@ namespace Constants{
    const health_t MaxHealth = 100;
    const health_t OverGrownThreshhold = 33;
    const health_t UnderGrownThreshhold = -33;
-   
 }
 
 }}

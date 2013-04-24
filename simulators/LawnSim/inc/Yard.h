@@ -38,16 +38,28 @@ public:
    void DebugPrintHeights(std::string fileName) const;
 
 private:
+   inline const bnu::matrix<YardCell> InitCells(const YardInfo& yardInfo);
+   inline void ComputeFeedback(pt::time_period tickPeriod, ZoneFeedback_t &feedbackByZone) const;
+   inline void DoGrow(ETCalc::ETParam_t ET_0, 
+                      double growthFactor,
+                      size_t startCell, 
+                      size_t count);
+
+   // Determines in which zen
+   inline size_t ComputeZone(size_t row, size_t) const;
+
    const GeoLocale locale_;
 
-   // Initialize First
+   // The sprinklers in the yard, along with their positions in the yard
+   const SprinklersList_t sprinklers_;
+
+   // Cells in the yard
    bnu::matrix<YardCell> cells_;
 
    // Stores the indices of the yardcells in order of decreasing height
    const bnu::unbounded_array<LawnCoordinate> cells_by_height_;
    
-   // The sprinklers in the yard, along with their positions in the yard
-   const SprinklersList_t sprinklers_;
+   const CellPerZoneList_t cells_per_zone_;
 
    // The sprinkler "masks" which indicate how much water is to be delivered to each cell
    // The units are mm/s, so each matrix needs to be multiplied by time duration when watering
@@ -64,19 +76,17 @@ private:
    // Matrix which holds the current health of each lawn cell
    bnu::matrix<health_t> cell_health_;
 
+
+
    ETCalc::ETCalc et_calc_;
 
    SprinklerMaskList_t InitSprinklerMasks(const YardInfo &yardInfo);
 
-   void DoGrow(ETCalc::ETParam_t ET_0, 
-               double growthFactor,
-               size_t startCell, 
-               size_t count);
+   
 
    template<class T>
    static void DebugPrintMatrix(const bnu::matrix<T> &toPrint, std::string fileName);
 
-   static const bnu::matrix<YardCell> InitCells(const YardInfo& yardInfo);
    static const bnu::unbounded_array<LawnCoordinate> InitHeightMap(YardInfo const &yardInfo);
 };
 
