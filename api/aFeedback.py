@@ -14,7 +14,7 @@ def storeFeedback(deviceID, zoneNumber, created, value):
     conf = DBConfig.DBConfig()
     db = conf.connectToLocalConfigDatabase()
     cursor = db.cursor()
-    cursor.execute("INSERT INTO feedback (deviceID, zoneNumber, created, value) VALUES (%s, %s, %s, %S)", (deviceID, zoneNumber, created, value))
+    cursor.execute("INSERT INTO feedback (deviceID, zoneNumber, created, value) VALUES (%s, %s, FROM_UNIXTIME(%s), %s)", (deviceID, zoneNumber, created, value))
     db.commit()
     return 0
 
@@ -25,11 +25,11 @@ class aFeedback:
 
     def POST(self):
         data = web.data()
-        print data
-        deviceID = data['deviceID']
-        zoneNumber = data['zoneNumber']
-        created = data['created']
-        value = data['value']
+        data = eval(data)
+        deviceID = str(data['deviceID'])
+        zoneNumber = str(data['zoneNumber'])
+        created = str(data['created'])
+        value = str(data['value'])
         storeFeedback(deviceID, zoneNumber, created, value)
         
         #print web.input()
