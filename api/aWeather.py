@@ -17,7 +17,7 @@ import time
 from collections import defaultdict
 
 class WeatherData:
-    def __init__(self, startTemp, endTemp, avgTemp, avgWind, avgPressure, minRH, maxRH, minTemp, maxTemp, srStart, srEnd, ssStart, ssEnd):
+    def __init__(self, startTemp, endTemp, avgTemp, avgWind, avgPressure, minRH, maxRH, minTemp, maxTemp, srStart, srEnd, ssStart, ssEnd, rainfall):
         self.startTemp = startTemp
         self.endTemp = endTemp
         self.avgTemp = avgTemp
@@ -31,6 +31,7 @@ class WeatherData:
         self.srEnd = srEnd
         self.ssStart = ssStart
         self.ssEnd = ssEnd
+        self.rainfall = rainfall
 
     def printWD(self):
         if self.avgTemp:
@@ -59,6 +60,8 @@ class WeatherData:
             print "Sunset First Day: %s" % self.ssStart
         if self.ssEnd:
             print "Sunset Last Day: %s" % self.ssEnd
+        if self.rainfall:
+            print "Rainfall (in): %s" % self.rainfall
 
 def findNearestClimateStation(latitude, longitude):
     conf = DBConfig.DBConfig()
@@ -148,22 +151,6 @@ def createWeatherDataObjectFromDictionary(dictionary):
     endHours = dictionary['endHours']
     endMinutes = dictionary['endMinutes']
 
-    #min temp
-    #max temp
-    #min humidity
-    #max humidity
-    #startTemp
-    #endTemp
-
-    #average temp over time period
-    #average pressure over time period
-    #average wind speed over time period
-    #sunrise time on start day
-    #sunrise time on end day
-    #sunset time on start day
-    #sunset time on end day
-    #rainfall in MM
-    
     startTemp = 0
     endTemp = 0
     minTemp = 200
@@ -178,7 +165,11 @@ def createWeatherDataObjectFromDictionary(dictionary):
     srEnd = 0
     ssStart = 0
     ssEnd = 0
-    #rainfall
+    rainfall = 0
+
+    #integrate rainfall over hours... 
+    #rainfall += precipIntensity*precipProbability*inchesToMMconversion
+
     for minute in beginMinutes:
         if minute['temperature'] < minTemp:
             minTemp = minute['temperature']
@@ -193,8 +184,10 @@ def createWeatherDataObjectFromDictionary(dictionary):
         avgWindSum += minute['windSpeed']
         count += 1.0
 
-    numHour = 0 
+    numHour = 0
     for hour in beginHours:
+        if hour['precipIntensity'] > .001:
+            rainfall += hour['precipIntensity']*hour['precipProbability']
         if numHour == 0:
             startTemp = hour['temperature']
             numHour += 1
@@ -213,6 +206,8 @@ def createWeatherDataObjectFromDictionary(dictionary):
 
     numDay = 0
     for day in days:
+        if day['precipIntensity'] > .001:
+            rainfall += day['precipIntensity']*day['precipProbability']*24
         if numDay == 0:
             srStart = day['sunriseTime']
             ssStart = day['sunsetTime']
@@ -235,6 +230,8 @@ def createWeatherDataObjectFromDictionary(dictionary):
 
     numHour = 0
     for hour in endHours:
+        if hour['precipIntensity'] > .001:
+            rainfall += hour['precipIntensity']*hour['precipProbability']
         numHour += 1
         if numHour == len(endHours):
             endTemp = hour['temperature']
@@ -268,14 +265,14 @@ def createWeatherDataObjectFromDictionary(dictionary):
     avgTemp = avgTempSum/count
     avgPressure = avgPressureSum/count
     avgWind = avgWindSum/count
-    
-    wd = WeatherData(startTemp, endTemp, avgTemp, avgWind, avgPressure, minRH, maxRH, minTemp, maxTemp, srStart, srEnd, ssStart, ssEnd)
+
+    wd = WeatherData(startTemp, endTemp, avgTemp, avgWind, avgPressure, minRH, maxRH, minTemp, maxTemp, srStart, srEnd, ssStart, ssEnd, rainfall)
     return wd
 
 
 def main():
     #huh
-    result = getWeatherData(30, -100, "1366439974", "1366699176")
+    result = getWeatherData(40, -82, "1366256841", "1366699176")
     result.printWD()
 
 if __name__ == '__main__':
