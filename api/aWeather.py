@@ -15,9 +15,10 @@ import urllib2
 import urllib
 import time
 from collections import defaultdict
+import calendar
 
 class WeatherData:
-    def __init__(self, startTemp, endTemp, avgTemp, avgWind, avgPressure, minRH, maxRH, minTemp, maxTemp):
+    def __init__(self, startTemp, endTemp, avgTemp, avgWind, avgPressure, minRH, maxRH, minTemp, maxTemp, srStart, srEnd, ssStart, ssEnd, rainfall):
         self.startTemp = startTemp
         self.endTemp = endTemp
         self.avgTemp = avgTemp
@@ -27,6 +28,29 @@ class WeatherData:
         self.maxRH = maxRH
         self.minTemp = minTemp
         self.maxTemp = maxTemp
+        self.srStart = srStart
+        self.srEnd = srEnd
+        self.ssStart = ssStart
+        self.ssEnd = ssEnd
+        self.rainfall = rainfall
+
+    def jsonize(self):
+       d = collections.OrderedDict()
+       d['StartTemp'] = self.startTemp
+       d['EndTemp'] = self.endTemp
+       d['AvgTemp'] = self.avgTemp
+       d['AvgWindSpeed'] = self.avgWind
+       d['AvgPressure'] = self.avgPressure
+       d['MinRH'] = self.minRH
+       d['MaxRH'] = self.maxRH
+       d['minTemp'] = self.minTemp
+       d['maxTemp'] = self.maxTemp
+       d['srStart'] = self.srStart
+       d['srEnd'] = self.srEnd
+       d['ssStart'] = self.ssStart
+       d['ssEnd'] = self.ssEnd
+       d['rainfall'] = self.rainfall
+       j = json.dumps(d, cls=MyEncoder)
 
     def printWD(self):
         if self.avgTemp:
@@ -47,6 +71,16 @@ class WeatherData:
             print "Start Temp: %s" % self.startTemp
         if self.endTemp:
             print "End Temp: %s" % self.endTemp
+        if self.srStart:
+            print "Sunrise First Day: %s" % self.srStart
+        if self.srEnd:
+            print "Sunrise Last Day: %s" % self.srEnd
+        if self.ssStart:
+            print "Sunset First Day: %s" % self.ssStart
+        if self.ssEnd:
+            print "Sunset Last Day: %s" % self.ssEnd
+        if self.rainfall:
+            print "Rainfall (in): %s" % self.rainfall
 
 def findNearestClimateStation(latitude, longitude):
     conf = DBConfig.DBConfig()
@@ -71,17 +105,7 @@ def forecastAPI(latitude, longitude, thetime, interval):
 def getWeatherData(latitude, longitude, begin, end):
     begintime = datetime.datetime.fromtimestamp(int(begin)) 
     endtime = datetime.datetime.fromtimestamp(int(end))
-    
-    #count # of minutes til next hour
-    numMinutes = 60 - begintime.minute
-    #count # of hours til midnight
-    numHours = 24 - begintime.hour
-    #count # of days til end day
-    numDays = endtime.day - begintime.day #what if new yaer?
-    #count # of hours til hour of end day
-    numEndHours = endtime.hour
-    #count # of minutes til minute of end day
-    numEndMinutes = endtime.minute
+
     dataDict = {'beginMinutes': [], 'beginHours': [], 'days': [], 'endHours': [], 'endMinutes': []}
     #this will create an array of [4, 10, 15, 10 ,4] which is # of calls of each kind to API
 
@@ -94,6 +118,7 @@ def getWeatherData(latitude, longitude, begin, end):
     #    dataRes = results['data']   
     #    dataDict['beginMinutes'].append(dataRes[i])
     #    i+=1
+
     i = begintime.hour
     while i < 24:
         #call API, hour resolution
@@ -102,24 +127,38 @@ def getWeatherData(latitude, longitude, begin, end):
         dataRes = results['data']
         dataDict['beginHours'].append(dataRes[i])
         i+=1
-    i = 0
-    while i < numDays:
+
+    i = begintime.day
+    m = begintime.month
+    y = begintime.year
+    while i < endtime.day or m < endtime.month or y < endtime.year:
+        print "call"
         #call API, day resolution
         aTime = begintime + timedelta(days=i)
         results = forecastAPI(latitude, longitude, aTime, 'daily')
         dataRes = results['data']
         dataDict['days'].append(dataRes[0])
-        i+=1
+        #update day/month/year
+        if i == calendar.monthrange(y, m)[1]: # last day of month
+            i=0
+            m+=1
+        else:
+            i+=1
+        if m == 12: #last month of year
+            m=0
+            y+=1
+
     i = 0
-    while i < numEndHours:
+    while i < endtime.hour:
         #call API, hours resolution
         aTime = begintime - timedelta(hours=i)
         results = forecastAPI(latitude, longitude, aTime, 'hourly')
         dataRes = results['data']
         dataDict['endHours'].append(dataRes[i])
         i+=1
+
     i = 0
-    #while i < numEndMinutes:
+    #while i < endtime.minute:
     #    #call API, days resolution
     #    aTime = endTime - timedelta(minutes=i)
     #    results = forecastAPI(latitude, longitude, aTime, 'minutely')
@@ -136,22 +175,6 @@ def createWeatherDataObjectFromDictionary(dictionary):
     endHours = dictionary['endHours']
     endMinutes = dictionary['endMinutes']
 
-    #min temp
-    #max temp
-    #min humidity
-    #max humidity
-    #startTemp
-    #endTemp
-
-    #average temp over time period
-    #average pressure over time period
-    #average wind speed over time period
-    #sunrise time on start day
-    #sunrise time on end day
-    #sunset time on start day
-    #sunset time on end day
-    #rainfall in MM
-    
     startTemp = 0
     endTemp = 0
     minTemp = 200
@@ -162,15 +185,16 @@ def createWeatherDataObjectFromDictionary(dictionary):
     avgTempSum = 0
     avgPressureSum = 0
     avgWindSum = 0
-    #srStart
-    #srEnd
-    #ssStart
-    #ssEnd
-    #rainfall
+    srStart = 0
+    srEnd = 0
+    ssStart = 0
+    ssEnd = 0
+    rainfall = 0
+
+    #integrate rainfall over hours... 
+    #rainfall += precipIntensity*precipProbability*inchesToMMconversion
 
     for minute in beginMinutes:
-        if count == 0:
-            startTemp = minute['temperature']
         if minute['temperature'] < minTemp:
             minTemp = minute['temperature']
         if minute['temperature'] > maxTemp:
@@ -184,7 +208,14 @@ def createWeatherDataObjectFromDictionary(dictionary):
         avgWindSum += minute['windSpeed']
         count += 1.0
 
+    numHour = 0
     for hour in beginHours:
+        if 'precipIntensity' in hour:
+            if 'precipProbability' in hour:
+                rainfall += hour['precipIntensity']*hour['precipProbability']
+        if numHour == 0:
+            startTemp = hour['temperature']
+            numHour += 1
         if hour['temperature'] < minTemp:
             minTemp = hour['temperature']
         if hour['temperature'] > maxTemp:
@@ -198,7 +229,18 @@ def createWeatherDataObjectFromDictionary(dictionary):
         avgWindSum += hour['windSpeed']*60.0
         count += 60.0
 
+    numDay = 0
     for day in days:
+        if 'precipIntensity' in day:
+            if 'precipProbability' in day:
+                rainfall += day['precipIntensity']*day['precipProbability']*24
+        if numDay == 0:
+            srStart = day['sunriseTime']
+            ssStart = day['sunsetTime']
+        numDay+=1
+        if numDay == len(days):
+            srEnd = day['sunriseTime']
+            ssEnd = day['sunsetTime']
         if day['temperatureMin'] < minTemp:
             minTemp = day['temperatureMin']
         if day['temperatureMax'] > maxTemp:
@@ -212,7 +254,18 @@ def createWeatherDataObjectFromDictionary(dictionary):
         avgWindSum += day['windSpeed']*60.0*24.0
         count += 60.0*24.0
 
+    if numDay == 0:
+        print "no daily data"
+        #TODO: get current days sunrise time because time interval is less than one day
+
+    numHour = 0
     for hour in endHours:
+        if 'precipIntensity' in hour:
+            if 'precipProbability' in hour:
+                rainfall += hour['precipIntensity']*hour['precipProbability']
+        numHour += 1
+        if numHour == len(endHours):
+            endTemp = hour['temperature']
         if hour['temperature'] < minTemp:
             minTemp = hour['temperature']
         if hour['temperature'] > maxTemp:
@@ -243,14 +296,14 @@ def createWeatherDataObjectFromDictionary(dictionary):
     avgTemp = avgTempSum/count
     avgPressure = avgPressureSum/count
     avgWind = avgWindSum/count
-    
-    wd = WeatherData(startTemp, endTemp, avgTemp, avgWind, avgPressure, minRH, maxRH, minTemp, maxTemp)
+
+    wd = WeatherData(startTemp, endTemp, avgTemp, avgWind, avgPressure, minRH, maxRH, minTemp, maxTemp, srStart, srEnd, ssStart, ssEnd, rainfall)
     return wd
 
 
 def main():
     #huh
-    result = getWeatherData(30, -100, "1366699176", "1366439974")
+    result = getWeatherData(40, -90, "1366768754", "1366779536")
     result.printWD()
 
 if __name__ == '__main__':
@@ -262,7 +315,6 @@ class aWeather:
     #RETURN weather data object: expetected parameter: latitude, longitude, POSIX time begin and end
     def GET(self):
         weather_data = web.input()
-        devices = 0
 
         if weather_data:
             latitude = weather_data.latitude
@@ -272,22 +324,13 @@ class aWeather:
             weatherData = getWeatherData(latitude, longitude, beginTime, endTime)
 
             #JSONize WeatherData object
-            objects_list = []
-            d = collections.OrderedDict()
-            d['StartTemp'] = weatherData.startTemp
-            d['EndTemp'] = weatherData.endTemp
-            d['AvgTemp'] = weatherData.avgTemp
-            d['AvgWind'] = weatherData.avgWind
-            d['AvgPressure'] = weatherData.avgPressure
-            d['MinRH'] = weatherData.minRH
-            d['MaxRH'] = weatherData.maxRH
-            objects_list.append(d)
-            j = json.dumps(objects_list, cls=MyEncoder)
+            weatherJSON = weatherData.jsonize()
+
             #return JSONized data
-            return j
+            return weatherJSON
         else:
             return 0
 
     #POST API for WeatherData
     def POST(self):
-        return deviceId
+        return 0
