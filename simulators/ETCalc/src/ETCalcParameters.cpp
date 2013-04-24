@@ -30,10 +30,27 @@ namespace Mist { namespace ETCalc {
          }
       }
 
-      if (interval.length() > pt::time_duration(24*11,0,0,0)) {
+      SetLengthType();
+   }
+
+   ETCalcParameters::ETCalcParameters(pt::time_period interval,
+                    BOOST_PP_SEQ_ENUM(BOOST_PP_SEQ_FOR_EACH(TYPED_PARAMS,ET_float_t,ETDATA_PARAMS)))
+   : interval_(interval)
+   {
+#define SET_VAL_FUNC(r, data, elem) SetValue(data::elem, elem);
+      BOOST_PP_SEQ_FOR_EACH(SET_VAL_FUNC, ETCalcData_t, ETDATA_PARAMS);
+#undef SET_VAL_FUNC
+
+      SetLengthType();
+   }
+
+
+   void ETCalcParameters::SetLengthType()
+   {
+      if (interval_.length() > pt::time_duration(24*11,0,0,0)) {
          // Longer than 11 days
          length_type_ = ETCalcLengthType::Months;
-      } else if (interval.length() >= pt::time_duration(22, 0, 0, 0)) {
+      } else if (interval_.length() >= pt::time_duration(22, 0, 0, 0)) {
          // Longer than 22 hours
          length_type_ = ETCalcLengthType::Days;
       } else {
@@ -45,32 +62,22 @@ namespace Mist { namespace ETCalc {
          // Calculate total daylight hours
 
          // First calculate the daylight period on start day
-         pt::ptime startSunrise = pt::ptime(interval.begin().date()) + pt::hours(7);
-         pt::ptime startSunset = pt::ptime(interval.begin().date()) + pt::hours(20);
+         pt::ptime startSunrise = pt::ptime(interval_.begin().date()) + pt::hours(7);
+         pt::ptime startSunset = pt::ptime(interval_.begin().date()) + pt::hours(20);
 
-         auto daylightTotal = interval.intersection(pt::time_period(startSunrise, startSunset)).length();
+         auto daylightTotal = interval_.intersection(pt::time_period(startSunrise, startSunset)).length();
          // If the interval spans two days, calculate the daylight period
          //    on the second day.
-         if (interval.begin().date() != interval.end().date()) {
-             pt::ptime endSunrise = pt::ptime(interval.begin().date()) + pt::hours(7);
-             pt::ptime endSunset = pt::ptime(interval.begin().date()) + pt::hours(20);
+         if (interval_.begin().date() != interval_.end().date()) {
+             pt::ptime endSunrise = pt::ptime(interval_.begin().date()) + pt::hours(7);
+             pt::ptime endSunset = pt::ptime(interval_.begin().date()) + pt::hours(20);
 
-             daylightTotal += interval.intersection(pt::time_period(endSunrise, endSunset)).length();
+             daylightTotal += interval_.intersection(pt::time_period(endSunrise, endSunset)).length();
          }
 
-         length_type_ = daylightTotal > interval.length()/2? 
+         length_type_ = daylightTotal > interval_.length()/2? 
                            ETCalcLengthType::HoursDay: 
                            ETCalcLengthType::HoursNight;
       }
    }
-
-   ETCalcParameters::ETCalcParameters(pt::time_period interval,
-                    BOOST_PP_SEQ_ENUM(BOOST_PP_SEQ_FOR_EACH(TYPED_PARAMS,ET_float_t,ETDATA_PARAMS)))
-   : interval_(interval)
-   {
-#define SET_VAL_FUNC(r, data, elem) SetValue(data::elem, elem);
-      BOOST_PP_SEQ_FOR_EACH(SET_VAL_FUNC, ETCalcData_t, ETDATA_PARAMS);
-#undef SET_VAL_FUNC
-   }
-
 }}

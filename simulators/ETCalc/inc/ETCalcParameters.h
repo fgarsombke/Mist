@@ -66,6 +66,8 @@ public:
 	inline void SetSunlightFraction(ET_float_t value) { SetValue(ETCalcData_t::SunlightFraction, value); } 
 
 private:
+   void SetLengthType();
+
    pt::time_period interval_;
    ETCalcLengthType length_type_;
 };

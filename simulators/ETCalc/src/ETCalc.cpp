@@ -381,7 +381,6 @@ ET_float_t ETCalc::CalculateET_0(ETParam_t ETParam) const
 	ET_float_t G;
 	ET_float_t e_s = MeanSaturationVapourPressure(ETParam);
 
-	R_n = NetRadiation(R_ns_hours(ETParam), R_nl_hours(ETParam));
 	switch(ETParam.LengthType()) {
 		case ETCalcLengthType::HoursDay:
 			R_n = NetRadiation(R_ns_hours(ETParam), R_nl_hours(ETParam));

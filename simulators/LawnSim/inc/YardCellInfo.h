@@ -8,7 +8,7 @@ class YardCellInfo
 {
 public:
    YardCellInfo(double initial_health, double rel_height, zone_number_t zone)
-      : initial_health_(initial_health), rel_height_(rel_height), zone_(zone)
+      : initial_health_(initial_health), zone_(zone), rel_height_(rel_height)
    {
    }
 
