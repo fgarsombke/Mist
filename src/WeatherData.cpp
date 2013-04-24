@@ -10,8 +10,9 @@ using namespace boost::assign;
 namespace Mist { 
 	using boost::property_tree::ptree;
 
+
 	namespace WeatherDataInternal {
-      #define LIST_MAP(r, data, elem) ("elem", data::elem)
+#define LIST_MAP(r, data, elem) (BOOST_PP_STRINGIZE_I(elem), data::elem)
 
 		const std::map<std::string, WeatherDataValue_t> WeatherDataMap = map_list_of
          BOOST_PP_SEQ_FOR_EACH(LIST_MAP,WeatherDataValue_t,WDATA_VALUES)
@@ -21,6 +22,18 @@ namespace Mist {
 	}
 
 	using namespace WeatherDataInternal;
+
+   WeatherData WeatherData::CreateDebug()
+   {
+      WeatherData data;
+
+      std::stringstream ss;
+
+      ss <<  "{\"Rainfall\":0.001, \"StartTemp\": 14.4444, \"EndTemp\": 21.6667, \"MinTemp\":13.68, \"MaxTemp\":22.10, \"AvgTemp\": 17.377778,"
+         "\"AvgWindSpeed\": 11.51875, \"AvgPressure\": 1012.245, \"MinRH\": 0.52, \"MaxRH\": 0.89}";
+
+      return WeatherData::CreateFromJson(ss);
+   }
 
 	WeatherData WeatherData::CreateFromPTree(ptree &weatherTree)
 	{

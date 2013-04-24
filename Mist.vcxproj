@@ -166,6 +166,7 @@
     <ClInclude Include="inc\MistSchedule.h" />
     <ClInclude Include="inc\MistStd.h" />
     <ClInclude Include="inc\PAL.h" />
+    <ClInclude Include="inc\PushPullBuffer.h" />
     <ClInclude Include="inc\ScheduleSource.h" />
     <ClInclude Include="inc\WeatherData.h" />
     <ClInclude Include="inc\WeatherDataSource.h" />
@@ -179,6 +180,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="src\PAL.cpp" />
+    <ClCompile Include="src\PushPullBuffer.cpp" />
     <ClCompile Include="src\WeatherData.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

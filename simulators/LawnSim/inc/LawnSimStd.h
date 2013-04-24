@@ -31,10 +31,10 @@ namespace bnu = boost::numeric::ublas;
 //#define _DEBUG_SPRINKLER_DURATIONS
 #endif
 
+typedef double health_t;
+typedef size_t zone_number_t;
+
+
 // My Headers
 #include "MistStd.h"
 #include "Constants.h"
-
-// -100 is most undergrown, 0 perfect, 100 most overgrown
-typedef double health_t;
-const health_t MaxHealth = 100;

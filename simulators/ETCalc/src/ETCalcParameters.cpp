@@ -4,10 +4,32 @@
 
 namespace Mist { namespace ETCalc {
 
-
-	ETCalcParameters::ETCalcParameters(pt::time_period interval)
+	ETCalcParameters::ETCalcParameters(pt::time_period interval, const WeatherData& data)
       : interval_(interval)
    {
+      for(WeatherData::const_iterator i = data.AllSetValues();
+         i < data.end(); ++i) {
+         if ((*i).first == WeatherDataValue_t::MinTemp) {
+            SetValue(ETCalcData_t::MinTemp, (*i).second);
+         } else if ((*i).first == WeatherDataValue_t::MaxTemp) {
+            SetValue(ETCalcData_t::MaxTemp, (*i).second);
+         } else if ((*i).first == WeatherDataValue_t::AvgTemp) {
+            SetValue(ETCalcData_t::AvgTemp, (*i).second);
+         } else if ((*i).first == WeatherDataValue_t::MinRH) {
+            SetValue(ETCalcData_t::MinRH, (*i).second);
+         } else if ((*i).first == WeatherDataValue_t::MaxRH) {
+            SetValue(ETCalcData_t::MaxRH, (*i).second);
+         } else if ((*i).first == WeatherDataValue_t::StartTemp) {
+            SetValue(ETCalcData_t::StartTemp, (*i).second);
+         } else if ((*i).first == WeatherDataValue_t::EndTemp) {
+            SetValue(ETCalcData_t::EndTemp, (*i).second);
+         } else if ((*i).first == WeatherDataValue_t::AvgPressure) {
+            SetValue(ETCalcData_t::AvgPressure, (*i).second);
+         } else if ((*i).first == WeatherDataValue_t::AvgWindSpeed) {
+            SetValue(ETCalcData_t::AvgWindSpeed, (*i).second);
+         }
+      }
+
       if (interval.length() > pt::time_duration(24*11,0,0,0)) {
          // Longer than 11 days
          length_type_ = ETCalcLengthType::Months;

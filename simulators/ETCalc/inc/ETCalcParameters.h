@@ -10,7 +10,7 @@ typedef double ET_float_t;
                       (MinRH)(MaxRH)\
                       (StartTemp)(EndTemp)\
                       (AvgPressure)\
-                      (WindSpeed)\
+                      (AvgWindSpeed)\
                       (SunlightFraction)\
                       (ENUM_COUNT)
 	
@@ -32,15 +32,16 @@ class ETCalcParameters
 {
 public:
 	ETCalcParameters();
+   explicit ETCalcParameters(pt::time_period interval, const WeatherData& data);
 
    pt::time_period Interval() const { return interval_; }
 
    ETCalcLengthType LengthType() const { return length_type_; }
 
 #if _DEBUG
-   #define CHECK_IS_SET(x, data, elem)  if (!IsSet(data::elem)) { throw std::logic_error("ETCalc Value used but not set."); }
+   #define CHECK_IS_SET(x, data, elem)  if (!IsSet(data::elem)) { throw std::logic_error("ETCalc Value " BOOST_PP_STRINGIZE_I(elem) " used but not set."); }
 #else
-   #define CHECK_IS_SET(x)  
+   #define CHECK_IS_SET(x)
 #endif
 
    // Use this regex s/\(([\w\d_]+?)\)/inline ET_float_t $1() const { return GetValue(ETCalcData_t::$1); }\n/g
@@ -51,7 +52,6 @@ public:
 
 	BOOST_PP_SEQ_FOR_EACH(GET_FUNC,ETCalcData_t,ETDATA_VALUES)
 
-
 #undef CHECK_IS_SET
 #undef GET_FUNC
 #undef DATA_VALUES
@@ -59,10 +59,6 @@ public:
 	inline void SetSunlightFraction(ET_float_t value) { SetValue(ETCalcData_t::SunlightFraction, value); } 
 
 private:
-   friend class ETCalcParametersBuilder;
-
-   explicit ETCalcParameters(pt::time_period interval);
-
    pt::time_period interval_;
    ETCalcLengthType length_type_;
 };
