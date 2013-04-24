@@ -24,7 +24,7 @@ class aFeedback:
         return 0
 
     def POST(self):
-        data = web.input()
+        data = web.data()
         print data
         #deviceID = data.deviceID
         #zoneNumber = data.zoneNumber
