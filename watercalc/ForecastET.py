@@ -8,6 +8,8 @@ import ComputeET
 import urllib
 import urllib2
 import json
+import ctypes
+import os
 
 def getForecastForLocationAndDate(latitude, longitude, begin, end):
     url = "http://0.0.0.0:8080/api/weather?latitude=%s&longitude=%s&beginTime=%s&endTime=%s" % (latitude, longitude, begin, end)
@@ -25,8 +27,9 @@ def getForecastForLocationAndDate(latitude, longitude, begin, end):
 
 def forecastETo(latitude, longitude, begin, end):
     wdObject = getForecastForLocationAndDate(latitude, longitude, begin, end)
-
+    
     #USE ctypes to turn this WeatherData object into an ETo value: Graczyk's extern C function.
+    #ETCalc = ctypeslib.load_library('ETCalc.so', '.')
 
     #then return ETo
     return 7.0
