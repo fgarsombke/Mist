@@ -41,7 +41,7 @@ public:
 #if _DEBUG
    #define CHECK_IS_SET(x, data, elem)  if (!IsSet(data::elem)) { throw std::logic_error("ETCalc Value " BOOST_PP_STRINGIZE_I(elem) " used but not set."); }
 #else
-   #define CHECK_IS_SET(x)  
+   #define CHECK_IS_SET(x)
 #endif
 
    // Use this regex s/\(([\w\d_]+?)\)/inline ET_float_t $1() const { return GetValue(ETCalcData_t::$1); }\n/g

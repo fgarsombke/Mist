@@ -133,7 +133,7 @@ const bnu::matrix<YardCell> Yard::InitCells(const YardInfo& yardInfo)
          rh.Bottom() = cells(row + 1, col).cell_info().rel_height() - myInfo.rel_height();
          rh.BottomRight() = cells(row + 1, col + 1).cell_info().rel_height() - myInfo.rel_height();
 
-         cells(row, col).UnIsolate(rh);
+         cells(row, col).UnIsolate(rh, 0+ZONE_OFFSET);
          rh = 0;
       }
    }

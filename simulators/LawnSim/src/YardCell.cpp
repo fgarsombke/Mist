@@ -82,11 +82,6 @@ YardCell YardCell::CreateVoid(double relHeight)
    return YardCell(YardCellInfo(FP_NAN, relHeight), YardCellType_t::Void);
 }
 
-YardCell YardCell::CreateGrass(YardCellInfo info, NeighborHeightDiffs_t &heightDiffs)
-{
-   return YardCell(info, YardCellType_t::Grass, heightDiffs);
-}
-
 YardCell YardCell::CreateIsolated(YardCellInfo info)
 {
    return YardCell(info, YardCellType_t::Isolated);
@@ -94,10 +89,10 @@ YardCell YardCell::CreateIsolated(YardCellInfo info)
 ///////////////////////////////////////////////////////////////////////////
 
 
-void YardCell::UnIsolate(NeighborHeightDiffs_t heightDiffs) {   
+void YardCell::UnIsolate(NeighborHeightDiffs_t heightDiffs, zone_number_t zone) {   
    if (cell_type_ == YardCellType_t::Isolated) {
       drift_entry_ = DriftEntry(heightDiffs);
-
+      zone_ = zone;
       cell_type_ = YardCellType_t::Grass;
    } else {
       throw Exceptions::InvalidOperationException("Can only unisolate a YardCell of type Isolated.");
