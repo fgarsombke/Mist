@@ -15,6 +15,8 @@ typedef double ET_float_t;
 
 #define ETDATA_VALUES ETDATA_PARAMS\
                       (ENUM_COUNT)
+
+#define TYPED_PARAMS(r, data, elem) (data elem)
 	
 enum class ETCalcData_t
 {
@@ -34,7 +36,10 @@ class ETCalcParameters
 {
 public:
 	ETCalcParameters();
-   explicit ETCalcParameters(pt::time_period interval, const WeatherData& data);
+   ETCalcParameters(pt::time_period interval, const WeatherData& data);
+
+   ETCalcParameters(pt::time_period interval,
+                    BOOST_PP_SEQ_ENUM(BOOST_PP_SEQ_FOR_EACH(TYPED_PARAMS,ET_float_t,ETDATA_PARAMS)));
 
    pt::time_period Interval() const { return interval_; }
 
