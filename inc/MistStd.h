@@ -54,9 +54,7 @@ namespace Mist {
 
 #include "GeoLocale.h"
 #include "ScheduleSource.h"
-#include "WeatherData.h"
 #include "WeatherDataSource.h"
-#include "Feedback.h"
 
 #if defined(_MSC_VER)
   #define JL_SIZE_T_SPECIFIER    "%Iu"

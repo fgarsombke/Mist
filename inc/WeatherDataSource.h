@@ -1,6 +1,8 @@
 #pragma once
 #include "MistStd.h"
 
+#include "WeatherData.h"
+
 namespace Mist {
 
 class WeatherDataSource;
@@ -12,6 +14,5 @@ public:
    virtual WeatherData GetWeatherData(GeoLocale locale, pt::time_period period, unsigned int timeout = -1) = 0;
    virtual ~WeatherDataSource() { };
 };
-
 
 }

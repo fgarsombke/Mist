@@ -7,6 +7,7 @@
 #include "DriftEntry.h"
 #include "WeatherData.h"
 #include "LawnCoordinate.h"
+#include "Feedback.h"
 
 #include "Controller.h"
 
@@ -24,11 +25,12 @@ public:
    void ElapseTime(pt::time_period tickPeriod, 
                   const WeatherData &data, 
                   const std::vector<pt::time_duration> &sprinklerDurations, 
+                  bool addFeedback,
                   ZoneFeedback_t &feedbackByZone);
 
    void ResetState();
 
-   size_t ZoneCount() const { return 1; }
+   size_t ZoneCount() const { return SprinklersCount(); }
    size_t SprinklersCount() const { return sprinklers_.size(); }
    const GeoLocale locale() const { return locale_; }
 
@@ -67,7 +69,6 @@ private:
    SprinklerMaskList_t InitSprinklerMasks(const YardInfo &yardInfo);
 
    void DoGrow(ETCalc::ETParam_t ET_0, 
-               double periodLengthSeconds, 
                double growthFactor,
                size_t startCell, 
                size_t count);

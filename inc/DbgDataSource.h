@@ -28,7 +28,8 @@ public:
 												  unsigned int timeout = -1) 
 	{
 		SleepForMS(WeatherDataWaitTime);
-		return WeatherData();
+
+      return WeatherData::CreateDebug();
 	}
 
    virtual MistSchedule GetSchedule(product_id_t id, 

@@ -9,7 +9,7 @@ namespace Mist {
                      (MinRH)(MaxRH)\
                      (StartTemp)(EndTemp)\
                      (AvgPressure)\
-                     (WindSpeed)\
+                     (AvgWindSpeed)\
                      (ENUM_COUNT)
 
 // Effective precipitation in mm
@@ -43,6 +43,8 @@ public:
 
       return CreateFromPTree(scheduleTree);
    } 
+
+   static WeatherData CreateDebug();
 
    WeatherData()
    {

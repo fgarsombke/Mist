@@ -24,6 +24,8 @@ public:
    {
       // Do nothing by default
    }
+
+   virtual const product_id_t id() const { return 1; }
    
    // Indicates to the controller that an interval of time has elapsed.
    //    

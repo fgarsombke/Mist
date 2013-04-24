@@ -30,6 +30,8 @@ namespace Mist {
       std::vector<std::string> headers;
       std::string fbStr = Feedback::PackFeedbackJson(feedback);
 
+      std::cout << "FEEDBACK:\n " << fbStr << std::endl;
+
       int result = data_source_.PostHtml(feedbackStr + std::to_string(id),
          "application/json", fbStr, headers, timeout);
       if (result != 200) {
