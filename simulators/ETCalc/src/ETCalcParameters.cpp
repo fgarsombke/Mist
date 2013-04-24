@@ -64,4 +64,13 @@ namespace Mist { namespace ETCalc {
       }
    }
 
+   ETCalcParameters::ETCalcParameters(pt::time_period interval,
+                    BOOST_PP_SEQ_ENUM(BOOST_PP_SEQ_FOR_EACH(TYPED_PARAMS,ET_float_t,ETDATA_PARAMS)))
+   : interval_(interval)
+   {
+#define SET_VAL_FUNC(r, data, elem) SetValue(data::elem, elem);
+      BOOST_PP_SEQ_FOR_EACH(SET_VAL_FUNC, ETCalcData_t, ETDATA_PARAMS);
+#undef SET_VAL_FUNC
+   }
+
 }}
