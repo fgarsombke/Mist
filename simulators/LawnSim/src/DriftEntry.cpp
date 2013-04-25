@@ -26,6 +26,7 @@ static const double C = -(MaxDriftAmount/(1.0 + (K*M/(K*M+L))))/8.0;
 static const double Offset = M*K/(M*K + L);
 
 // Relative height is stored in mm
+
 static const double HeightUConv = 1000.0;
 
 static const double invSqrt2 = 1.0/sqrt(2.0);
