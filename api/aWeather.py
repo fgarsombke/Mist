@@ -51,6 +51,7 @@ class WeatherData:
        d['ssEnd'] = self.ssEnd
        d['rainfall'] = self.rainfall
        j = json.dumps(d, cls=MyEncoder)
+       return j
 
     def printWD(self):
         if self.avgTemp:

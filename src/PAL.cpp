@@ -14,7 +14,7 @@ inline unsigned int GetSystemTimeMS()
    return GetTickCount(); //timeGetTime();
 }
 
-inline int SleepForMS(int time_ms) 
+/*inline int SleepForMS(int time_ms) 
 { 
    return SleepEx(time_ms, false);
 }
@@ -42,6 +42,6 @@ inline int SleepForMS(int time_ms)
    tim.tv_nsec = sleepRem * 1000000L; 
 
    return nanosleep(&tim, NULL);
-}
+}*/
 
 #endif
