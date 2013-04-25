@@ -38,7 +38,7 @@ unique_ptr<YardInfo> LawnGenerator::Generate(GeoLocale locale,
    }
 
    return unique_ptr<YardInfo>(
-      new YardInfo(locale, GenerateCells(rows, cols, sprinklers, FillHeightsDiagonally)
+      new YardInfo(locale, GenerateCells(rows, cols, sprinklers, FillHeightsFromFile, heightParams)
       , sprinklers, sprinklerMasks, RainMask_t(rows, cols, 1.0))
    );
 }
@@ -84,16 +84,21 @@ void LawnGenerator::FillHeightsFromFile(bnu::matrix<double> &heights, std::strin
 
    std::string line;
    size_t rowNum = 0;
+   size_t colNum;
    while(std::getline(heightsFile, line)) {
       std::stringstream lineStream(line);
       std::string data;
 
-      size_t colNum = 0;
+      colNum = 0;
       while(std::getline(lineStream, data, ',')) {
          heights(rowNum, colNum) = std::strtod(data.c_str(), nullptr);
          ++colNum;
       }
       ++rowNum;
+   }
+
+   if (!((rowNum == heights.size1()) && (colNum == heights.size2()))) {
+      throw new std::logic_error("The file " + param + " did not contain enough lawn cell heights.\n");
    }
 }
 
