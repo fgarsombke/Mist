@@ -14,22 +14,14 @@ Yard::Yard(const YardInfo& yardInfo)
      cells_(InitCells(yardInfo)), 
      cells_by_height_(InitHeightMap(yardInfo)),
      cells_per_zone_(std::move(yardInfo.cells_per_zone())),
+     sprinkler_masks_(std::move(yardInfo.sprinkler_masks())),
+     rain_mask_(std::move(yardInfo.rain_mask())),
 	  surface_water_(cells_.size1(), cells_.size2(), 0),
      cell_health_(cells_.size1(), cells_.size2(), 0),
      et_calc_(locale_)
 {
    // Zero everything out and
    // Generate a height sorted view of the Yard
-   
-   // Generate rain mask
-   // TODO: Should this be nonideal?
-   rain_mask_ = bnu::scalar_matrix<double>(cells_.size1() - 2, cells_.size2() - 2, 1.0);
-
-   // TODO: Implement
-   sprinkler_masks_ = SprinklerMaskList_t(sprinklers_.size());
-   for (SprinklerMask_t &mask : sprinkler_masks_) {
-      mask = SprinklerMask_t(cells_.size1() - 2, cells_.size2() - 2);
-   }
 }
 
 const bnu::matrix<YardCell> Yard::InitCells(const YardInfo& yardInfo)
@@ -190,8 +182,10 @@ void Yard::ElapseTime(pt::time_period tickPeriod,
 
    cout << "ElapseTime: " << tickPeriod << endl;
 
-   //static int ticknum = 0;
-   //DebugPrintMatrix(surface_water_, "SurfaceWaterVals/SurfaceWater" + std::to_string(ticknum++) + ".csv");
+   static int ticknum = 0;
+   DebugPrintMatrix(matrix_range<matrix<water_mm_t> >(surface_water_, 
+                    range(1, surface_water_.size1() - 1), 
+                    range(1, surface_water_.size2() - 1)), "SurfaceWaterVals/SurfaceWater" + std::to_string(ticknum) + ".csv");
   
    // Add sprinkler water to the surface
    for (size_t i = 0; i < sprinkler_masks_.size(); ++i) {
@@ -225,6 +219,10 @@ void Yard::ElapseTime(pt::time_period tickPeriod,
    double growthFactor = 1.0;
    DoGrow(ETBaseParams, growthFactor , 0, cells_.data().size());
 
+   DebugPrintMatrix(matrix_range<matrix<water_mm_t> >(cell_health_, 
+                    range(1, cell_health_.size1() - 1), 
+                    range(1, cell_health_.size2() - 1)), "LawnHealthVals/LawnHealthVals" + std::to_string(ticknum++) + ".csv");
+
 	if (addFeedback) {
       ComputeFeedback(tickPeriod, feedbackByZone);
    }
@@ -242,16 +240,15 @@ inline void Yard::DoGrow(ETCalc::ETParam_t etParams,
    ET_float_t cellWater;
    health_t nextCellHealth;
 
-	auto cellData = cells_.data();
-   auto cellHealthData = cell_health_.data();
-
    double periodLengthDays = etParams.Interval().length().ticks()/(((double)etParams.Interval().length().ticks_per_second())*24*60*60);
 
    // Grow the grass in the yard
    while (startCell < endCell) {  
-		if (cellData[startCell].cell_type() == YardCellType_t::Grass) {
+      YardCell& currentCell = cells_.data()[startCell];
+
+		if (currentCell.cell_type() == YardCellType_t::Grass) {
 			// Shine sunlight
-			cellETParams.SetSunlightFraction(cellData[startCell].sunlight_fraction());
+			cellETParams.SetSunlightFraction(currentCell.sunlight_fraction());
 
 			// TODO: Apply heat
    
@@ -260,19 +257,19 @@ inline void Yard::DoGrow(ETCalc::ETParam_t etParams,
 			// TODO: Blow wind
 
 			// Calculate Cell Water available 
-         double cellET = cellData[startCell].ET_K()*et_calc_.CalculateET_0(cellETParams);
+         double cellET = currentCell.ET_K()*et_calc_.CalculateET_0(cellETParams);
 
          // Water deficit is ET_0 * Time
 			cellWater = surface_water_.data()[startCell] - periodLengthDays*cellET;
 
 			// With the water amount calculated, we compute the health delta
-         nextCellHealth = YardCell::ComputeHealthMetric(cellHealthData[startCell], cellWater, periodLengthDays, growthFactor);
+         nextCellHealth = YardCell::ComputeHealthMetric(cell_health_.data()[startCell], cellWater, periodLengthDays, growthFactor);
 
          // Kill the grass if it was at minimum health for too long.
-         if (((int)nextCellHealth) + ((int)cellHealthData[startCell]) == -2*MaxHealth) {
-            cellData[startCell].Kill();
+         if ((nextCellHealth + cell_health_.data()[startCell]) == -2*MaxHealth) {
+            currentCell.Kill();
          } else {
-            cellHealthData[startCell] = nextCellHealth;
+            cell_health_.data()[startCell] = nextCellHealth;
          }
 
 			// Reduce remaining surface water
@@ -302,17 +299,14 @@ inline void Yard::ComputeFeedback(pt::time_period tickPeriod, ZoneFeedback_t &fe
    std::vector<health_t> msePerZone(ZoneCount(), 0);
 
    DbgAssertLogic(feedbackByZone.size() != ZoneCount(), "Feedback array zone count mismatch.");
-
-   auto cellData = cells_.data();
-   auto cellHealthData = cell_health_.data();
    
    size_t currCellIndx = 0;
 
-   while (currCellIndx < cellData.size()) { 
-      YardCell& currentCell = cellData[currCellIndx];
+   while (currCellIndx < cells_.data().size()) { 
+      const YardCell& currentCell = cells_.data()[currCellIndx];
 
       if (currentCell.HasHealth()) {
-         health_t currCellHealth = cellHealthData[currCellIndx];
+         health_t currCellHealth = cell_health_.data()[currCellIndx];
          msePerZone[currentCell.zone()] += currCellHealth*abs(currCellHealth)/cells_per_zone_[currentCell.zone()];
       }
       ++currCellIndx;
@@ -350,8 +344,8 @@ void Yard::DebugPrint() const
    }
 }
 
-template<class T>
-static void Yard::DebugPrintMatrix(const bnu::matrix<T> &toPrint, std::string fileName)
+template<class M>
+static void Yard::DebugPrintMatrix(const M &toPrint, std::string fileName)
 {
    using namespace std;
 

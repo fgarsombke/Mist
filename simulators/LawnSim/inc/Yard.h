@@ -13,9 +13,6 @@
 
 namespace Mist { namespace LawnSim {
 
-typedef bnu::compressed_matrix<double> SprinklerMask_t;
-typedef bnu::unbounded_array<SprinklerMask_t> SprinklerMaskList_t;
-
 class Yard {
 public:
    explicit Yard(const YardInfo& yardInfo);
@@ -61,7 +58,15 @@ private:
    
    const CellPerZoneList_t cells_per_zone_;
 
-   
+   // The sprinkler "masks" which indicate how much water is to be delivered to each cell
+   // The units are mm/s, so each matrix needs to be multiplied by time duration when watering
+   // We assume here that any deviation from ideal in the sprinkler spray pattern is time invariant
+   const SprinklerMaskList_t sprinkler_masks_;
+
+   // Contains fraction rain amoun modifiers so that rain will be distributed unevenly across the yard
+   const RainMask_t rain_mask_;
+
+
    // The water on the surface across the yard, which has not yet been absorbed into the soil
    bnu::matrix<water_mm_t> surface_water_;
 
@@ -70,24 +75,14 @@ private:
 
    ETCalc::ETCalc et_calc_;
 
-   // The sprinkler "masks" which indicate how much water is to be delivered to each cell
-   // The units are mm/s, so each matrix needs to be multiplied by time duration when watering
-   // We assume here that any deviation from ideal in the sprinkler spray pattern is time invariant
-   SprinklerMaskList_t sprinkler_masks_;
-
-   // Contains fraction rain amoun modifiers so that rain will be distributed unevenly across the yard
-   // TODO: Possibly get a more sophistocated mask
-   bnu::scalar_matrix<double> rain_mask_;
-
-
 
 
    SprinklerMaskList_t InitSprinklerMasks(const YardInfo &yardInfo);
 
    
 
-   template<class T>
-   static void DebugPrintMatrix(const bnu::matrix<T> &toPrint, std::string fileName);
+   template<class M>
+   static void DebugPrintMatrix(const M &toPrint, std::string fileName);
 
    static const bnu::unbounded_array<LawnCoordinate> InitHeightMap(YardInfo const &yardInfo);
 };

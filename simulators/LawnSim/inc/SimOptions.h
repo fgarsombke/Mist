@@ -24,6 +24,10 @@ public:
    ptime start_time() const { return start_time_; }
    ptime end_time() const { return end_time_; }
 
+   size_t yard_rows() const { return yard_rows_; }
+   size_t yard_cols() const { return yard_cols_; }
+   std::string heights_param() const { return heights_param_; }
+
 private:
    // Ref class only
    SimOptions & operator= (const SimOptions & other);
@@ -38,6 +42,11 @@ private:
 
    unsigned int sim_tick_period_;       // Length of tick in simulated time in milliseconds
    unsigned int sim_speed_ratio_;       // (simulator speed)/(real time)   
+
+   size_t yard_rows_;
+   size_t yard_cols_;
+
+   std::string heights_param_;
 
    bool generate_random_;
 

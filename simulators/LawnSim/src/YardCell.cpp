@@ -59,11 +59,13 @@ health_t YardCell::ComputeHealthMetric(health_t currentHealth,
    const double B = 1/8.0;
    const double C = 0;
 
+   const double SCALE = .001;
+
    const double T = 1.0;
 
-   double yp = sign(currentHealth)*B*(K-A)*exp(-B*(currentHealth-C))/pow(1+exp(-B*(currentHealth-C)),2);
+   double yp = -SCALE*sign(currentHealth)*B*(K-A)*exp(-B*(currentHealth-C))/pow(1+exp(-B*(currentHealth-C)),2);
 
-   double dHealth = yp*periodLengthDays*waterAvailable*T;
+   double dHealth = periodLengthDays*T*(yp+waterAvailable);
 
    double newHealth = currentHealth + growthFactor*dHealth;
 
