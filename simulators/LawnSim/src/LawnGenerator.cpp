@@ -14,19 +14,32 @@ using std::unique_ptr;
 namespace Mist {
 namespace LawnSim {
 
-unique_ptr<YardInfo> LawnGenerator::Generate(GeoLocale locale, size_t rows, size_t cols) const 
+unique_ptr<YardInfo> LawnGenerator::Generate(GeoLocale locale, 
+                                             size_t rows, 
+                                             size_t cols, 
+                                             std::string heightParams) const 
 {
    if (rows == 0 || cols == 0) {
       throw std::invalid_argument("rows and cols must both be nonzero.");
    }
 
-   // Place 4 sprinklers at each corner
+   // Place 8 sprinklers at each corner
    SprinklersList_t sprinklers = SprinklersList_t(8);
+   sprinklers[0] = sprinklers[1] = SprinklerLocation(Sprinkler(1, SprayPattern::Square, 20), 0,0);
+   sprinklers[2] = sprinklers[3] = SprinklerLocation(Sprinkler(1, SprayPattern::Square, 20), 0,cols-1);
+   sprinklers[4] = sprinklers[5] = SprinklerLocation(Sprinkler(1, SprayPattern::Square, 20), rows-1,0);
+   sprinklers[6] = sprinklers[7] = SprinklerLocation(Sprinkler(1, SprayPattern::Square, 20), rows-1,cols-1);
+
    CellPerZoneList_t cellsPerZone = CellPerZoneList_t(8);
+
+   SprinklerMaskList_t sprinklerMasks( sprinklers.size());
+   for (size_t i = 0; i < sprinklers.size(); ++i) {
+      sprinklerMasks[i] = sprinklers[i].GenerateSprinklerMask(rows, cols);
+   }
 
    return unique_ptr<YardInfo>(
       new YardInfo(locale, GenerateCells(rows, cols, sprinklers, FillHeightsDiagonally)
-      , sprinklers)
+      , sprinklers, sprinklerMasks, RainMask_t(rows, cols, 1.0))
    );
 }
 
@@ -34,26 +47,57 @@ unique_ptr<YardInfo> LawnGenerator::Generate(GeoLocale locale, size_t rows, size
 inline bnu::matrix<YardCellInfo> LawnGenerator::GenerateCells(size_t rows, 
                                                   size_t cols, 
                                                   const SprinklersList_t &sprinklers,
-                                                  FillHeightFunc_t hFunc) const 
+                                                  FillHeightFunc_t hFunc, 
+                                                  std::string heightParams) const 
 {
    bnu::matrix<YardCellInfo> cells(rows, cols, YardCellInfo());
    
    bnu::matrix<double> heights(rows, cols);
 
    // Generate the heights
-   hFunc(heights);
+   hFunc(heights, heightParams);
 
    //TODO URGENT: Compute actual zone!!!!
-   for (unsigned int i = 0; i < rows; ++i) {
-      for (unsigned int j = 0; j < cols; ++j) {
-         cells(i,j) = YardCellInfo(0, heights(i,j), 0);
+   for (size_t i = 0; i < rows; ++i) {
+      for (size_t j = 0; j < cols; ++j) {
+         double minDistance = FP_INFINITE;
+         size_t minZone = 0;
+
+         // Calculate the zone the slow, painful way
+         for (size_t l = 0; l < sprinklers.size(); ++l) {
+            double thisDistance = sqrt(pow(i-sprinklers[l].row(),2) + pow(j-sprinklers[l].col(),2));
+            if (thisDistance < minDistance) {
+               minDistance = thisDistance;
+               minZone = l;
+            }
+         }
+
+         cells(i,j) = YardCellInfo(0, heights(i,j), minZone);
       }
    }
 
    return cells;
 }
 
-void LawnGenerator::FillHeightsPerlin(bnu::matrix<double> &heights) {
+void LawnGenerator::FillHeightsFromFile(bnu::matrix<double> &heights, std::string param) {
+   std::ifstream heightsFile(param);
+
+   std::string line;
+   size_t rowNum = 0;
+   while(std::getline(heightsFile, line)) {
+      std::stringstream lineStream(line);
+      std::string data;
+
+      size_t colNum = 0;
+      while(std::getline(lineStream, data, ',')) {
+         heights(rowNum, colNum) = std::strtod(data.c_str(), nullptr);
+         ++colNum;
+      }
+      ++rowNum;
+   }
+}
+
+void LawnGenerator::FillHeightsPerlin(bnu::matrix<double> &heights, std::string param) {
    size_t rows = heights.size1();
    size_t cols = heights.size2();
 
@@ -66,7 +110,7 @@ void LawnGenerator::FillHeightsPerlin(bnu::matrix<double> &heights) {
    }
 }
 
-void LawnGenerator::FillHeightsDiagonally(bnu::matrix<double> &heights) {
+void LawnGenerator::FillHeightsDiagonally(bnu::matrix<double> &heights, std::string param) {
    size_t rows = heights.size1();
    size_t cols = heights.size2();
    

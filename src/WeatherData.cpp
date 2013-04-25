@@ -29,7 +29,7 @@ namespace Mist {
 
       std::stringstream ss;
 
-      ss <<  "{\"Rainfall\":0.001, \"StartTemp\": 14.4444, \"EndTemp\": 21.6667, \"MinTemp\":13.68, \"MaxTemp\":22.10, \"AvgTemp\": 17.377778,"
+      ss <<  "{\"Rainfall\":10.0, \"StartTemp\": 14.4444, \"EndTemp\": 21.6667, \"MinTemp\":13.68, \"MaxTemp\":22.10, \"AvgTemp\": 17.377778,"
          "\"AvgWindSpeed\": 11.51875, \"AvgPressure\": 1012.245, \"MinRH\": 0.52, \"MaxRH\": 0.89}";
 
       return WeatherData::CreateFromJson(ss);
