@@ -4,10 +4,7 @@ import BeautifulSoup
 from googlevoice import Voice
 from optparse import OptionParser
 import re
-<<<<<<< HEAD
 import sqlite3
-=======
->>>>>>> 682fad65d02194934cbdbae1071631929ae8e39a
 import sys
 
 # Extracts SMS messages and returns them as a list of dictionaries, one per message
