@@ -51,6 +51,7 @@ boost
 
 # Repository Specific Files #
 *.pyc
+*.swp
 local.config
 *.sdf
 *.tlog
@@ -60,4 +61,3 @@ local.config
 *.pch
 *.idb
 *.lastbuildstate
-
