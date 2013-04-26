@@ -35,17 +35,27 @@ def poll(img_name, score_range):
     score_re = re.compile("-?[0-9]+")
     num_re = re.compile("[0-9]{9,12}")
 
-    # login to gvoice
+    # connect to the db
+    conn = sqlite3.connect("temp.db")
+    cursor = conn.cursor()
+
+    # login to gvoice and get sms
     voice = Voice();
     voice.login()
+    voice.sms()
 
     raw_input("Press ENTER to end poll...\n") # waits until we are ready
 
-    hist = [0]*(score_range*2+1) # initialize histogram
-
     print "Results for '" + img_name + "':"
     print "SENDER\t\tSCORE"
-    voice.sms()
+
+    # add the image if it doesn't exist
+    try:
+        add_image = "ALTER TABLE images ADD COLUMN " + img_name +" integer" 
+        cursor.execute(add_image)
+    except:
+        pass
+
     for ballot in extractsms(voice.sms.html):
         # remove blank matches
         phone_num = filter(None, num_re.findall(ballot['from']))
@@ -54,7 +64,20 @@ def poll(img_name, score_range):
         # checks if the first number is a valid score
         if len(score) != 0 and -score_range <= int(score[0]) <= score_range:
             resp = "Thank you!\nYou rated '" + img_name + "' as a " + score[0] + "."
-            hist[(int(score[0])+score_range)] = hist[(int(score[0])+score_range)] + 1; # Histogram
+
+            # add the user if they do not exist
+            try:
+                add_user = "ALTER TABLE users ADD COLUMN `" + phone_num[0] +"` integer" 
+                cursor.execute(add_user)
+            except:
+                pass
+
+            # insert values
+            add_usr_score = "INSERT INTO users (`" + phone_num[0] + "`) VALUES (" + score[0] +")"
+            cursor.execute(add_usr_score)
+            add_img_score = "INSERT INTO images (" + img_name + ") VALUES (" + score[0] + ")"
+            cursor.execute(add_img_score)
+
             print phone_num[0] + "\t" + score[0]
 
         else:
@@ -66,59 +89,57 @@ def poll(img_name, score_range):
         # send responses
         # voice.send_sms(phone_num[0], resp);
 
-    # print histogram
-    print ""
-    print "HISTOGRAM"
-    for idx in range(-score_range,score_range+1):
-        print '%+03d' % idx,
-    print ""
-    for val in hist:
-        print '%3d' % val,
-    print ""
-    print ""
-
     # removes read messages
     #for message in voice.sms().messages:
         #if message.isRead:
         #    message.delete() # moves to trash
 
+    # close sessions
     voice.logout()
+    conn.commit()
+    conn.close()
 
-    store(img_name, hist, score_range)
-
-def store(img_name, hist, score_range):
+def init_db():
     # connect to the db
-    conn = sqlite3.connect("image_scores.db")
+    conn = sqlite3.connect("temp.db")
     cursor = conn.cursor()
 
-    print "TABLE " + img_name
-    try:
-        create_table = "CREATE TABLE "+ img_name + "(score integer, votes integer)"
-        cursor.execute(create_table);
+    # create tables, we have to create temporary columns 
+    user_score_table = "CREATE TABLE IF NOT EXISTS users(tempUser integer)"
+    cursor.execute(user_score_table)
 
-        for idx in range(-score_range, score_range+1):
-            entry = "INSERT INTO " + img_name + " VALUES (" + str(idx) +", " + str(hist[idx+score_range]) + ")"
-            cursor.execute(entry)
+    image_score_table = "CREATE TABLE IF NOT EXISTS images(tempImage integer)"
+    cursor.execute(image_score_table)
 
-        print "  CREATED"
-
-    except sqlite3.OperationalError:
-        for idx in range(-score_range, score_range+1):
-            update = "UPDATE " + img_name + " "  
-            set = "SET votes=" + str(hist[idx+score_range]) + " " 
-            where = "WHERE score=" + str(idx) + " " 
-            cursor.execute(update + set + where);
-
-        print "  UPDATED"
-
+    # commit and close
     conn.commit()
+    conn.close()
+
+def clean_db():
+    # connect to the db
+    conn = sqlite3.connect("temp.db")
+    cursor = conn.cursor()
+
+    # drop temporary columns
+    try:
+        cursor.execute("ALTER TABLE users DROP COLUMN tempUser")
+    except:
+        pass
+    try:
+        cursor.execute("ALTER TABLE images DROP COLUMN tempImage")
+    except:
+        pass
+
+    # commit changes and close the db
+    conn.commit()
+    conn.close()
 
 def main():
-    parser = OptionParser(usage = "Usage: %prog -f <filename> -s <score>")
-    parser.add_option("-f", "--filename", 
-            dest="filename", 
-            metavar="FILENAME",
-            help="filename of the image to be scored",)
+    parser = OptionParser(usage = "Usage: %prog -i IMAGE -s SCORE")
+    parser.add_option("-i", "--image", 
+            dest="image", 
+            metavar="IMAGE",
+            help="IMAGE is the name of the image to be scored",)
     parser.add_option("-s", "--score", 
             dest="score", 
             default="10",
@@ -126,12 +147,14 @@ def main():
             help="defines scoring range [-SCORE SCORE], defaults to 10",)
     (opts, args) = parser.parse_args()
 
-    if opts.filename is None:
-        print "ERROR: no image specified\n"
+    if opts.image is None:
+        print "ERROR: no image name specified\n"
         parser.print_help()
         exit(-1)
 
-    poll(opts.filename, int(opts.score))
+    init_db() # Initializes the db
+    poll(opts.image, int(opts.score)) # Polls gvoice and stores scores
+    clean_db() # Cleans the db
 
 if __name__ == '__main__':
     main()
