@@ -4,7 +4,10 @@ import BeautifulSoup
 from googlevoice import Voice
 from optparse import OptionParser
 import re
+<<<<<<< HEAD
 import sqlite3
+=======
+>>>>>>> 682fad65d02194934cbdbae1071631929ae8e39a
 import sys
 
 # Extracts SMS messages and returns them as a list of dictionaries, one per message
@@ -31,14 +34,20 @@ def extractsms(htmlsms) :
 
     return msgitems
 
+<<<<<<< HEAD
 def poll(img_name, score_range):
     score_re = re.compile("-?[0-9]+")
+=======
+def store_results(img_name):
+    qual_re = re.compile("^(-?10|-?[0-9])$")
+>>>>>>> 682fad65d02194934cbdbae1071631929ae8e39a
     num_re = re.compile("[0-9]{9,12}")
 
     # login to gvoice
     voice = Voice();
     voice.login()
 
+<<<<<<< HEAD
     raw_input("Press ENTER to end poll...\n") # waits until we are ready
 
     hist = [0]*(score_range*2+1) # initialize histogram
@@ -70,11 +79,42 @@ def poll(img_name, score_range):
     print ""
     print "HISTOGRAM"
     for idx in range(-score_range,score_range+1):
+=======
+    raw_input("Press ENTER to process sms...\n") # waits until we are ready
+
+    voice.sms()
+    print "SENDER\t\tQUALITY"
+    hist = [0]*21
+    for ballot in extractsms(voice.sms.html):
+        num = filter(None, num_re.findall(ballot['from']))
+        qual = filter(None, qual_re.findall(ballot['text']))
+
+        # valid
+        if len(qual) != 0:
+            resp = "Thank you!\nYou rated '" + img_name + "' as a " + qual[0] + "."
+            hist[(int(qual[0])+10)] = hist[(int(qual[0])+10)] + 1; # Histogram
+
+            print num[0] + "\t" + qual[0]
+
+        # invalid
+        else:
+            resp = "You submitted an invalid rating for '" + img_name + "'!\nPlease try again."
+
+            print num[0] + "\t" + "invalid"
+
+        voice.send_sms(num[0], resp);
+
+    # shows a histogram of the results
+    print ""
+    print "HISTOGRAM"
+    for idx in range(-10,11):
+>>>>>>> 682fad65d02194934cbdbae1071631929ae8e39a
         print '%+03d' % idx,
     print ""
     for val in hist:
         print '%3d' % val,
     print ""
+<<<<<<< HEAD
     print ""
 
     # removes read messages
@@ -124,6 +164,22 @@ def main():
             default="10",
             metavar="SCORE",
             help="defines scoring range [-SCORE SCORE], defaults to 10",)
+=======
+
+    # deletes all texts
+    for message in voice.sms().messages:
+        if message.isRead:
+            message.delete() # moves read messages to trash
+
+    voice.logout()
+
+def main():
+    parser = OptionParser(usage = "Usage: %prog -i <image>")
+    parser.add_option("-i", "--image", 
+            dest="filename", 
+            metavar="IMAGE",
+            help="image to display",)
+>>>>>>> 682fad65d02194934cbdbae1071631929ae8e39a
     (opts, args) = parser.parse_args()
 
     if opts.filename is None:
@@ -131,7 +187,11 @@ def main():
         parser.print_help()
         exit(-1)
 
+<<<<<<< HEAD
     poll(opts.filename, int(opts.score))
+=======
+    store_results(opts.filename)
+>>>>>>> 682fad65d02194934cbdbae1071631929ae8e39a
 
 if __name__ == '__main__':
     main()
