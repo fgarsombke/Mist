@@ -12,8 +12,8 @@ import json
 from jsonencode import MyEncoder
 
 class IrrigationEvent:
-    def __init__(self, productID, zoneNumber, startTime, duration, date):
-        self.productID = productID
+    def __init__(self, deviceID, zoneNumber, startTime, duration, date):
+        self.deviceID = deviceID
         self.zoneNumber = zoneNumber
         self.startTime = startTime
         self.duration = duration
@@ -26,16 +26,16 @@ def queueIrrigation(event):
     startTime = event.date + " " + event.startTime
     print startTime
     timestamp = datetime.now() 
-    cursor.execute("INSERT INTO queuedIrrigations (productID, zoneNumber, startTime, duration, created) VALUES (%s, %s, %s, %s, %s)", (event.productID, event.zoneNumber, startTime, event.duration, timestamp))
+    cursor.execute("INSERT INTO queuedIrrigations (deviceID, zoneNumber, startTime, duration, created) VALUES (%s, %s, %s, %s, %s)", (event.deviceID, event.zoneNumber, startTime, event.duration, timestamp))
     results = cursor.lastrowid
     db.commit()
     return results
 
-def getScheduleForDevice(productID):
+def getScheduleForDevice(deviceID):
     conf = DBConfig.DBConfig()
     db = conf.connectToLocalConfigDatabase()    
     cursor = db.cursor()
-    cursor.execute("SELECT * FROM queuedIrrigations WHERE (queuedIrrigations.productID = (%s)) ORDER by zoneNumber ASC", (productID))
+    cursor.execute("SELECT * FROM queuedIrrigations WHERE (queuedIrrigations.deviceID = (%s)) ORDER by zoneNumber ASC", (deviceID))
     results = cursor.fetchall()
     return results  
 
@@ -91,11 +91,11 @@ class aSchedule:
             return 0
 
     #POST API - queue an irrigation event
-    #parameters productID, zoneNumber, startTime, duration
+    #parameters deviceID, zoneNumber, startTime, duration
     def POST(self):
         schedule_data = web.input() 
 
         if schedule_data:
-            event = IrrigationEvent(schedule_data.productID, schedule_data.zoneNumber, schedule_data.startTime, schedule_data.duration, schedule_data.date)
+            event = IrrigationEvent(schedule_data.deviceID, schedule_data.zoneNumber, schedule_data.startTime, schedule_data.duration, schedule_data.date)
             success = queueIrrigation(event)
             return success

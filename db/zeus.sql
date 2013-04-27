@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS users (
 					);
 					
 CREATE TABLE IF NOT EXISTS devices (
-					productID INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY,
+					deviceID INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY,
 					userID INTEGER NOT NULL,
 					latitude FLOAT,
 					longitude FLOAT,
@@ -19,7 +19,7 @@ CREATE TABLE IF NOT EXISTS devices (
 					);
 
 CREATE TABLE IF NOT EXISTS zones (
-					productID INTEGER NOT NULL,
+					deviceID INTEGER NOT NULL,
 					zoneNumber INTEGER NOT NULL,
 					description VARCHAR(50),
 					plantSpecies VARCHAR(50),
@@ -61,17 +61,9 @@ CREATE TABLE IF NOT EXISTS dailyETo (
 					date DATETIME NOT NULL
 					);
 
-CREATE TABLE IF NOT EXISTS dailyETLperZone (
-						productID INTEGER NOT NULL,
-						zoneNumber INTEGER NOT NULL,
-						dailyETL FLOAT NOT NULL,
-						dayOfYear INTEGER,
-						date DATETIME NOT NULL
-						);
-
 CREATE TABLE IF NOT EXISTS queuedIrrigations (
 						    vectorID INTEGER NOT NULL,
-                            productID INTEGER NOT NULL,
+                            deviceID INTEGER NOT NULL,
 						    zoneNumber INTEGER NOT NULL,
 						    startTime DATETIME NOT NULL,
 						    duration INTEGER NOT NULL,
@@ -80,7 +72,7 @@ CREATE TABLE IF NOT EXISTS queuedIrrigations (
 
 CREATE TABLE IF NOT EXISTS executedIrrigations (
                             vectorID INTEGER NOT NULL,
-                            productID INTEGER NOT NULL,
+                            deviceID INTEGER NOT NULL,
 						    zoneNumber INTEGER NOT NULL,
 						    startTime DATETIME NOT NULL,
 						    duration INTEGER NOT NULL,
@@ -94,7 +86,7 @@ CREATE TABLE IF NOT EXISTS sessions (
 					);
 
 CREATE TABLE IF NOT EXISTS toggle (
-                    productID INTEGER NOT NULL,
+                    deviceID INTEGER NOT NULL,
                     toggleStatus BOOLEAN DEFAULT TRUE
                     );
 

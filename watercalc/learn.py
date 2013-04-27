@@ -84,7 +84,7 @@ def getLatLongforDevice(deviceID):
     conf = DBConfig.DBConfig()
     db = conf.connectToLocalConfigDatabase()
     cursor = db.cursor()
-    sqlString = "SELECT latitude, longitude FROM devices WHERE productID = %s" % deviceID
+    sqlString = "SELECT latitude, longitude FROM devices WHERE deviceID = %s" % deviceID
     cursor.execute(sqlString)
     latlong = cursor.fetchone()
     return latlong
@@ -112,7 +112,7 @@ def createIrrigationEvent(deviceID, zone, timer, duration, vectorID):
     db = conf.connectToLocalConfigDatabase()
     cursor = db.cursor()
     print timer
-    sqlString = "INSERT INTO queuedIrrigations (productID, zoneNumber, startTime, duration, vectorID) VALUES (%s, %s, '%s', %s, %s)" % (deviceID, zone, timer, duration, vectorID)
+    sqlString = "INSERT INTO queuedIrrigations (deviceID, zoneNumber, startTime, duration, vectorID) VALUES (%s, %s, '%s', %s, %s)" % (deviceID, zone, timer, duration, vectorID)
     cursor.execute(sqlString)
     db.commit()
 
@@ -306,6 +306,7 @@ def getLearningVector(vectorID):
     cursor.close()
 
     #create the Learning Vector object (no feedback or vectors yet)
+    print v
     lv = LearningVector(v[0], v[1], v[2], v[3], v[4])
 
     #assimilate the parameter vector from the vectors table
@@ -317,7 +318,7 @@ def getMostRecentIrrigationEventForDevice(deviceID, zone, time):
     conf = DBConfig.DBConfig()
     db = conf.connectToLocalConfigDatabase()
     cursor = db.cursor()
-    sqlString = "SELECT * FROM executedIrrigations WHERE productID = '%s' AND zoneNumber = '%s' AND startTime < '%s' ORDER BY startTime DESC" % (deviceID, zone, time)
+    sqlString = "SELECT * FROM executedIrrigations WHERE deviceID = '%s' AND zoneNumber = '%s' AND startTime < '%s' ORDER BY startTime DESC" % (deviceID, zone, time)
     cursor.execute(sqlString)
     event = cursor.fetchone()
     cursor.close()

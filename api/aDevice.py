@@ -37,7 +37,7 @@ def getDevice(deviceid):
     conf = DBConfig.DBConfig()
     db = conf.connectToLocalConfigDatabase()    
     cursor = db.cursor()
-    cursor.execute("SELECT * FROM devices WHERE devices.productID = (%s)", deviceid)
+    cursor.execute("SELECT * FROM devices WHERE devices.deviceID = (%s)", deviceid)
     results = cursor.fetchall()
     return results  
 
@@ -67,7 +67,7 @@ class aDevice:
         objects_list = []
         for row in devices:
                 d = collections.OrderedDict()
-                d['productID'] = row[0]
+                d['deviceID'] = row[0]
                 d['userID'] = row[1]
                 d['latitude'] = row[2]
                 d['longitude'] = row[3]
@@ -93,4 +93,3 @@ class aDevice:
             deviceId = insertDeviceInDatabase(device_data.userID, device_data.latitude, device_data.longitude, assignedStationID, device_data.wifiNetwork, device_data.wifiPassword, device_data.numZones) #SQL
         #TODO: JSONize output?
         return deviceId
-        
