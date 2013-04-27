@@ -22,14 +22,14 @@ class addSchedule:
         render = web.template.render('templates/', base='layout')
 
         if schedule_data:
-            productID = schedule_data.deviceID
+            deviceID = schedule_data.deviceID
             zoneNumber = schedule_data.zoneNumber
             startTime = schedule_data.startTime
             date = schedule_data.date
             duration = schedule_data.duration
 
         #Construct POST API Request
-        query_args = {'productID':productID, 'zoneNumber':zoneNumber, 'startTime':startTime, 'date':date, 'duration':duration}
+        query_args = {'deviceID':deviceID, 'zoneNumber':zoneNumber, 'startTime':startTime, 'date':date, 'duration':duration}
         encoded_args = urllib.urlencode(query_args)
         url = "http://0.0.0.0:8080/api/schedule?"
         req = urllib2.Request(url, encoded_args)
