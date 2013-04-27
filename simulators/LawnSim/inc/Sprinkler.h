@@ -4,8 +4,12 @@
 
 namespace Mist { namespace LawnSim {
 
+typedef bnu::compressed_matrix<double> SprinklerMask_t;
+
 enum class SprayPattern {
+   None,
    UCircle,
+   Square,
 };
 
 // Represents a single sprinkler head.
@@ -15,29 +19,28 @@ class Sprinkler {
 public:
    // Makes a sprinkler that does not water
    Sprinkler()
-      : watering_rate_(0)
+      : watering_rate_(0), pattern_(SprayPattern::None), range_(0)
    {
    }
 
-   explicit Sprinkler(double wateringRate)
-      : watering_rate_(wateringRate)
+   Sprinkler(double wateringRate, 
+             SprayPattern pattern,
+             size_t range)
+      : watering_rate_(wateringRate), pattern_(pattern), range_(range)
    {
    }
-
-   // Stored at a rate of mm/s
-   //const bnu::matrix<double> SprayRates();
 
 private:
-   const double watering_rate_;     // In mm/s
-
+   double watering_rate_;     // In mm/s
+   SprayPattern pattern_;
+   size_t range_;
 };
 
 class SprinklerLocation
 {
 public:
-   // Create a sprinkler that does no waterign
+   // Create a sprinkler that does no watering
    SprinklerLocation()
-      : sprinkler_(0.0)
    {
    }
 
@@ -45,6 +48,13 @@ public:
       : sprinkler_(sprinkler), row_(row), col_(col)
    {
    }
+
+   const Sprinkler &sprinkler() const { return sprinkler_; }
+
+   SprinklerMask_t GenerateSprinklerMask(size_t rows, size_t cols) const;
+
+   size_t row() const { return row_; }
+   size_t col() const { return col_; }
 
 private:
    Sprinkler sprinkler_;

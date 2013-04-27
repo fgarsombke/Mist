@@ -29,12 +29,6 @@ CellPerZoneList_t YardInfo::InitCellsPerZone(const bnu::matrix<YardCellInfo> &ya
 }
 
 
-
-
-
-
-
-
 #ifdef _DEBUG
 void YardInfo::DebugPrint(const std::string &fileName) const
 {

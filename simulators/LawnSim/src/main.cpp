@@ -33,13 +33,11 @@ int main(int argc, char * argv[])
          return 1;
       }
 
-      double results = CalculateET_0(
-         30.0, -100.0, 136666666, 136666667, 30.0, 40.0, 35.0, .2, .8, 32.0, 38.0, 10.0, 10.0, .6        
-      );
-
-      auto yardInfo = LawnGenerator().Generate(options->geo_locale(), 5, 5);
-
-
+      auto yardInfo = LawnGenerator().Generate(options->geo_locale(), 
+                                               options->yard_rows(), 
+                                               options->yard_cols(), 
+                                               options->heights_param());
+      yardInfo->DebugPrint("yardHeights.csv");
       // Use Mist Data for everything
 #if _DEBUG_DATA == 1
 		Mist::sPtrMistDataSource mistDataSource = Mist::MistDataSource::GetNullSource();
