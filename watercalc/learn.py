@@ -30,6 +30,8 @@ class LearningVector:
         print "Feedback: %s" % self.feedback
         print "Vector: %s" % self.vector
 
+forecastLength = 7
+
 def main():
     #RANDOM DATA FOR TESTING
     deviceID = 1
@@ -53,28 +55,28 @@ def doLearning(deviceID, zone, simulatedTime):
         vector.printLV()
 
         #assimilate all feedback since the creation of that learning vector (or since downloading of the schedule directly attributed to that vector?)
-        feedback = getFeedbackForLearningVector(vector)
-        vector.feedback = feedback
-        print "Feedback: %s" % str(feedback)
+        vector.feedback = getFeedbackForLearningVector(vector)
+        print "Feedback: %s" % str(vector.feedback)
 
-        #score the learning vector... and store it in the database.
-        score = scoreVector(feedback, vector)
+        #update score for the learning vector
+        score = scoreVector(vector)
         print "Vector Score: %s" % score
 
-    #create a new learning vetctor... pick new parameters via hill climbing and store in database
+    #create a new learning vector
+    #pick new parameters via hill climbing and store in database
     newVector = createNewLearningVector(numIterations, deviceID, zone, simulatedTime)
     print "~~New Generated Vector~~"
     newVector.printLV()
 
-    #predict the new ET prime
+    #predict the new ET prime for the created vector
+    #TODO: should this be added to the vector metadata?
     ETp = predictCorrectET(newVector)
     print "Computed ETprime: %s" % ETp
 
     #generate a new schedule for the device
     #and store it in the database
-    numDays = 7 #duration of forecast
     #time = current or simulated current time
-    generateNewSchedule(deviceID, zone, ETp, numDays, simulatedTime, newVector.vectorID)
+    generateNewSchedule(deviceID, zone, ETp, forecastLength, simulatedTime, newVector.vectorID)
     print "Generated Schedule"
 
 def getNumIterations(deviceID, zone):
@@ -98,7 +100,7 @@ def getLatLongforDevice(deviceID):
 def getEToForecast(deviceID, createdTime):
     latLong = getLatLongforDevice(deviceID)
     begin = int(createdTime)
-    end = int(time.time()) #createdTime + 10 days
+    end = int(createdTime + forecastLength)
     value = ForecastET.forecastETo(latLong[0], latLong[1], begin, end)
     return value
 
