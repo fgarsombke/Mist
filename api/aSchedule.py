@@ -35,7 +35,7 @@ def getScheduleForDevice(deviceID):
     conf = DBConfig.DBConfig()
     db = conf.connectToLocalConfigDatabase()
     cursor = db.cursor()
-    cursor.execute("SELECT * FROM queuedIrrigations WHERE (queuedIrrigations.deviceID = (%s)) ORDER by zoneNumber ASC", (deviceID))
+    cursor.execute("SELECT * FROM queuedIrrigations WHERE (queuedIrrigations.deviceID = (%s)) AND vectorID=(SELECT max(vectorID) FROM queuedIrrigations) ORDER BY zoneNumber ASC", (deviceID))
     results = cursor.fetchall()
     return results
 
