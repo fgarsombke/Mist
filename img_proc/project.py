@@ -7,30 +7,6 @@ import re
 import sqlite3
 import sys
 
-# Extracts SMS messages and returns them as a list of dictionaries, one per message
-# From the pygooglevoice examples
-# John Nagle, nagle@animats.com
-def extractsms(htmlsms) :
-    msgitems = []
-    #   Extract all conversations by searching for a DIV with an ID at top level.
-    tree = BeautifulSoup.BeautifulSoup(htmlsms)                 # parse HTML into tree
-    conversations = tree.findAll("div",attrs={"id" : True},recursive=False)
-    for conversation in conversations :
-        #       For each conversation, extract each row, which is one SMS message.
-        rows = conversation.findAll(attrs={"class" : "gc-message-sms-row"})
-        #       Additonally get the phone number
-        type = conversation.findAll("span", attrs={"class" : "gc-message-type"})
-        for row in rows :                                                               # for a
-            #   For each row, which is one message, extract all the fields.
-            msgitem = {"id" : conversation["id"]}               # tag this message with convers
-            spans = row.findAll("span",attrs={"class" : True}, recursive=False)
-            for span in spans :                                                 # for all spans
-                cl = span["class"].replace('gc-message-sms-', '')
-                msgitem[cl] = (" ".join(span.findAll(text=True))).strip()       # put text in d
-            msgitems.append(msgitem)                                    # add msg dictionary to
-
-    return msgitems
-
 def poll(img_name, score_range):
     score_re = re.compile("-?[0-9]+")
     num_re = re.compile("[0-9]{9,12}")
@@ -134,6 +110,13 @@ def clean_db():
     conn.commit()
     conn.close()
 
+    
+##
+
+
+
+##
+    
 def main():
     parser = OptionParser(usage = "Usage: %prog -i IMAGE -s SCORE")
     parser.add_option("-i", "--image", 
