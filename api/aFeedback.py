@@ -24,24 +24,20 @@ class aFeedback:
         return 0
 
     def POST(self):
-        #TODO MAKE THIS API WORK WITH GRACZYKS SIMULATOR TO CALL THE LEARNING CODE
         data = web.data()
         data = eval(data)
-        deviceID = str(data['deviceID'])
-        zoneNumber = str(data['zoneNumber'])
-        created = str(data['created'])
-        value = str(data['value'])
-        storeFeedback(deviceID, zoneNumber, created, value)
-        
-        learn.doLearning(deviceID, zoneNumber, currentTime)
-        #print web.input()
-        #print FBdata.deviceID
-        #if FBData.json:
-        #    jsonFeedback = FBdata.json
-        #    fb = json.loads(jsonFeedback)
-        #    for zone in fb:
-        #        for item in zone["feedback"]:
-        #            storeFeedback(FBdata.deviceID, zone["zoneNumber"], item["time"], item["value"])
-        #else:
-        #    storeFeedback(FBdata.deviceID, FBdata.zoneNumber, FBdata.create, FBData.value)
-        #return 0
+        if 'json' in data: #then this is coming from the simulator
+            json = data['json'] 
+            fb = json.loads(json)
+            for zone in fb['array']:
+                for item in zone["feedback"]:
+                    storeFeedback(fb['deviceID'], zone["zoneNumber"], item["time"], item["value"])
+            #run the learning code
+            learn.doLearning(deviceID, zoneNumber, currentTime)
+        else:#this is coming from the iPhone app
+            deviceID = str(data['deviceID'])
+            zoneNumber = str(data['zoneNumber'])
+            created = str(data['created'])
+            value = str(data['value'])
+            storeFeedback(deviceID, zoneNumber, created, value)
+
