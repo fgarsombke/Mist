@@ -8,7 +8,7 @@ from db import DBConfig
 import json
 import collections
 from jsonencode import MyEncoder
-
+from watercalc import learn
 
 def storeFeedback(deviceID, zoneNumber, created, value):
     conf = DBConfig.DBConfig()
@@ -24,6 +24,7 @@ class aFeedback:
         return 0
 
     def POST(self):
+        #TODO MAKE THIS API WORK WITH GRACZYKS SIMULATOR TO CALL THE LEARNING CODE
         data = web.data()
         data = eval(data)
         deviceID = str(data['deviceID'])
@@ -32,6 +33,7 @@ class aFeedback:
         value = str(data['value'])
         storeFeedback(deviceID, zoneNumber, created, value)
         
+        learn.doLearning(deviceID, zoneNumber, currentTime)
         #print web.input()
         #print FBdata.deviceID
         #if FBData.json:

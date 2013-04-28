@@ -10,17 +10,19 @@ from db import DBConfig
 import ForecastET
 
 class LearningVector:
-    def __init__(self, vectorID=0, deviceID=0, zoneNumber=0, ETo=0, score=0, feedback=[], vector=[]):
+    def __init__(self, vectorID=0, deviceID=0, zoneNumber=0, ETo=0, score=0, created=0, feedback=[], vector=[]):
         self.vectorID  = vectorID
         self.deviceID  = deviceID
         self.zoneNumber = zoneNumber
         self.ETo = ETo
         self.score = score
+        self.created = created
         self.feedback = []
         self.vector = []
 
     def printLV(self):
         print "VectorID: %s" % self.vectorID
+        print "Created: %s" % self.created
         print "DeviceID: %s" % self.deviceID
         print "Zone: %s" % self.zoneNumber
         print "ETo: %s" % self.ETo
@@ -28,15 +30,17 @@ class LearningVector:
         print "Feedback: %s" % self.feedback
         print "Vector: %s" % self.vector
 
+
 def main():
-    #how do I choose the current /simulated time 
     deviceID = 1
     zone = 1
     simulatedTime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     simulatedTime = datetime.datetime.strptime(simulatedTime, "%Y-%m-%d %H:%M:%S")
+    doLearning(deviceID, zone, simulatedTime)
+
+def doLearning(deviceID, zone, simulatedTime):
     numIterations = getNumIterations(deviceID, zone)
 
-    #don't execute this code on the first iteration of the algorithm
     if numIterations > 0:
         event = getMostRecentIrrigationEventForDevice(deviceID, zone, simulatedTime)
         identifier = event[5]
@@ -56,7 +60,7 @@ def main():
         print "Vector Score: %s" % score
 
     #create a new learning vetctor... pick new parameters via hill climbing and store in database
-    newVector = createNewLearningVector(numIterations, deviceID, zone)
+    newVector = createNewLearningVector(numIterations, deviceID, zone, simulatedTime)
     print "~~New Generated Vector~~"
     newVector.printLV()
 
@@ -89,12 +93,11 @@ def getLatLongforDevice(deviceID):
     latlong = cursor.fetchone()
     return latlong
 
-def getETo(deviceID):
+def getEToForecast(deviceID, createdTime):
     latLong = getLatLongforDevice(deviceID)
-    #TODO:parameterize the date
-    begin = int(time.time())
-    end = int(time.time())
-    value = ForecastET.forecastETo(latLong[0], latLong[1], 1366768754, 1366779536)
+    begin = int(createdTime)
+    end = int(time.time()) #createdTime + 10 days
+    value = ForecastET.forecastETo(latLong[0], latLong[1], begin, end)
     return value
 
 def generateNewSchedule(deviceID, zone, ETp, numDays, timer, vectorID):
@@ -111,7 +114,6 @@ def createIrrigationEvent(deviceID, zone, timer, duration, vectorID):
     conf = DBConfig.DBConfig()
     db = conf.connectToLocalConfigDatabase()
     cursor = db.cursor()
-    print timer
     sqlString = "INSERT INTO queuedIrrigations (deviceID, zoneNumber, startTime, duration, vectorID) VALUES (%s, %s, '%s', %s, %s)" % (deviceID, zone, timer, duration, vectorID)
     cursor.execute(sqlString)
     db.commit()
@@ -159,9 +161,8 @@ def computeDescent(vector1, vector2):
 #case 0: 1st iteration of algorithm
 #case 1: 2nd iteration of algorithm
 #case 2: 3rd or greater iteration of algorithm
-def createNewLearningVector(iteration, deviceID, zoneNumber):
+def createNewLearningVector(iteration, deviceID, zoneNumber, created):
     newVector = []
-    print iteration
     #pick parameters for new vector based on what iteration of algorithm it is
     if iteration == 0:
         #initially ETp = 0*ETo^2 + 1*ETo + 0
@@ -204,17 +205,15 @@ def createNewLearningVector(iteration, deviceID, zoneNumber):
     #create the LearningVector Object
     new = LearningVector()
     new.vector = newVector
-    new.ETo = getETo(deviceID)
+    new.ETo = getEToForecast(deviceID, created)
     new.deviceID = deviceID
     new.zoneNumber = zoneNumber
+    new.created = created
 
     #store in database
     conf = DBConfig.DBConfig()
     db = conf.connectToLocalConfigDatabase()
     cursor = db.cursor()
-    print new.ETo
-    print deviceID
-    print zoneNumber
     sqlString = "INSERT INTO learning (deviceID, zoneNumber, ETo) VALUES (%s, %s, %s)" % (new.deviceID, new.zoneNumber, new.ETo)
     cursor.execute(sqlString)
 
@@ -261,7 +260,6 @@ def dateToValue(date):
     return 2.0
 
 def scoreVector(feedback, vector):
-    #vector.printLV()
     #scoring function
     summation = 0
     bSummation = 0
@@ -306,8 +304,7 @@ def getLearningVector(vectorID):
     cursor.close()
 
     #create the Learning Vector object (no feedback or vectors yet)
-    print v
-    lv = LearningVector(v[0], v[1], v[2], v[3], v[4])
+    lv = LearningVector(v[0], v[1], v[2], v[3], v[4], v[5])
 
     #assimilate the parameter vector from the vectors table
     for vector in vectors:
