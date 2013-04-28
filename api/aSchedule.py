@@ -33,11 +33,11 @@ def queueIrrigation(event):
 
 def getScheduleForDevice(deviceID):
     conf = DBConfig.DBConfig()
-    db = conf.connectToLocalConfigDatabase()    
+    db = conf.connectToLocalConfigDatabase()
     cursor = db.cursor()
     cursor.execute("SELECT * FROM queuedIrrigations WHERE (queuedIrrigations.deviceID = (%s)) ORDER by zoneNumber ASC", (deviceID))
     results = cursor.fetchall()
-    return results  
+    return results
 
 class aSchedule:
     #GET API FOR SCHEDULE

@@ -30,8 +30,8 @@ class LearningVector:
         print "Feedback: %s" % self.feedback
         print "Vector: %s" % self.vector
 
-
 def main():
+    #RANDOM DATA FOR TESTING
     deviceID = 1
     zone = 1
     simulatedTime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
@@ -39,6 +39,7 @@ def main():
     doLearning(deviceID, zone, simulatedTime)
 
 def doLearning(deviceID, zone, simulatedTime):
+    #determine state
     numIterations = getNumIterations(deviceID, zone)
 
     if numIterations > 0:
@@ -53,6 +54,7 @@ def doLearning(deviceID, zone, simulatedTime):
 
         #assimilate all feedback since the creation of that learning vector (or since downloading of the schedule directly attributed to that vector?)
         feedback = getFeedbackForLearningVector(vector)
+        vector.feedback = feedback
         print "Feedback: %s" % str(feedback)
 
         #score the learning vector... and store it in the database.
@@ -256,14 +258,14 @@ def getLastXLearningVectors(deviceID, number):
     return lastVectors
 
 def dateToValue(date):
-    #turn a date into a value to go into the scoring function
+    #TODO: turn a date into a value to go into the scoring function
     return 2.0
 
-def scoreVector(feedback, vector):
+def scoreVector(vector):
     #scoring function
     summation = 0
     bSummation = 0
-    for each in feedback:
+    for each in vector.feedback:
        timeValue = dateToValue(each[1])
        summation += math.pow(timeValue, 1/2)*abs(each[2]) 
        bSummation += math.pow(timeValue, 1/2)
