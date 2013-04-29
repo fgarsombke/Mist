@@ -2,10 +2,11 @@
 
 import BeautifulSoup
 from googlevoice import Voice
-from optparse import OptionParser
+import argparse
 import re
 import sqlite3
 import sys
+import img_db
 
 def poll(img_name, score_range):
     score_re = re.compile("-?[0-9]+")
@@ -75,69 +76,18 @@ def poll(img_name, score_range):
     conn.commit()
     conn.close()
 
-def init_db():
-    # connect to the db
-    conn = sqlite3.connect("temp.db")
-    cursor = conn.cursor()
-
-    # create tables, we have to create temporary columns 
-    user_score_table = "CREATE TABLE IF NOT EXISTS users(tempUser integer)"
-    cursor.execute(user_score_table)
-
-    image_score_table = "CREATE TABLE IF NOT EXISTS images(tempImage integer)"
-    cursor.execute(image_score_table)
-
-    # commit and close
-    conn.commit()
-    conn.close()
-
-def clean_db():
-    # connect to the db
-    conn = sqlite3.connect("temp.db")
-    cursor = conn.cursor()
-
-    # drop temporary columns
-    try:
-        cursor.execute("ALTER TABLE users DROP COLUMN tempUser")
-    except:
-        pass
-    try:
-        cursor.execute("ALTER TABLE images DROP COLUMN tempImage")
-    except:
-        pass
-
-    # commit changes and close the db
-    conn.commit()
-    conn.close()
-
-    
-##
-
-
-
-##
     
 def main():
-    parser = OptionParser(usage = "Usage: %prog -i IMAGE -s SCORE")
-    parser.add_option("-i", "--image", 
-            dest="image", 
-            metavar="IMAGE",
-            help="IMAGE is the name of the image to be scored",)
-    parser.add_option("-s", "--score", 
-            dest="score", 
-            default="10",
-            metavar="SCORE",
-            help="defines scoring range [-SCORE SCORE], defaults to 10",)
-    (opts, args) = parser.parse_args()
-
-    if opts.image is None:
-        print "ERROR: no image name specified\n"
-        parser.print_help()
-        exit(-1)
-
-    init_db() # Initializes the db
-    poll(opts.image, int(opts.score)) # Polls gvoice and stores scores
-    clean_db() # Cleans the db
+    parser = argparse.ArgumentParser(description='Gather image processing information.')
+    parser.add_argument('img_dir', type=file, nargs='1', metavar='IMG_DIR',
+                        help='Directory where images to be rated are stored.')
+    parser.add_argument('image', type=str, nargs="1",
+                      help='Current Image to be rated.')
+                      
+    args = parser.parse_args()
+    
+   
+    #poll(opts.image, int(opts.score)) # Polls gvoice and stores scores
 
 if __name__ == '__main__':
     main()

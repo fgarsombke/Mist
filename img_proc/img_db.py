@@ -1,7 +1,6 @@
 import sqlite3 as sql
 import sys
 
-
 class ImgDB:
     ImgTableName = 'images'
     ImgIDColName = 'img_id'
@@ -15,11 +14,20 @@ class ImgDB:
     
     UserTableName = 'users'
     UserIdColName = 'user_id'
-    PhoneNumColName = 'phone_num'
-    ScoreColName = 'user_score'
+    ScoreAvgColName = 'score_avg'
+    ScoreVarColName = 'score_var'
+    LastMsgColName = 'last_msg'
+     
+    UserTableCols = UserIdColName + ' INTEGER, ' + ScoreAvgColName + ' REAL, ' + \
+        ScoreVarColName + ' REAL, ' + LastMsgColName + ' TEXT'         
     
-    UserTableCols = UserIdColName + ' INTEGER, ' + PhoneNumColName + \
-        ' TEXT, ' + ScoreColName + ' REAL, ' + ImgIDColName + ' INTEGER, ' + \
+    ScoresTableName = 'user_scores'
+    PhoneNumColName = 'phone_num'
+    ScoreColName = 'score'
+    
+    ScoresTableCols = UserIdColName + ' INTEGER, ' + PhoneNumColName + \
+        ' TEXT, ' + ImgIDColName + ' INTEGER, ' + ScoreColName + ' REAL, ' + \
+        'FOREIGN KEY(' + UserIdColName + ') REFERENCES ' + UserTableName + '(' + UserIdColName + ')' + \
         'FOREIGN KEY(' + ImgIDColName + ') REFERENCES ' + ImgTableName + '(' + ImgIDColName + ')'
     
     def get_cursor():
@@ -36,8 +44,14 @@ class ImgDB:
         crUsrTbl = 'CREATE TABLE IF NOT EXISTS ' + self.UserTableName + '(' + self.UserTableCols + ')'
         cur.execute(crUsrTbl)
         
+        # Create scores table
+        crScrTbl = 'CREATE TABLE IF NOT EXISTS ' + self.ScoresTableName + '(' + self.ScoresTableCols + ')'
+        cur.execute(crScrTbl)
+        
+    
+        
     def rebuild_db(self):
-        """Repopulates the DB using the ."""
+        """Repopulates the DB using the gvoice account and our csv scores."""
         
     def __enter__(self):
         return self
