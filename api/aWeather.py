@@ -94,6 +94,7 @@ def findNearestClimateStation(latitude, longitude):
 def forecastAPI(latitude, longitude, thetime, interval):
    apiKey = "6d838d5df77d3f8650aee0d173fcad4b"
    posix = time.mktime(thetime.timetuple())
+   print posix
    url = "http://api.forecast.io/forecast/%s/%s,%s,%s" % (apiKey, latitude, longitude, int(posix))
    req = urllib2.Request(url)
    response = ""
