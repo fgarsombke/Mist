@@ -47,7 +47,7 @@ def doLearning(deviceID, zone, simulatedTime):
     if numIterations > 0:
         event = getMostRecentIrrigationEventForDevice(deviceID, zone, simulatedTime)
         vectorID = event[5]
-        print "LearningID: %s (For most recent irrigation event for DeviceID: %s)" % (identifier, deviceID)
+        print "LearningID: %s (For most recent irrigation event for DeviceID: %s)" % (vectorID, deviceID)
 
         #grab the learning vector for that irrigation event
         vector = getLearningVector(vectorID)

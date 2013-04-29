@@ -124,7 +124,7 @@ def getWeatherData(latitude, longitude, begin, end):
     i = begintime.hour
     while i < 24:
         #call API, hour resolution
-        aTime = begintime + timedelta(hours=i)
+        aTime = begintime + timedelta(hours=(i - begintime.hour))
         results = forecastAPI(latitude, longitude, aTime, 'hourly')
         dataRes = results['data']
         dataDict['beginHours'].append(dataRes[i])
