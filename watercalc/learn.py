@@ -46,11 +46,11 @@ def doLearning(deviceID, zone, simulatedTime):
 
     if numIterations > 0:
         event = getMostRecentIrrigationEventForDevice(deviceID, zone, simulatedTime)
-        identifier = event[5]
+        vectorID = event[5]
         print "LearningID: %s (For most recent irrigation event for DeviceID: %s)" % (identifier, deviceID)
 
         #grab the learning vector for that irrigation event
-        vector = getLearningVector(identifier)
+        vector = getLearningVector(vectorID)
         print "~~Learning Vector~~"
         vector.printLV()
 
@@ -286,7 +286,7 @@ def getFeedbackForLearningVector(vector):
     conf = DBConfig.DBConfig()
     db = conf.connectToLocalConfigDatabase()
     cursor = db.cursor()
-    sqlString = """SELECT * FROM executedIrrigations WHERE vectorID = '%s' ORDER BY startTime ASC""" % vector.vectorID
+    sqlString = """SELECT * FROM queuedIrrigations WHERE vectorID = '%s' ORDER BY startTime ASC""" % vector.vectorID
     cursor.execute(sqlString)
     earliest = cursor.fetchone()
     sqlString = """SELECT * FROM feedback WHERE deviceID = '%s' AND created > '%s'""" % (earliest[1], earliest[2])
@@ -319,7 +319,7 @@ def getMostRecentIrrigationEventForDevice(deviceID, zone, time):
     conf = DBConfig.DBConfig()
     db = conf.connectToLocalConfigDatabase()
     cursor = db.cursor()
-    sqlString = "SELECT * FROM executedIrrigations WHERE deviceID = '%s' AND zoneNumber = '%s' AND startTime < '%s' ORDER BY startTime DESC" % (deviceID, zone, time)
+    sqlString = "SELECT * FROM queuedIrrigations WHERE deviceID = '%s' AND zoneNumber = '%s' AND startTime < '%s' ORDER BY startTime DESC" % (deviceID, zone, time)
     cursor.execute(sqlString)
     event = cursor.fetchone()
     cursor.close()
