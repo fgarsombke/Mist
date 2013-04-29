@@ -30,6 +30,9 @@ class LearningVector:
         print "Feedback: %s" % self.feedback
         print "Vector: %s" % self.vector
 
+#~~~~~~~~~
+#CONSTANTS
+#~~~~~~~~~
 forecastLength = 7
 
 def main():
