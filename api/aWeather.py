@@ -94,15 +94,14 @@ def findNearestClimateStation(latitude, longitude):
 def forecastAPI(latitude, longitude, thetime, interval):
    apiKey = "6d838d5df77d3f8650aee0d173fcad4b"
    posix = time.mktime(thetime.timetuple())
-   print posix
    url = "http://api.forecast.io/forecast/%s/%s,%s,%s" % (apiKey, latitude, longitude, int(posix))
    req = urllib2.Request(url)
+   print url
    response = ""
    try:
        response = json.loads(urllib2.urlopen(req).read())
    except urllib2.URLError, e:
        print e
-   print response
    return response[interval]
 
 def getWeatherData(latitude, longitude, begin, end):
