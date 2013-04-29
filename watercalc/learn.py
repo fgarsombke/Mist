@@ -30,6 +30,9 @@ class LearningVector:
         print "Feedback: %s" % self.feedback
         print "Vector: %s" % self.vector
 
+#~~~~~~~~~
+#CONSTANTS
+#~~~~~~~~~
 forecastLength = 7
 
 def main():
@@ -47,7 +50,7 @@ def doLearning(deviceID, zone, simulatedTime):
     if numIterations > 0:
         event = getMostRecentIrrigationEventForDevice(deviceID, zone, simulatedTime)
         vectorID = event[5]
-        print "LearningID: %s (For most recent irrigation event for DeviceID: %s)" % (identifier, deviceID)
+        print "LearningID: %s (For most recent irrigation event for DeviceID: %s)" % (vectorID, deviceID)
 
         #grab the learning vector for that irrigation event
         vector = getLearningVector(vectorID)
