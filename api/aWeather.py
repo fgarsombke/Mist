@@ -134,7 +134,6 @@ def getWeatherData(latitude, longitude, begin, end):
     m = begintime.month
     y = begintime.year
     while i < endtime.day or m < endtime.month or y < endtime.year:
-        print "call"
         #call API, day resolution
         aTime = begintime + timedelta(days=i)
         results = forecastAPI(latitude, longitude, aTime, 'daily')
@@ -153,7 +152,7 @@ def getWeatherData(latitude, longitude, begin, end):
     i = 0
     while i < endtime.hour:
         #call API, hours resolution
-        aTime = begintime - timedelta(hours=i)
+        aTime = endtime - timedelta(hours=i)
         results = forecastAPI(latitude, longitude, aTime, 'hourly')
         dataRes = results['data']
         dataDict['endHours'].append(dataRes[i])
