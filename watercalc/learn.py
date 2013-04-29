@@ -99,9 +99,10 @@ def getLatLongforDevice(deviceID):
 
 def getEToForecast(deviceID, createdTime):
     latLong = getLatLongforDevice(deviceID)
-    begin = int(createdTime)
-    end = int(createdTime + forecastLength)
-    value = ForecastET.forecastETo(latLong[0], latLong[1], begin, end)
+    print createdTime
+    begin = time.mktime(createdTime.timetuple())
+    end = time.mktime((createdTime + datetime.timedelta(days=forecastLength)).timetuple())
+    value = ForecastET.forecastETo(latLong[0], latLong[1], int(begin), int(end))
     return value
 
 def generateNewSchedule(deviceID, zone, ETp, numDays, timer, vectorID):

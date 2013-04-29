@@ -101,6 +101,7 @@ def forecastAPI(latitude, longitude, thetime, interval):
        response = json.loads(urllib2.urlopen(req).read())
    except urllib2.URLError, e:
        print e
+   print response
    return response[interval]
 
 def getWeatherData(latitude, longitude, begin, end):
