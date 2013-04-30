@@ -7,6 +7,7 @@ import MySQLdb
 from db import DBConfig
 import json
 import collections
+import datetime
 from jsonencode import MyEncoder
 from watercalc import learn
 
@@ -26,14 +27,21 @@ class aFeedback:
     def POST(self):
         data = web.data()
         data = eval(data)
-        if 'json' in data: #then this is coming from the simulator
-            json = data['json'] 
-            fb = json.loads(json)
-            for zone in fb['array']:
-                for item in zone["feedback"]:
-                    storeFeedback(fb['deviceID'], zone["zoneNumber"], item["time"], item["value"])
-            #run the learning code
-            learn.doLearning(deviceID, zoneNumber, currentTime)
+        sim = web.input()
+        print data['deviceID']
+        if sim.simulator:  #then this is coming from the simulator
+            if 'feedback' in data:
+                for item in data["feedback"]:
+                    print item["zoneNumber"]
+                    print item["time"]
+                    print item["value"]
+                    storeFeedback(data['deviceID'], item["zoneNumber"], item["time"], item["value"])
+            else:#first call ever from simulator
+                print "empty feedback"
+            print data['endTime']
+            endTime = datetime.datetime.fromtimestamp(data['endTime'])
+            print endTime
+            learn.doLearning(data['deviceID'], 1, endTime)
         else:#this is coming from the iPhone app
             deviceID = str(data['deviceID'])
             zoneNumber = str(data['zoneNumber'])
