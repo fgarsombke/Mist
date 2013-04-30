@@ -26,11 +26,11 @@ class aFeedback:
     def POST(self):
         data = web.data()
         data = eval(data)
+        sim = web.input()
         print data['deviceID']
-        if 'json' in data: #then this is coming from the simulator
-            json = data['json'] 
-            fb = json.loads(json)
-            for zone in fb['array']:
+        if sim.simulator:  #then this is coming from the simulator
+            for each in data:
+                print each
                 for item in zone["feedback"]:
                     storeFeedback(fb['deviceID'], zone["zoneNumber"], item["time"], item["value"])
             #run the learning code
