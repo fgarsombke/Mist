@@ -46,7 +46,7 @@ def main():
 def doLearning(deviceID, zone, simulatedTime):
     #determine state
     numIterations = getNumIterations(deviceID, zone)
-
+    print simulatedTime
     if numIterations > 0:
         event = getMostRecentIrrigationEventForDevice(deviceID, zone, simulatedTime)
         vectorID = event[5]
