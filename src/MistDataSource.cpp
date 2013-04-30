@@ -80,7 +80,7 @@ namespace Mist {
       std::vector<std::string> headers;
 
       std::string addDeviceStr;
-      size_t deviceID;
+      size_t deviceID = 0;
 
       std::cout << "ADD DEVICE:\n" << addDeviceStr << std::endl;
 

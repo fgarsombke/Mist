@@ -14,7 +14,7 @@ typedef std::unique_ptr<YardInfo> uPtrYardInfo;
 typedef bnu::unbounded_array<SprinklerLocation> SprinklerList_t;
 typedef bnu::unbounded_array<size_t> CellPerZoneList_t;
 typedef bnu::unbounded_array<SprinklerMask_t> SprinklerMaskList_t;
-typedef bnu::scalar_matrix<double> RainMask_t;
+typedef bnu::matrix<double> RainMask_t;
 
 class YardInfo
 {

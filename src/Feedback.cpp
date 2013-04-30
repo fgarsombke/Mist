@@ -63,7 +63,7 @@ namespace Mist {
       }
 
       boost::property_tree::json_parser::write_json(ss, mTree);
-      return std::regex_replace(ss.str(), exp, "$1");
+      return std::regex_replace(ss.str(), exp, std::string("$1"));
    }
 
 }

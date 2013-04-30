@@ -9,12 +9,12 @@
 //#include <mmsystem.h>
 
 // In Milliseconds
-inline unsigned int GetSystemTimeMS() 
+extern inline unsigned int GetSystemTimeMS() 
 {
    return GetTickCount(); //timeGetTime();
 }
 
-inline int SleepForMS(int time_ms) 
+extern inline int SleepForMS(int time_ms) 
 { 
    return SleepEx(time_ms, false);
 }
@@ -23,7 +23,7 @@ inline int SleepForMS(int time_ms)
 #include <time.h>
 
 // In Milliseconds
-inline unsigned int GetSystemTimeMS() 
+extern inline unsigned int GetSystemTimeMS() 
 {
    struct timespec ts;
    if(clock_gettime(CLOCK_MONOTONIC,&ts) != 0) {
@@ -33,7 +33,7 @@ inline unsigned int GetSystemTimeMS()
    return ts.tv_sec*1000 + ts.tv_nsec/1000000;
 }
 
-inline int SleepForMS(int time_ms) 
+extern inline int SleepForMS(int time_ms) 
 {  
    struct timespec tim; 
    int sleepSec = (time_ms)/1000; 
@@ -48,7 +48,7 @@ inline int SleepForMS(int time_ms)
 #endif
 
 
-inline unsigned long long GetEpochTime(pt::ptime time)
+extern inline time_t GetEpochTime(pt::ptime time)
 {
    tm timeTM = pt::to_tm(time);
    time_t tt = mktime(&timeTM);

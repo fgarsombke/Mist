@@ -21,7 +21,6 @@ namespace LawnGeneratorInternal {
    // Special File Names
    //
    const std::string ConfigFilename = "config.json";
-   const std::string HeightsFileName = "heights.csv";
 }
 
 unique_ptr<YardInfo> LawnGenerator::Generate(GeoLocale locale, 
@@ -58,7 +57,6 @@ bnu::matrix<YardCellInfo> LawnGenerator::GenerateCells(size_t rows,
    // Generate the heights
    bnu::matrix<double> heights = hFunc( heightParams, rows, cols);
 
-   //TODO URGENT: Compute actual zone!!!!
    for (size_t i = 0; i < rows; ++i) {
       for (size_t j = 0; j < cols; ++j) {
          double minDistance = std::numeric_limits<double>::infinity();
@@ -101,22 +99,41 @@ uPtrYardInfo LawnGenerator::LoadYard(std::string configDir)
    size_t rows = configTree.get<size_t>("rows");
    size_t cols = configTree.get<size_t>("cols");
 
-   std::string heightsFileName = configTree.get_value("heightsFile", "");
-   std::string rainMaskFileName = configTree.get_value("rainMaskFile", "");
+   std::string heightsFileName(configTree.get("heightsFile", ""));
+   std::string rainMaskFileName(configTree.get("rainMaskFile", ""));
+
+   ptree sprinklersTree = configTree.get_child("sprinklers");
+
+   std::string heightsPath;
+   FillHeightFunc_t fillFunc;
 
 
    if (heightsFileName.length() > 0) {
-
+      fillFunc = FillMatrixFromFile;
+      heightsPath = (configPath / fs::path(heightsFileName)).string();
+   } else {
+      fillFunc = FillHeightsPerlin;
    }
    
-   
-   std::string heightsPath((configPath / fs::path(heightsFileName)).string());
-   SprinklerList_t sprinklers;
-   SprinklerMaskList_t sprinklerMasks;
    RainMask_t rainMask;
+   if (rainMaskFileName.length() > 0) {
+      rainMask = FillMatrixFromFile((configPath / fs::path(rainMaskFileName)).string(), rows, cols);
+   } else {
+      rainMask = GenerateDefaultRainMask(rows, cols);
+   }
+
+   SprinklerList_t sprinklers(0);
+   size_t sprinklerNum = 0;
+   for (const ptree::value_type &t : sprinklersTree) {
+      
+
+      ++sprinklerNum;
+   }
+
+   SprinklerMaskList_t sprinklerMasks;
 
    bnu::matrix<YardCellInfo> yardCells =
-      GenerateCells(rows, cols, sprinklers, ""/*heightsPath*/, FillMatrixFromFile);
+      GenerateCells(rows, cols, sprinklers, heightsPath, fillFunc);
 
    return unique_ptr<YardInfo>( 
       new YardInfo(GeoLocale(latitude, longitude), yardCells, sprinklers, sprinklerMasks, rainMask)
@@ -134,6 +151,11 @@ SprinklerList_t LawnGenerator::GenerateDefaultSprinklerList(size_t rows, size_t 
    sprinklers[6] = sprinklers[7] = SprinklerLocation(Sprinkler(1, SprayPattern::Square, 20), rows-1,cols-1);
 
    return sprinklers;
+}
+
+RainMask_t LawnGenerator::GenerateDefaultRainMask(size_t rows, size_t cols)
+{
+   return bnu::matrix<double>(rows, cols, 1.0);
 }
 
 bnu::matrix<double> LawnGenerator::FillMatrixFromFile(std::string fileName, size_t rows, size_t cols) {
