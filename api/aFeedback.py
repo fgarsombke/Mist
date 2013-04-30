@@ -37,6 +37,7 @@ class aFeedback:
                     storeFeedback(data['deviceID'], item["zoneNumber"], item["time"], item["value"])
             else:#first call ever from simulator
                 print "empty feedback"
+            print data['endTime']
             learn.doLearning(data['deviceID'], 1, data['endTime'])
         else:#this is coming from the iPhone app
             deviceID = str(data['deviceID'])
