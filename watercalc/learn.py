@@ -39,13 +39,13 @@ def main():
     #RANDOM DATA FOR TESTING
     deviceID = 1
     zone = 1
-    simulatedTime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-    simulatedTime = datetime.datetime.strptime(simulatedTime, "%Y-%m-%d %H:%M:%S")
+    simulatedTime = 13674483320 
     doLearning(deviceID, zone, simulatedTime)
 
 def doLearning(deviceID, zone, simulatedTime):
     #determine state
     numIterations = getNumIterations(deviceID, zone)
+    simulatedTime = time.mktime(simulatedTime.timetuple())
     print simulatedTime
     if numIterations > 0:
         event = getMostRecentIrrigationEventForDevice(deviceID, zone, simulatedTime)
