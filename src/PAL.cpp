@@ -44,4 +44,13 @@ inline int SleepForMS(int time_ms)
    return nanosleep(&tim, NULL);
 }
 
+
 #endif
+
+
+inline unsigned long long GetEpochTime(pt::ptime time)
+{
+   tm timeTM = pt::to_tm(time);
+   time_t tt = mktime(&timeTM);
+   return tt;
+}

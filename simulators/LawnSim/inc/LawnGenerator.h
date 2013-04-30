@@ -6,27 +6,33 @@
 
 namespace Mist { namespace LawnSim {
 
-typedef void (*FillHeightFunc_t)(bnu::matrix<double> &heights, std::string param);
+typedef bnu::matrix<double> (*FillHeightFunc_t)(std::string param, size_t rows, size_t cols);
 
 class LawnGenerator {
 public:
-   LawnGenerator() {
-      
-   }
+   // Loads a rectangular yard from the file
+   static uPtrYardInfo LoadYard(std::string configDir);
 
    // Generates a square yard
-   std::unique_ptr<YardInfo> Generate(GeoLocale locale, size_t rows, size_t cols, std::string heightParams = "") const;
+   static uPtrYardInfo Generate(GeoLocale locale, size_t rows, size_t cols, std::string heightParams = "");
 
 private:
-   inline bnu::matrix<YardCellInfo> GenerateCells(size_t rows, 
-                                                  size_t cols,
-                                                  const SprinklersList_t &sprinklers,
-                                                  std::string heightParams,
-                                                  FillHeightFunc_t hFunc = FillHeightsDiagonally) const;
+   LawnGenerator();
+   LawnGenerator(const LawnGenerator& other);
+   LawnGenerator& operator=(LawnGenerator other);
 
-   static void FillHeightsDiagonally(bnu::matrix<double> &heights, std::string param);
-   static void FillHeightsPerlin(bnu::matrix<double> &heights, std::string param);
-   static void FillHeightsFromFile(bnu::matrix<double> &heights, std::string param);
+   static bnu::matrix<YardCellInfo> GenerateCells(size_t rows, 
+                                                  size_t cols,
+                                                  const SprinklerList_t &sprinklers,
+                                                  std::string heightParams,
+                                                  FillHeightFunc_t hFunc = FillHeightsDiagonally);
+
+
+   static bnu::matrix<double>  FillMatrixFromFile(std::string fileName, size_t rows, size_t cols);
+   static SprinklerList_t GenerateDefaultSprinklerList(size_t rows, size_t cols);
+
+   static bnu::matrix<double> FillHeightsDiagonally(std::string param, size_t rows, size_t cols);
+   static bnu::matrix<double> FillHeightsPerlin(std::string param, size_t rows, size_t cols);
 };
 
 }}

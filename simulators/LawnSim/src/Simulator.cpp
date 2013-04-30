@@ -165,7 +165,7 @@ inline void Simulator::ProcessFeedback(pt::time_period tickPeriod,
 													const ZoneFeedback_t &zoneFeedback) const
 {
 	std::lock_guard<std::mutex> lock(process_controller_lock_);
-	feedback_sink_->SubmitFeedback(controller_->id(), zoneFeedback);
+	feedback_sink_->SubmitFeedback(controller_->id(), tickPeriod.end(), zoneFeedback);
 }
 
 inline void  Simulator::ProcessWait()

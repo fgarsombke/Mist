@@ -11,7 +11,7 @@ namespace MistScheduleInteral {
    extern const char* START_LABEL;
    extern const char* END_LABEL;
 
-	typedef double json_time_parse_t;
+	typedef time_t json_time_parse_t;
 }
 
 class ZoneInfo 

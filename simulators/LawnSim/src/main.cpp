@@ -11,6 +11,8 @@
 
 #include "Controller.h"
 
+#include "PAL.h"
+
 using namespace Mist::LawnSim;
 using namespace std;
 namespace dt = boost::date_time;
@@ -23,6 +25,8 @@ int main(int argc, char * argv[])
    try {
       // Speed up debugging io
       ios_base::sync_with_stdio(false);
+      // Seed
+
 
       std::unique_ptr<SimOptions> options = nullptr;
       
@@ -33,10 +37,18 @@ int main(int argc, char * argv[])
          return 1;
       }
 
-      auto yardInfo = LawnGenerator().Generate(options->geo_locale(), 
+
+      uPtrYardInfo yardInfo;
+      
+      if (options->config_dir().length() != 0) {
+         yardInfo = LawnGenerator::Generate(options->geo_locale(), 
                                                options->yard_rows(), 
-                                               options->yard_cols(), 
-                                               options->heights_param());
+                                               options->yard_cols(), "");
+      } else {
+         yardInfo = LawnGenerator::LoadYard(options->config_dir());
+      }
+
+      
       yardInfo->DebugPrint("yardHeights.csv");
       // Use Mist Data for everything
 #if _DEBUG_DATA == 1

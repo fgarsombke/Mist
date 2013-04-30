@@ -48,7 +48,7 @@ private:
    const GeoLocale locale_;
 
    // The sprinklers in the yard, along with their positions in the yard
-   const SprinklersList_t sprinklers_;
+   const SprinklerList_t sprinklers_;
 
    // Cells in the yard
    bnu::matrix<YardCell> cells_;

@@ -1,12 +1,13 @@
 #include "MistStd.h"
 
 #include "Feedback.h"
-
+#include "PAL.h"
 
 namespace Mist {
 
    namespace FeedbackInternal {
       const char* DEVICE_ID_LABEL = "deviceID";
+      const char* INTERVAL_END_LABEL = "endTime";
       const char* FEEDBACK_LABEL = "feedback";
       const char* ZONE_NUM_LABEL = "zoneNumber";
       const char* TIME_LABEL = "time";
@@ -16,7 +17,9 @@ namespace Mist {
       std::regex exp("\"(null|true|false|[0-9]+(\\.[0-9]+)?)\"");
    }
 
-   const std::string Feedback::PackFeedbackJson(const ZoneFeedback_t &feedbackByZone, product_id_t deviceID)
+   const std::string Feedback::PackFeedbackJson(const ZoneFeedback_t &feedbackByZone, 
+                                                product_id_t deviceID,
+                                                pt::ptime intervalEndTime)
    {
       using namespace FeedbackInternal;
       using boost::property_tree::ptree;
@@ -28,6 +31,8 @@ namespace Mist {
 
       mTree.put<product_id_t>(DEVICE_ID_LABEL, deviceID);
 
+      intervalEndTime.time_of_day().total_seconds();
+      mTree.put<time_t>(INTERVAL_END_LABEL, GetEpochTime(intervalEndTime));
 
       for (size_t z = 0; z < feedbackByZone.size(); ++z) {
          FeedbackList_t zoneFeedback = feedbackByZone[z];

@@ -14,9 +14,10 @@ namespace MistScheduleInteral{
 
 pt::ptime MistSchedule::LongTimeToPTime(MistScheduleInteral::json_time_parse_t seconds) 
 {
-   const pt::ptime epoch(boost::gregorian::date(1970, 1, 1));
+   //const pt::ptime epoch(boost::gregorian::date(1970, 1, 1));
+   //return epoch + pt::seconds((long)seconds);
 
-   return epoch + pt::seconds((long)seconds);
+   return pt::from_time_t(seconds);
 }
 
 MistSchedule MistSchedule::CreateFromPTree(boost::property_tree::ptree &scheduleTree)

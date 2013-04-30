@@ -26,7 +26,7 @@ public:
 
    size_t yard_rows() const { return yard_rows_; }
    size_t yard_cols() const { return yard_cols_; }
-   std::string heights_param() const { return heights_param_; }
+   std::string config_dir() const { return config_dir_; }
 
 private:
    // Ref class only
@@ -50,7 +50,7 @@ private:
 
    bool generate_random_;
 
-   std::string config_file_path_;
+   std::string config_dir_;
 };
 
 }}

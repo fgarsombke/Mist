@@ -1,61 +1,62 @@
 #include "LawnSimStd.h"
 
-#include<numeric>
+#include <numeric>
 #include <random>
 #include <math.h>
 
+#include "boost/optional.hpp"
+
 #include "LawnGenerator.h"
 #include "PerlinNoiseGenerator.h"
+
+
 
 using std::unique_ptr;
 
 // TODO: We should probably use something from here:
 //    http://lodev.org/cgtutor/randomnoise.html
-namespace Mist {
-namespace LawnSim {
+namespace Mist { namespace LawnSim {
+
+namespace LawnGeneratorInternal {
+   // Special File Names
+   //
+   const std::string ConfigFilename = "config.json";
+   const std::string HeightsFileName = "heights.csv";
+}
 
 unique_ptr<YardInfo> LawnGenerator::Generate(GeoLocale locale, 
                                              size_t rows, 
                                              size_t cols, 
-                                             std::string heightParams) const 
+                                             std::string heightParams) 
 {
    if (rows == 0 || cols == 0) {
       throw std::invalid_argument("rows and cols must both be nonzero.");
    }
 
-   // Place 8 sprinklers at each corner
-   SprinklersList_t sprinklers = SprinklersList_t(8);
-   sprinklers[0] = sprinklers[1] = SprinklerLocation(Sprinkler(1, SprayPattern::Square, 20), 0,0);
-   sprinklers[2] = sprinklers[3] = SprinklerLocation(Sprinkler(1, SprayPattern::Square, 20), 0,cols-1);
-   sprinklers[4] = sprinklers[5] = SprinklerLocation(Sprinkler(1, SprayPattern::Square, 20), rows-1,0);
-   sprinklers[6] = sprinklers[7] = SprinklerLocation(Sprinkler(1, SprayPattern::Square, 20), rows-1,cols-1);
+   SprinklerList_t sprinklers = GenerateDefaultSprinklerList(rows, cols);
 
-   CellPerZoneList_t cellsPerZone = CellPerZoneList_t(8);
-
-   SprinklerMaskList_t sprinklerMasks( sprinklers.size());
+   SprinklerMaskList_t sprinklerMasks(sprinklers.size());
    for (size_t i = 0; i < sprinklers.size(); ++i) {
       sprinklerMasks[i] = sprinklers[i].GenerateSprinklerMask(rows, cols);
    }
 
    return unique_ptr<YardInfo>(
-      new YardInfo(locale, GenerateCells(rows, cols, sprinklers, heightParams, FillHeightsFromFile)
+      new YardInfo(locale, GenerateCells(rows, cols, sprinklers, heightParams, FillHeightsPerlin)
       , sprinklers, sprinklerMasks, RainMask_t(rows, cols, 1.0))
    );
 }
 
 
-inline bnu::matrix<YardCellInfo> LawnGenerator::GenerateCells(size_t rows, 
+bnu::matrix<YardCellInfo> LawnGenerator::GenerateCells(size_t rows, 
                                                   size_t cols, 
-                                                  const SprinklersList_t &sprinklers,
+                                                  const SprinklerList_t &sprinklers,
                                                   std::string heightParams,
-                                                  FillHeightFunc_t hFunc) const 
+                                                  FillHeightFunc_t hFunc)
 {
    bnu::matrix<YardCellInfo> cells(rows, cols, YardCellInfo());
    
-   bnu::matrix<double> heights(rows, cols);
-
    // Generate the heights
-   hFunc(heights, heightParams);
+   bnu::matrix<double> heights = hFunc( heightParams, rows, cols);
 
    //TODO URGENT: Compute actual zone!!!!
    for (size_t i = 0; i < rows; ++i) {
@@ -79,32 +80,91 @@ inline bnu::matrix<YardCellInfo> LawnGenerator::GenerateCells(size_t rows,
    return cells;
 }
 
-void LawnGenerator::FillHeightsFromFile(bnu::matrix<double> &heights, std::string param) {
-   std::ifstream heightsFile(param);
+uPtrYardInfo LawnGenerator::LoadYard(std::string configDir) 
+{
+   // We load the yard from various files in the directory
+   using namespace LawnGeneratorInternal;
+
+   // First read in the config information directly
+   using namespace boost::property_tree;
+   namespace fs = boost::filesystem;
+
+   fs::path configPath(configDir);
+   std::string configFileName((configPath / fs::path(ConfigFilename)).string());
+
+   ptree configTree;
+   read_json(configFileName, configTree);
+
+   double latitude = configTree.get<double>("latitude");
+   double longitude = configTree.get<double>("longitude");
+
+   size_t rows = configTree.get<size_t>("rows");
+   size_t cols = configTree.get<size_t>("cols");
+
+   //boost::optional<std::string> heightsFileName = configTree.get_value_optional<std::string>("heightsFile");
+   //boost::optional<std::string> rainMasFileName = configTree.get_value_optional<std::string>("rainMaskFile");
+
+
+   //if (heightsFileName.is_initialized()) {
+
+   //}
+   //std::string heightsPath((configPath / fs::path(heightsFileName.get_value_or(""))).string());
+   
+
+   SprinklerList_t sprinklers;
+   SprinklerMaskList_t sprinklerMasks;
+   RainMask_t rainMask;
+
+   bnu::matrix<YardCellInfo> yardCells =
+      GenerateCells(rows, cols, sprinklers, ""/*heightsPath*/, FillMatrixFromFile);
+
+   return unique_ptr<YardInfo>( 
+      new YardInfo(GeoLocale(latitude, longitude), yardCells, sprinklers, sprinklerMasks, rainMask)
+   );
+}
+
+
+SprinklerList_t LawnGenerator::GenerateDefaultSprinklerList(size_t rows, size_t cols) 
+{
+   // Place 8 sprinklers at each corner
+   SprinklerList_t sprinklers = SprinklerList_t(8);
+   sprinklers[0] = sprinklers[1] = SprinklerLocation(Sprinkler(1, SprayPattern::Square, 20), 0,0);
+   sprinklers[2] = sprinklers[3] = SprinklerLocation(Sprinkler(1, SprayPattern::Square, 20), 0,cols-1);
+   sprinklers[4] = sprinklers[5] = SprinklerLocation(Sprinkler(1, SprayPattern::Square, 20), rows-1,0);
+   sprinklers[6] = sprinklers[7] = SprinklerLocation(Sprinkler(1, SprayPattern::Square, 20), rows-1,cols-1);
+
+   return sprinklers;
+}
+
+bnu::matrix<double> LawnGenerator::FillMatrixFromFile(std::string fileName, size_t rows, size_t cols) {
+   std::ifstream heightsFile(fileName);
+
+   bnu::matrix<double> dataOut(rows, cols);
 
    std::string line;
    size_t rowNum = 0;
    size_t colNum;
-   while(std::getline(heightsFile, line)) {
+   while(std::getline(heightsFile, line) && (rowNum<dataOut.size1())) {
       std::stringstream lineStream(line);
       std::string data;
 
       colNum = 0;
-      while(std::getline(lineStream, data, ',')) {
-         heights(rowNum, colNum) = std::strtod(data.c_str(), nullptr);
+      while(std::getline(lineStream, data, ',') && (colNum<dataOut.size2())) {
+         dataOut(rowNum, colNum) = std::strtod(data.c_str(), nullptr);
          ++colNum;
       }
       ++rowNum;
    }
 
-   if (!((rowNum == heights.size1()) && (colNum == heights.size2()))) {
-      throw new std::logic_error("The file " + param + " did not contain enough lawn cell heights.\n");
+   if (!((rowNum == rows) && (colNum == cols))) {
+      throw new std::logic_error("The file " + fileName + " did not contain enough data.\n");
    }
+
+   return dataOut;
 }
 
-void LawnGenerator::FillHeightsPerlin(bnu::matrix<double> &heights, std::string param) {
-   size_t rows = heights.size1();
-   size_t cols = heights.size2();
+bnu::matrix<double> LawnGenerator::FillHeightsPerlin(std::string param, size_t rows, size_t cols) {
+   bnu::matrix<double> heights(rows, cols);
 
    Perlin::PerlinModified perGen(10, 1, .01, 5, 0);//time(0));
 
@@ -113,11 +173,12 @@ void LawnGenerator::FillHeightsPerlin(bnu::matrix<double> &heights, std::string 
          heights(i,j) = perGen.GetHeight(j,i);
       }
    }
+
+   return heights;
 }
 
-void LawnGenerator::FillHeightsDiagonally(bnu::matrix<double> &heights, std::string param) {
-   size_t rows = heights.size1();
-   size_t cols = heights.size2();
+bnu::matrix<double> LawnGenerator::FillHeightsDiagonally(std::string param, size_t rows, size_t cols) {
+   bnu::matrix<double> heights(rows, cols);
    
    typedef std::random_device RNGType;
 
@@ -159,8 +220,9 @@ void LawnGenerator::FillHeightsDiagonally(bnu::matrix<double> &heights, std::str
          heights(rows-1-j, i+j) = (heights(rows-1-j, i+j-1) + heights(rows-2-j, i+j))/2 + dist(rng);
       }
    }
+
+   return heights;
 }
 
 
-}
-}
+}}

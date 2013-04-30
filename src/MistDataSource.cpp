@@ -12,7 +12,7 @@ namespace Mist {
    static const std::string srcURL("www.quattrotap.com");
 
    static const std::string scheduleStr("/api/schedule?deviceID=");
-   static const std::string feedbackStr("/api/feedback?deviceID=");
+   static const std::string feedbackStr("/api/feedback?simulator=1");
 	static const std::string weatherStr("/api/weatherData?");
 
    sPtrMistDataSource MistDataSource::GetDefaultDataSource()
@@ -25,17 +25,19 @@ namespace Mist {
 		return sPtrMistDataSource(new DbgDataSource());
 	}
 
-   int MistDataSource::SubmitFeedback(product_id_t id, const std::vector<FeedbackList_t> feedback, unsigned int timeout) const
+   int MistDataSource::SubmitFeedback(product_id_t id, 
+                                      pt::ptime intervalEnd, 
+                                      std::vector<FeedbackList_t> feedback, 
+                                      unsigned int timeout) const
    {
       std::vector<std::string> headers;
-      std::string fbStr = Feedback::PackFeedbackJson(feedback, id);
+      std::string fbStr = Feedback::PackFeedbackJson(feedback, id, intervalEnd);
 
       std::cout << "FEEDBACK:\n" << fbStr << std::endl;
 
-      int result = data_source_.PostHtml(feedbackStr + std::to_string(id),
-         "application/json", fbStr, headers, timeout);
-      if (result != 200) {
-         throw std::logic_error(std::string("Error Posting HTML: ") + std::to_string(result));
+      int result = data_source_.PostHtml(feedbackStr, "application/json", fbStr, headers, timeout);
+      if (result < 200 || result >= 300) {
+         throw std::logic_error(std::string("Error Posting Feedback: HTTP-") + std::to_string(result));
       } else {
          return 0;
       }
