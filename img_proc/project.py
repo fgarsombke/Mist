@@ -7,6 +7,7 @@ import re
 import sqlite3
 import sys
 import img_db
+import logging
 
 def poll(img_name, score_range):
     score_re = re.compile("-?[0-9]+")
@@ -58,8 +59,8 @@ def poll(img_name, score_range):
             print phone_num[0] + "\t" + score[0]
 
         else:
-            resp = "You submitted an invalid rating for '" + img_name + "'!\n"
-            resp = resp + "Valid scores are " + str(-score_range) + " to " + str(score_range) + ".\n"
+            resp = "You submitted an invalid rating for '%s'!\n"%(img_name) +\
+            "Valid scores are " + str(-score_range) + " to " + str(score_range) + ".\n"
             resp = resp + "Please try again."
             print phone_num[0] + "\t" + "invalid"
 
@@ -79,13 +80,20 @@ def poll(img_name, score_range):
     
 def main():
     parser = argparse.ArgumentParser(description='Gather image processing information.')
-    parser.add_argument('img_dir', type=file, nargs='1', metavar='IMG_DIR',
+    parser.add_argument('img_dir', type=str, metavar='IMG_DIR',
                         help='Directory where images to be rated are stored.')
-    parser.add_argument('image', type=str, nargs="1",
-                      help='Current Image to be rated.')
-                      
+    parser.add_argument('image', type=str, metavar='IMAGE',
+                      help='File name of current Image to be rated.')
+    parser.add_argument('-d', '--debug', dest='do_dbg', action='store_true', default=False)
+                    
     args = parser.parse_args()
     
+    if args.do_dbg:
+        print('Debugging enabled.')
+        logging.basicConfig(stream=sys.stdout, level=logging.DEBUG)
+    
+    db = img_db.ImgDB(args.img_dir, repopulate=True)
+   
    
     #poll(opts.image, int(opts.score)) # Polls gvoice and stores scores
 

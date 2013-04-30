@@ -50,6 +50,9 @@ void Simulator::Reset(time_period simPeriod,
 
    real_tick_period = simTickDuration/simSpeedMultiplier;
 
+   // Post some feedback to start the whole sim
+   ProcessFeedback(time_period(sim_period_.begin()-sim_tick_duration_, sim_tick_duration_), ZoneFeedback_t());
+
    // Put the yard into it's initial state
    controller_->Reset(sim_period_.begin());
    yard_.ResetState();
@@ -90,7 +93,6 @@ void Simulator::Start()
 
 void Simulator::DoTickWork(pt::ptime firstTickTime)
 {
-
 	WeatherData weatherData;
 	sprinkler_durations_t sprinklerDurations = sprinkler_durations_t(yard_.SprinklersCount());
    ZoneFeedback_t zoneFeedback = ZoneFeedback_t(yard_.ZoneCount());

@@ -7,20 +7,20 @@ namespace Mist { namespace LawnSim {
 
 // Max amount of water a patch of soil can lose
 // Must be less than 1.0
-static const double MaxDriftAmount = 0.98;
+static const double MaxDriftAmount = 0.995;
 
 // Eccentricity of Sigmoid
 static const double M = 1.0;
 
 // Difference in height that will cause flow
-static const double K = .15;
+static const double K = .015;
 
 // Slope of Sigmoid
-static const double L = .02;
+static const double L = .08;
 
 // Asmptotic correction constant
 // Divide by 8 for 8 subcells
-static const double C = -(MaxDriftAmount/(1.0 + (K*M/(K*M+L))))/8.0;
+static const double C = -(MaxDriftAmount/(1.0 + (K*M/(K*M+L))));
 
 // Function Offset
 static const double Offset = M*K/(M*K + L);
@@ -55,7 +55,7 @@ DriftEntry::DriftEntry(NeighborHeightDiffs_t &heightDiffs)
          double d = HeightUConv*heightDiffs.data().data()[i]; 
 
          // Compute the sigmoid
-         cellFlowConstant = C*(M*(d-K)/(M*abs(d-K)+L) + Offset);
+         cellFlowConstant = C*(M*(d-K)/(M*abs(d-K)+L) + Offset)/8.0;
       } else {
          cellFlowConstant = 0;
       }

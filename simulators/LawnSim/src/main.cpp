@@ -49,7 +49,7 @@ int main(int argc, char * argv[])
       Mist::Controllers::ControllerConfig cConfig;
       cConfig.Locale = options->geo_locale();
       cConfig.UpdatePeriod = time_duration(hours(1));
-      cConfig.Id = 1;
+      cConfig.Id = abs(std::rand());
       cConfig.ScheduleSource = mistDataSource;
 
       Mist::Controllers::uPtrController controller = Controller::GetControllerByName("MistReal", std::move(cConfig));
