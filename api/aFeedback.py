@@ -7,6 +7,7 @@ import MySQLdb
 from db import DBConfig
 import json
 import collections
+import datetime
 from jsonencode import MyEncoder
 from watercalc import learn
 
@@ -38,7 +39,9 @@ class aFeedback:
             else:#first call ever from simulator
                 print "empty feedback"
             print data['endTime']
-            learn.doLearning(data['deviceID'], 1, data['endTime'])
+            endTime = datetime.datetime.fromtimestamp(data['endTime'])
+            print endTime
+            learn.doLearning(data['deviceID'], 1, endTime)
         else:#this is coming from the iPhone app
             deviceID = str(data['deviceID'])
             zoneNumber = str(data['zoneNumber'])
