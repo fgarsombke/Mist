@@ -60,7 +60,7 @@ inline bnu::matrix<YardCellInfo> LawnGenerator::GenerateCells(size_t rows,
    //TODO URGENT: Compute actual zone!!!!
    for (size_t i = 0; i < rows; ++i) {
       for (size_t j = 0; j < cols; ++j) {
-         double minDistance = FP_INFINITE;
+         double minDistance = std::numeric_limits<double>::infinity();
          size_t minZone = 0;
 
          // Calculate the zone the slow, painful way

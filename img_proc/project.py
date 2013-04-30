@@ -59,8 +59,8 @@ def poll(img_name, score_range):
             print phone_num[0] + "\t" + score[0]
 
         else:
-            resp = "You submitted an invalid rating for '" + img_name + "'!\n"
-            resp = resp + "Valid scores are " + str(-score_range) + " to " + str(score_range) + ".\n"
+            resp = "You submitted an invalid rating for '%s'!\n"%(img_name) +\
+            "Valid scores are " + str(-score_range) + " to " + str(score_range) + ".\n"
             resp = resp + "Please try again."
             print phone_num[0] + "\t" + "invalid"
 

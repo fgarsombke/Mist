@@ -28,9 +28,9 @@ namespace Mist {
    int MistDataSource::SubmitFeedback(product_id_t id, const std::vector<FeedbackList_t> feedback, unsigned int timeout) const
    {
       std::vector<std::string> headers;
-      std::string fbStr = Feedback::PackFeedbackJson(feedback);
+      std::string fbStr = Feedback::PackFeedbackJson(feedback, id);
 
-      std::cout << "FEEDBACK:\n " << fbStr << std::endl;
+      std::cout << "FEEDBACK:\n" << fbStr << std::endl;
 
       int result = data_source_.PostHtml(feedbackStr + std::to_string(id),
          "application/json", fbStr, headers, timeout);

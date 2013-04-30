@@ -8,6 +8,7 @@
 #include <algorithm>
 #include <array>
 #include <forward_list>
+#include <regex>
 
 #if __linux__ == 1
 
