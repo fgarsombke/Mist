@@ -1,31 +1,11 @@
-function [ score ] = getScore( varargin )
+function [ score ] = getScore( db_con )
 %	GETIMGSCORES Gets the average, normalized score for all images from all users.
 %
-%	score = GETIMGSCORES( DB_NAME, DB_USER, DB_PASS )   
+%	score = GETIMGSCORES( DB_CON )   
 %		Gets the average, normalized score for all images from all users.
 %
-% 	DB_NAME ( optional )
-%		Program will perform queries in DB_NAME.
-%		DEFAULT 'data.db'
-%
-% 	DB_USER ( optional )
-%		Program will perform queries in DB_NAME.
-%		DEFAULT ''
-%
-% 	DB_PASS ( optional )
-%		Program will perform queries in DB_NAME.
-%		DEFAULT ''
-
-	% option checking
-	numargs = length(varargin);  
-	if( numargs ) &gt; 3
-		error('Requires at most 3 optional arguments');
-	end
-
-	% option parsing
-	optargs = { 'data.db', '', '' };
-	optargs( 1:numargs ) = varargin;
-	[ db_name, db_user, db_pass ] = optargs{:};
+% 	DB_CON ( required )
+%		Program will perform queries usings the connection DB_CON.
 
 	% constants
     UserTableName = 'users'
@@ -34,13 +14,8 @@ function [ score ] = getScore( varargin )
     ScoreQuery = ['SELECT' ScoreColName 'FROM' UserTableName]
 
     % connect to db
-	con = database( db_name, db_user, db_pass );
-	cur = exec(con, ScoreQuery);
+	cur = exec(db_con, ScoreQuery);
 	cur = fetch(cur);
 
 	% normalize
 	score = mean((cur.data - mean(cur.data) ) / ( std(cur.data) ^ 2 ));
-
-	% close out
-	close(cur);
-	close(con);
