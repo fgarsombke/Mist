@@ -12,7 +12,6 @@
 
 #if __linux__ == 1
 
-#include <uuid/uuid.h>
 
 #else 
 #ifdef _MSC_VER
@@ -26,17 +25,14 @@
 #include <boost/date_time/posix_time/posix_time.hpp>
 #include <boost/date_time.hpp>
 #include <boost/tuple/tuple.hpp>
-#include <boost/uuid/uuid.hpp>
 #include <boost/asio.hpp>
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
-#include <boost/uuid/string_generator.hpp>
 #include <boost/preprocessor.hpp>
 
 namespace pt = boost::posix_time;
 namespace dt = boost::date_time;
 namespace bJP = boost::property_tree::json_parser;
-namespace bUUID = boost::uuids;
 
 #define _DEBUG_DATA 0
 #define _DEBUG_NO_PIPES 0
@@ -47,15 +43,11 @@ namespace bUUID = boost::uuids;
 #define DbgAssertLogic(p,m) 
 #endif
 
-typedef boost::uuids::uuid uuid;
-extern const char* EmptyUUIDString;
-
-namespace Mist {
-   typedef boost::uuids::uuid uuid;
-   
+namespace Mist {  
    const int ZONE_OFFSET = 1;
 
    typedef size_t product_id_t;
+   typedef size_t user_id_t;
 }
 
 

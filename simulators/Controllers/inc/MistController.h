@@ -24,7 +24,6 @@ public:
    virtual void ElapseTime(pt::time_period interval, 
                            std::vector<pt::time_duration> &sprinklerOnDurations) override;
 
-
    const product_id_t id() const override { return id_; }
    const MistSchedule &current_schedule() const { return current_schedule_; }
    const pt::time_duration update_period() const { return update_period_; }
@@ -47,6 +46,7 @@ protected:
    // Reads in a new schedule from the specified stream
    template<class strT>
    void ReadInNewSchedule(strT &inSchedule);
+
 private:
    // Reference class only
    MistController &operator=(MistController other);
@@ -62,6 +62,7 @@ private:
 
    pt::ptime start_time_;
    bool has_started_;
+
 
 };
 

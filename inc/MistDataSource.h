@@ -28,6 +28,11 @@ public:
    virtual WeatherData GetWeatherData(GeoLocale locale, pt::time_period period, unsigned int timeout = -1) override;
    virtual MistSchedule GetSchedule(product_id_t id, unsigned int timeout = -1) const override;
 
+   // Adds the controller to the database
+   virtual product_id_t AddDevice(user_id_t userID, 
+                          GeoLocale locale,
+                          size_t numZones,
+                          unsigned int timeout = -1) const override;
 protected:
    explicit MistDataSource(const std::string &host)
       : data_source_(host, "8080")

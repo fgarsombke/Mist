@@ -57,6 +57,8 @@ int main(int argc, char * argv[])
       Mist::sPtrMistDataSource mistDataSource = Mist::MistDataSource::GetDefaultDataSource();
 #endif
 
+
+
       // Build controller configuration
       Mist::Controllers::ControllerConfig cConfig;
       cConfig.Locale = options->geo_locale();

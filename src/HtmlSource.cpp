@@ -117,6 +117,8 @@ int HTMLSource::PostHtml(const std::string & urlPath,
          return -2;
       }
 
+      // TODO: Return response data
+
       stringstream response_stream(line1);
       string http_version;
       response_stream >> http_version;
@@ -133,22 +135,7 @@ int HTMLSource::PostHtml(const std::string & urlPath,
          return (int)status_code;
       }
 
-      string header;
-      //while (getline(request_stream, header) && header != "\r") {
-      //   headers.push_back(header);
-      //}
 
-      //// TODO HACK: Ask Michael A WHY????
-      //string hackLine;
-      //getline(request_stream, hackLine);
-
-      //if (hackLine.length() > 10) {
-      //   out << hackLine;
-      //}
-
-      //while (std::getline(request_stream, hackLine) && hackLine != "0\r") {
-      //   out << hackLine;
-      //}
       return status_code;
    }catch(std::exception &e){
       std::cout << e.what() << std::endl;

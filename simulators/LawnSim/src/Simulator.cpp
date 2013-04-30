@@ -50,9 +50,6 @@ void Simulator::Reset(time_period simPeriod,
 
    real_tick_period = simTickDuration/simSpeedMultiplier;
 
-   // Post some feedback to start the whole sim
-   ProcessFeedback(time_period(sim_period_.begin()-sim_tick_duration_, sim_tick_duration_), ZoneFeedback_t());
-
    // Put the yard into it's initial state
    controller_->Reset(sim_period_.begin());
    yard_.ResetState();

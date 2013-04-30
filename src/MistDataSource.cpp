@@ -15,6 +15,8 @@ namespace Mist {
    static const std::string feedbackStr("/api/feedback?simulator=1");
 	static const std::string weatherStr("/api/weatherData?");
 
+   static const std::string addDeviceStr("/api/device?userID");
+
    sPtrMistDataSource MistDataSource::GetDefaultDataSource()
    {
       return sPtrMistDataSource(new MistDataSource(srcURL));
@@ -67,6 +69,27 @@ namespace Mist {
       } else {
          return MistSchedule::CreateFromJson(schedule_out);
       }
+   }
+
+      // Adds the controller to the database
+   product_id_t MistDataSource::AddDevice(user_id_t userID, 
+                          GeoLocale locale,
+                          size_t numZones,
+                          unsigned int timeout) const 
+   {
+      std::vector<std::string> headers;
+
+      std::string addDeviceStr;
+      size_t deviceID;
+
+      std::cout << "ADD DEVICE:\n" << addDeviceStr << std::endl;
+
+      int result = data_source_.PostHtml(feedbackStr, "application/json", addDeviceStr, headers, timeout);
+      if (result < 200 || result >= 300) {
+         throw std::logic_error(std::string("Error Posting Add Device: HTTP-") + std::to_string(result));
+      } else {
+         return deviceID;
+      } 
    }
 
 }

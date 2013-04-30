@@ -25,7 +25,6 @@ MistSchedule MistSchedule::CreateFromPTree(boost::property_tree::ptree &schedule
    using boost::property_tree::ptree;
    using namespace MistScheduleInteral;
    
-   std::string idStr = scheduleTree.get<std::string>(ID_LABEL, EmptyUUIDString);
    std::vector<ZoneInfo> infos(8, ZoneInfo());
 
    for (ptree::value_type &v : scheduleTree.get_child(ZONE_LABEL)) {
@@ -44,7 +43,7 @@ MistSchedule MistSchedule::CreateFromPTree(boost::property_tree::ptree &schedule
       infos.at(zoneNum) = info;
    }
          
-   return MistSchedule(bUUID::string_generator()(idStr), infos);
+   return MistSchedule(infos);
 }
 
 

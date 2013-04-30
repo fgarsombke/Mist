@@ -60,7 +60,6 @@ void MistController::ElapseTime(pt::time_period interval,
 
 // Real Controller specific code
 /////////////////////////////////////////////////////////////////////////////////////
-
 pt::ptime MistController::NextUpdateTimeAfter(pt::ptime afterTime) const 
 {
    double updateMillis = (double)update_period().total_milliseconds();

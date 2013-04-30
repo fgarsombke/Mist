@@ -101,16 +101,16 @@ uPtrYardInfo LawnGenerator::LoadYard(std::string configDir)
    size_t rows = configTree.get<size_t>("rows");
    size_t cols = configTree.get<size_t>("cols");
 
-   //boost::optional<std::string> heightsFileName = configTree.get_value_optional<std::string>("heightsFile");
-   //boost::optional<std::string> rainMasFileName = configTree.get_value_optional<std::string>("rainMaskFile");
+   std::string heightsFileName = configTree.get_value("heightsFile", "");
+   std::string rainMaskFileName = configTree.get_value("rainMaskFile", "");
 
 
-   //if (heightsFileName.is_initialized()) {
+   if (heightsFileName.length() > 0) {
 
-   //}
-   //std::string heightsPath((configPath / fs::path(heightsFileName.get_value_or(""))).string());
+   }
    
-
+   
+   std::string heightsPath((configPath / fs::path(heightsFileName)).string());
    SprinklerList_t sprinklers;
    SprinklerMaskList_t sprinklerMasks;
    RainMask_t rainMask;
