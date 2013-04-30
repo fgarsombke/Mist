@@ -26,6 +26,8 @@ class aFeedback:
     def POST(self):
         data = web.data()
         data = eval(data)
+        print data
+        print web.input()
         if 'json' in data: #then this is coming from the simulator
             json = data['json'] 
             fb = json.loads(json)
