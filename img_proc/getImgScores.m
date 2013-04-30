@@ -27,9 +27,9 @@ function [ img_scores ] = getImgScores(img_id, db_con varargin )
 
 	% constants
 	UserTableName = 'users';
-    ImgIDColName = 'img_id'
+    ImgIDColName = 'img_id';
     ScoreColName = 'user_score';
-    ImgScoreQuery = ['SELECT' ScoreColName 'FROM' UserTableName 'WHERE' ImgIDColName '=' img_id]
+    ImgScoreQuery = ['SELECT ' ScoreColName ' FROM ' UserTableName ' WHERE ' ImgIDColName ' = ' num2str(img_id)]
 
     % connect to db
 	cur = exec(db_con, ImgScoreQuery);
@@ -40,3 +40,4 @@ function [ img_scores ] = getImgScores(img_id, db_con varargin )
 		img_scores = ( cur.data - mean(cur.data) ) / ( std(cur.data) ^ 2 );
 	else
 		img_scores = cur.data;
+    end

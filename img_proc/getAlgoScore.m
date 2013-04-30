@@ -5,10 +5,10 @@ function [ algo_scores ] = getAlgoScore( db_con )
 %		Gets all the algo scores for all images.
 
 	% constants
-    ImgTableName = 'images'
-	AlgoScoreColName = 'algo_score'
+    ImgTableName = 'images';
+	AlgoScoreColName = 'algo_score';
 
-    AlgoScoreQuery = ['SELECT' AlgoScoreColName 'FROM' ImgTableName]
+    AlgoScoreQuery = ['SELECT ' AlgoScoreColName ' FROM ' ImgTableName];
 
     % connect to db
 	cur = exec(db_con, AlgoScoreQuery);

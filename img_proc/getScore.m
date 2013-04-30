@@ -8,10 +8,10 @@ function [ score ] = getScore( db_con )
 %		Program will perform queries usings the connection DB_CON.
 
 	% constants
-    UserTableName = 'users'
-    ScoreColName = 'user_score'
+    UserTableName = 'users';
+    ScoreColName = 'user_score';
 
-    ScoreQuery = ['SELECT' ScoreColName 'FROM' UserTableName]
+    ScoreQuery = ['SELECT ' ScoreColName ' FROM ' UserTableName];
 
     % connect to db
 	cur = exec(db_con, ScoreQuery);
