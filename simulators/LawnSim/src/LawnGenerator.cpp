@@ -38,7 +38,7 @@ unique_ptr<YardInfo> LawnGenerator::Generate(GeoLocale locale,
    }
 
    return unique_ptr<YardInfo>(
-      new YardInfo(locale, GenerateCells(rows, cols, sprinklers, FillHeightsFromFile, heightParams)
+      new YardInfo(locale, GenerateCells(rows, cols, sprinklers, heightParams, FillHeightsFromFile)
       , sprinklers, sprinklerMasks, RainMask_t(rows, cols, 1.0))
    );
 }
@@ -47,8 +47,8 @@ unique_ptr<YardInfo> LawnGenerator::Generate(GeoLocale locale,
 inline bnu::matrix<YardCellInfo> LawnGenerator::GenerateCells(size_t rows, 
                                                   size_t cols, 
                                                   const SprinklersList_t &sprinklers,
-                                                  FillHeightFunc_t hFunc, 
-                                                  std::string heightParams) const 
+                                                  std::string heightParams,
+                                                  FillHeightFunc_t hFunc) const 
 {
    bnu::matrix<YardCellInfo> cells(rows, cols, YardCellInfo());
    
