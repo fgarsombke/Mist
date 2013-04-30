@@ -29,10 +29,14 @@ class aFeedback:
         sim = web.input()
         print data['deviceID']
         if sim.simulator:  #then this is coming from the simulator
-            for each in data:
-                print each
-                for item in zone["feedback"]:
-                    storeFeedback(fb['deviceID'], zone["zoneNumber"], item["time"], item["value"])
+            if 'feedback' in data:
+                for item in data["feedback"]:
+                    print item["zoneNumber"]
+                    print item["time"]
+                    print item["value"]
+                    storeFeedback(data['deviceID'], item["zoneNumber"], item["time"], item["value"])
+            else:
+                print "empty feedback"
             #run the learning code
             learn.doLearning(deviceID, zoneNumber, currentTime)
         else:#this is coming from the iPhone app
