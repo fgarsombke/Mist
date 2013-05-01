@@ -31,11 +31,10 @@ class aFeedback:
         print data['deviceID']
         if sim.simulator:  #then this is coming from the simulator
             if 'feedback' in data:
-                for item in data["feedback"]:
-                    print item["zoneNumber"]
-                    print item["time"]
-                    print item["value"]
-                    storeFeedback(data['deviceID'], item["zoneNumber"], item["time"], item["value"])
+                for zone in data["zones"]:
+                    fbItems = zone["fbItems"]
+                    for fb in fbItems:
+                        storeFeedback(data['deviceID'], zone["zoneNumber"], fb["time"], fb["value"])
             else:#first call ever from simulator
                 print "empty feedback"
             print data['endTime']

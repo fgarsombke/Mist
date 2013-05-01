@@ -43,13 +43,13 @@ class WeatherData:
        d['AvgPressure'] = self.avgPressure
        d['MinRH'] = self.minRH
        d['MaxRH'] = self.maxRH
-       d['minTemp'] = self.minTemp
-       d['maxTemp'] = self.maxTemp
-       d['srStart'] = self.srStart
-       d['srEnd'] = self.srEnd
-       d['ssStart'] = self.ssStart
-       d['ssEnd'] = self.ssEnd
-       d['rainfall'] = self.rainfall
+       d['MinTemp'] = self.minTemp
+       d['MaxTemp'] = self.maxTemp
+       d['SrStart'] = self.srStart
+       d['SrEnd'] = self.srEnd
+       d['SsStart'] = self.ssStart
+       d['SsEnd'] = self.ssEnd
+       d['Rainfall'] = self.rainfall
        j = json.dumps(d, cls=MyEncoder)
        return j
 
