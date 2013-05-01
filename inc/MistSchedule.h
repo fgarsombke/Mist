@@ -53,8 +53,6 @@ public:
    //}
 
    std::vector<ZoneInfo> &zone_data() { return zone_data_; }
-
-   static pt::ptime LongTimeToPTime(MistScheduleInteral::json_time_parse_t ms);
 private:
    std::vector<ZoneInfo> zone_data_;
 

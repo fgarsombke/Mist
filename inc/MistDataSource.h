@@ -31,6 +31,7 @@ public:
    // Adds the controller to the database
    virtual product_id_t AddDevice(user_id_t userID, 
                           GeoLocale locale,
+                          pt::ptime initTime,
                           size_t numZones,
                           unsigned int timeout = -1) const override;
 protected:

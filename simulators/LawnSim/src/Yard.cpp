@@ -9,7 +9,8 @@
 namespace Mist { namespace LawnSim {
 
 Yard::Yard(const YardInfo& yardInfo)
-   : locale_(yardInfo.locale()), 
+   : config_dir_(yardInfo.config_dir()),
+     locale_(yardInfo.locale()), 
      sprinklers_(std::move(yardInfo.sprinklers())),
      cells_(InitCells(yardInfo)), 
      cells_by_height_(InitHeightMap(yardInfo)),
@@ -185,7 +186,8 @@ void Yard::ElapseTime(pt::time_period tickPeriod,
    static int ticknum = 0;
    DebugPrintMatrix(matrix_range<matrix<water_mm_t> >(surface_water_, 
                     range(1, surface_water_.size1() - 1), 
-                    range(1, surface_water_.size2() - 1)), "SurfaceWaterVals/SurfaceWater" + std::to_string(ticknum) + ".csv");
+                    range(1, surface_water_.size2() - 1)), 
+                    config_dir_ / std::string("SurfaceWaterVals/SurfaceWater" + std::to_string(ticknum) + ".csv"));
   
    // Add sprinkler water to the surface
    for (size_t i = 0; i < sprinkler_masks_.size(); ++i) {
@@ -221,8 +223,9 @@ void Yard::ElapseTime(pt::time_period tickPeriod,
 
    DebugPrintMatrix(matrix_range<matrix<water_mm_t> >(cell_health_, 
                     range(1, cell_health_.size1() - 1), 
-                    range(1, cell_health_.size2() - 1)), "LawnHealthVals/LawnHealthVals" + std::to_string(ticknum++) + ".csv");
-
+                    range(1, cell_health_.size2() - 1)), 
+                    config_dir_ / std::string("LawnHealthVals/LawnHealthVals" + std::to_string(ticknum++) + ".csv"));
+   
 	if (addFeedback) {
       ComputeFeedback(tickPeriod, feedbackByZone);
    }
@@ -345,15 +348,12 @@ void Yard::DebugPrint() const
 }
 
 template<class M>
-static void Yard::DebugPrintMatrix(const M &toPrint, std::string fileName)
+static void Yard::DebugPrintMatrix(const M &toPrint, const fs::path &fileName)
 {
    using namespace std;
-
+   
    ofstream dbgFile;
-
-   const std::string &name = fileName.length() == 0? "Matrix.csv": fileName;
-
-   dbgFile.open(name);
+   dbgFile.open(fileName.wstring());
 
    for(unsigned int i = 0; i < toPrint.size1(); ++i) {
       for(unsigned int j = 0; j < toPrint.size2() - 1; ++j) {
@@ -393,7 +393,7 @@ void Yard::DebugPrint() const
 }
 
 template<class M>
-void Yard::DebugPrintMatrix(const M &toPrint, std::string fileName)
+void Yard::DebugPrintMatrix(const M &toPrint, const fs::path &fileName)
 {
 }
 

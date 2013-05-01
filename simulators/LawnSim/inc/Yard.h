@@ -15,7 +15,7 @@ namespace Mist { namespace LawnSim {
 
 class Yard {
 public:
-   explicit Yard(const YardInfo& yardInfo);
+   explicit Yard(const  YardInfo& yardInfo);
 
    const bnu::matrix<YardCell> &cells() const { return cells_; }
 
@@ -45,6 +45,7 @@ private:
    // Determines in which zen
    inline size_t ComputeZone(size_t row, size_t) const;
 
+   const fs::path config_dir_;
    const GeoLocale locale_;
 
    // The sprinklers in the yard, along with their positions in the yard
@@ -82,7 +83,7 @@ private:
    
 
    template<class M>
-   static void DebugPrintMatrix(const M &toPrint, std::string fileName);
+   static void DebugPrintMatrix(const M &toPrint, const fs::path &fileName);
 
    static const bnu::unbounded_array<LawnCoordinate> InitHeightMap(YardInfo const &yardInfo);
 };

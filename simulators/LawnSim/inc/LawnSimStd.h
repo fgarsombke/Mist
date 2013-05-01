@@ -21,6 +21,7 @@
 #include <boost/filesystem.hpp>
 
 namespace bnu = boost::numeric::ublas;
+namespace fs = boost::filesystem;
 
 #ifdef _DEBUG
 //#define _DEBUG_SPRINKLER_DURATIONS

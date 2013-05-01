@@ -43,6 +43,14 @@ public:
 
       bJP::read_json(inSchedule, scheduleTree);
 
+      // HACK Added the patch from here to json_parser_read.hpp
+      //    https://svn.boost.org/trac/boost/attachment/ticket/5033/property.tree.read.UTF-8.patch
+      // Just kidding, I had to fix it myself. 
+      // Changed 248 to this:
+      // string
+      // =   +(lexeme_d[confix_p('\"', *character, '\"')])
+      //   | (ch_p("u") >> (+(lexeme_d[confix_p('\'', *character, '\'')])))
+      //   ;
       return CreateFromPTree(scheduleTree);
    } 
 

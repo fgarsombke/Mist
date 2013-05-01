@@ -11,7 +11,7 @@ typedef bnu::matrix<double> (*FillHeightFunc_t)(std::string param, size_t rows, 
 class LawnGenerator {
 public:
    // Loads a rectangular yard from the file
-   static uPtrYardInfo LoadYard(std::string configDir);
+   static uPtrYardInfo LoadYard(fs::path configDir);
 
    // Generates a square yard
    static uPtrYardInfo Generate(GeoLocale locale, size_t rows, size_t cols, std::string heightParams = "");
@@ -24,6 +24,7 @@ private:
    static bnu::matrix<YardCellInfo> GenerateCells(size_t rows, 
                                                   size_t cols,
                                                   const SprinklerList_t &sprinklers,
+                                                  SunlightFractions_t sunlightFractions,
                                                   std::string heightParams,
                                                   FillHeightFunc_t hFunc = FillHeightsDiagonally);
 

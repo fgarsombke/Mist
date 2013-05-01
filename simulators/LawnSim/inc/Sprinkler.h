@@ -30,6 +30,10 @@ public:
    {
    }
 
+   size_t range() const { return range_; }
+   SprayPattern pattern() const { return pattern_; }
+   double watering_rate() const { return watering_rate_; }
+
 private:
    double watering_rate_;     // In mm/s
    SprayPattern pattern_;

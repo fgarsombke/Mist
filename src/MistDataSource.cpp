@@ -10,13 +10,13 @@ using std::vector;
 
 
 namespace Mist {
-   static const std::string srcURL("www.quattrotap.com");
+   static const std::string srcURL("wireless-128-62-91-67.public.utexas.edu");
 
    static const std::string scheduleStr("/api/schedule?deviceID=");
    static const std::string feedbackStr("/api/feedback?simulator=1");
 	static const char* weatherFmtStr = "/api/weather?latitude=%g&longitude=%g&begin=%llu&end=%llu";
 
-   static const char* addDeviceFmtStr = "/api/device?userID=%llu&latitude=%g&longitude=%g&numZones=%llu";
+   static const char* addDeviceFmtStr = "/api/device?userID=%llu&initTime=%llu&latitude=%g&longitude=%g&numZones=%llu";
 
    sPtrMistDataSource MistDataSource::GetDefaultDataSource()
    {
@@ -62,11 +62,12 @@ namespace Mist {
 
       std::string getWeatherStr(urlbuff);
       std::cout << "GET WEATHER: " << getWeatherStr << std::endl;
-
+      
       int result = data_source_.GetHtml(getWeatherStr, weather_out, headers, timeout);
       if (result != 200) {
          throw std::logic_error(std::string("Error Getting Weather Data: HTML ") + std::to_string(result) + "\n");
       } else {
+         std::cout << "GOT WEATHER\n" << weather_out.str() << std::endl;
          return WeatherData::CreateFromJson(weather_out);
       }
    }
@@ -87,15 +88,16 @@ namespace Mist {
    // Adds the controller to the database
    product_id_t MistDataSource::AddDevice(user_id_t userID, 
                           GeoLocale locale,
+                          pt::ptime initTime,
                           size_t numZones,
                           unsigned int timeout) const 
    {
-
       char urlbuff[255];
       std::vector<std::string> headers;
 
       sprintf(urlbuff, addDeviceFmtStr, 
          userID, 
+         GetEpochTime(initTime),
          locale.latitude(), 
          locale.longitude(),
          numZones);

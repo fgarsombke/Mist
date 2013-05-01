@@ -7,6 +7,7 @@ namespace Mist { namespace Controllers {
 
 void MistController::Reset(pt::ptime startTime)
 {
+   id_ = schedule_source_->AddDevice(1, locale_, startTime, num_zones_);
    ResetSchedule(startTime, schedule_source_->GetSchedule(id_, -1));
 }
 
@@ -84,7 +85,7 @@ void MistUpdatingController::ElapseTime(pt::time_period interval,
       subElapseEnd = min(nextUpdate, elapseEnd);
 
       if (MistController::HasUpdatePeriodPassed(subElapseEnd)) {
-         ResetSchedule(nextUpdate, schedule_source().GetSchedule(id(), 2000));
+         ResetSchedule(nextUpdate, schedule_source()->GetSchedule(id(), 2000));
       }
 
       MistController::ElapseTime(time_period(subElapseStart, subElapseEnd), sprinklerOnDurations);

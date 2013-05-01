@@ -26,7 +26,7 @@ public:
 
    size_t yard_rows() const { return yard_rows_; }
    size_t yard_cols() const { return yard_cols_; }
-   std::string config_dir() const { return config_dir_; }
+   fs::path config_dir() const { return config_dir_; }
 
 private:
    // Ref class only

@@ -13,6 +13,7 @@ class ScheduleSource {
 public:
    virtual product_id_t AddDevice(user_id_t userID, 
                           GeoLocale locale,
+                          pt::ptime initTime,
                           size_t numZones,
                           unsigned int timeout = -1) const = 0;
 

@@ -12,13 +12,6 @@ namespace MistScheduleInteral{
    const char* END_LABEL = "endTime";
 }
 
-pt::ptime MistSchedule::LongTimeToPTime(MistScheduleInteral::json_time_parse_t seconds) 
-{
-   //const pt::ptime epoch(boost::gregorian::date(1970, 1, 1));
-   //return epoch + pt::seconds((long)seconds);
-
-   return pt::from_time_t(seconds);
-}
 
 MistSchedule MistSchedule::CreateFromPTree(boost::property_tree::ptree &scheduleTree)
 {
@@ -33,8 +26,8 @@ MistSchedule MistSchedule::CreateFromPTree(boost::property_tree::ptree &schedule
       auto last = info.OnTimes.before_begin();
 
       for (ptree::value_type &t : v.second.get_child(TIMES_ARRAY_LABEL)) {
-         pt::ptime start(LongTimeToPTime(t.second.get<json_time_parse_t>(START_LABEL)));
-         pt::ptime end(LongTimeToPTime(t.second.get<json_time_parse_t>(END_LABEL)));
+         pt::ptime start(pt::from_time_t(t.second.get<json_time_parse_t>(START_LABEL)));
+         pt::ptime end(pt::from_time_t(t.second.get<json_time_parse_t>(END_LABEL)));
          
          info.OnTimes.insert_after(last,pt::time_period(start, end));
          ++last;

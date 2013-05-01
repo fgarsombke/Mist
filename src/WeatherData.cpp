@@ -29,7 +29,7 @@ namespace Mist {
 
       std::stringstream ss;
 
-      ss <<  "{\"Rainfall\":10.0, \"StartTemp\": 14.4444, \"EndTemp\": 21.6667, \"MinTemp\":13.68, \"MaxTemp\":22.10, \"AvgTemp\": 17.377778,"
+      ss <<  "{u'Rainfall':10.0, \"StartTemp\": 14.4444, \"EndTemp\": 21.6667, \"MinTemp\":13.68, \"MaxTemp\":22.10, \"AvgTemp\": 17.377778,"
          "\"AvgWindSpeed\": 11.51875, \"AvgPressure\": 1012.245, \"MinRH\": 0.52, \"MaxRH\": 0.89}";
 
       return WeatherData::CreateFromJson(ss);
@@ -41,12 +41,10 @@ namespace Mist {
 
 		// The weather data tree is a single level
 		for (const pair<string, ptree> &dataChild : weatherTree) {
-         map<std::string, WeatherDataValue_t>::const_iterator it = WeatherDataMap.find(dataChild.first);
-         if(it != WeatherDataMap.end())
-         {
-            WeatherDataValue_t currValue = it->second;
+         try {
+            WeatherDataValue_t currValue = WeatherDataMap.at(dataChild.first);
 			   data.SetValue(currValue, dataChild.second.get_value<WeatherDataNumeric_t>());
-         } else {
+         } catch (std::out_of_range) {
             DbgPrint("Unexpected weather data read from server: " + dataChild.first + "\n");
          }
 		}

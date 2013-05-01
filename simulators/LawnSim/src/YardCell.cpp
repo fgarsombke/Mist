@@ -30,8 +30,8 @@ void YardCell::ChangeHeight(double delta) {
    if (cell_type_ == YardCellType_t::Void) {
       cell_info_ = YardCellInfo(cell_info_.initial_health(), 
                                 cell_info_.rel_height() + delta, 
-                                cell_info_.zone()
-      );
+                                cell_info_.zone(),
+                                cell_info_.sunlight_fraction());
    } else {
       throw std::logic_error("Cannot change the height of a non void cell");
    }
@@ -93,7 +93,7 @@ double YardCell::ET_K() const
 // Static Factory Methods
 YardCell YardCell::CreateVoid(double relHeight)
 {
-   return YardCell(YardCellInfo(FP_NAN, relHeight, 0), YardCellType_t::Void);
+   return YardCell(YardCellInfo(FP_NAN, relHeight, 0, 0), YardCellType_t::Void);
 }
 
 YardCell YardCell::CreateIsolated(YardCellInfo info)

@@ -81,12 +81,13 @@ void Simulator::Start()
 	// Death comes for us all
 	for (size_t t_i = 0; t_i < pipeThreads.size(); ++t_i) {
 		pipeThreads[t_i].join();
+	}
 
+	for (size_t t_i = 0; t_i < pipeThreads.size(); ++t_i) {
       if (async_exceptions_[t_i] != nullptr) {
-         async_exceptions_[t_i];
          std::rethrow_exception(async_exceptions_[t_i]);
       }
-	}
+   }
 }
 
 void Simulator::DoTickWork(pt::ptime firstTickTime)
@@ -145,7 +146,8 @@ inline void Simulator::ProcessController(const pt::time_period tickPeriod,
 										sprinkler_durations_t sprinklerDurations)
 {
 	std::lock_guard<std::mutex> lock(process_controller_lock_);
-	controller_->ElapseTime(tickPeriod, sprinklerDurations);
+	controller_->ElapseTime(tickPeriod, 
+                           sprinklerDurations);
    DbgPrintDurations(sprinklerDurations);
 }
 
@@ -163,7 +165,10 @@ inline void Simulator::ProcessFeedback(pt::time_period tickPeriod,
 													const ZoneFeedback_t &zoneFeedback) const
 {
 	std::lock_guard<std::mutex> lock(process_controller_lock_);
-	feedback_sink_->SubmitFeedback(controller_->id(), tickPeriod.end(), zoneFeedback);
+	feedback_sink_->SubmitFeedback(controller_->id(),
+                                  tickPeriod.end(), 
+                                  zoneFeedback, 
+                                  FeedbackTimeout);
 }
 
 inline void  Simulator::ProcessWait()

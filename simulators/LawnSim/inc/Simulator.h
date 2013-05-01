@@ -86,8 +86,12 @@ private:
 		5;
 #endif
 
+   template<class M>
+   static void DebugPrintMatrix(const M &toPrint, std::string fileName);
+
    std::array<std::exception_ptr, num_tick_pipes_> async_exceptions_;
 
+   static const int FeedbackTimeout = 60000;
 	static const int SleepModConstant = 0;
 };
 

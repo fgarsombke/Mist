@@ -10,10 +10,11 @@ namespace Mist { namespace Controllers {
 class MistController : public Controller {
 public:
    explicit MistController(ControllerConfig &&config)
-      :  update_period_(config.UpdatePeriod),
+      :  locale_(config.Locale),
+         num_zones_(config.numZones),
+         update_period_(config.UpdatePeriod),
          schedule_source_(std::move(config.ScheduleSource))
    {
-      id_ = schedule_source_->AddDevice(1, config.Locale, config.numZones);
       has_started_ = false;
    }
 
@@ -40,8 +41,8 @@ protected:
 
    pt::ptime NextUpdateTimeAfter(pt::ptime afterTime) const;
 
-   const ScheduleSource &schedule_source() const { return *schedule_source_; }
-   const ScheduleSource &schedule_source() { return *schedule_source_; }
+   sPtrScheduleSource schedule_source() const { return schedule_source_; }
+   sPtrScheduleSource schedule_source() { return schedule_source_; }
 
    // Reads in a new schedule from the specified stream
    template<class strT>
@@ -52,9 +53,11 @@ private:
    MistController &operator=(MistController other);
    MistController(const MistController &other);
 
+   const GeoLocale locale_;
+   const size_t num_zones_;
    const pt::time_duration update_period_;
 
-   sPtrScheduleSource schedule_source_;
+   const sPtrScheduleSource schedule_source_;
 
    MistSchedule current_schedule_;
    pt::ptime last_update_time_;

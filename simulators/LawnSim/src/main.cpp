@@ -37,17 +37,15 @@ int main(int argc, char * argv[])
          return 1;
       }
 
-
       uPtrYardInfo yardInfo;
       
-      if (options->config_dir().length() == 0) {
+      if (options->config_dir().empty()) {
          yardInfo = LawnGenerator::Generate(options->geo_locale(), 
                                                options->yard_rows(), 
                                                options->yard_cols(), "");
       } else {
          yardInfo = LawnGenerator::LoadYard(options->config_dir());
       }
-
       
       yardInfo->DebugPrint("yardHeights.csv");
       // Use Mist Data for everything

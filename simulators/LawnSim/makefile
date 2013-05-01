@@ -6,7 +6,8 @@ EXE := LawnSim
 ADTL_FLGS := -I../Controllers/$(INC_DIR) -I../ETCalc/$(INC_DIR)
 LFLAGS := 
 LDIRS:=
-LSTATIC_LIBS:=mist_controllers mist_shared boost_filesystem boost_chrono boost_date_time boost_program_options boost_thread boost_thread boost_random boost_exception boost_system
+LSTATIC_LIBS:=mist_controllers mist_shared
+LSHARED_LIBS:=boost_system boost_filesystem boost_chrono boost_date_time boost_program_options boost_thread boost_thread boost_random boost_exception
 ADTLEXE_FLGS := -pthread 
 
 SOURCE_NAMES = Constants.cpp DriftEntry.cpp LawnCoordinate.cpp LawnGenerator.cpp LawnSimStd.cpp main.cpp PerlinNoiseGenerator.cpp SimOptions.cpp Simulator.cpp Sprinkler.cpp Yard.cpp YardCell.cpp YardInfo.cpp
