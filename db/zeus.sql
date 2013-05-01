@@ -107,6 +107,7 @@ CREATE TABLE IF NOT EXISTS vectors (
 
 CREATE TABLE IF NOT EXISTS feedback (
                             deviceID INTEGER NOT NULL,
+                            zoneNumber INTEGER NOT NULL,
                             created TIMESTAMP,
                             value INTEGER NOT NULL
                             );

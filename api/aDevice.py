@@ -7,6 +7,8 @@ import MySQLdb
 from db import DBConfig
 import json
 import collections
+from watercalc import learn 
+import datetime
 
 def insertDeviceInDatabase(userId, latitude, longitude, wifiNetwork, wifiPassword, numZones):
     conf = DBConfig.DBConfig()
@@ -112,5 +114,6 @@ class aDevice:
         else:
             numZ = 8
         deviceId = insertDeviceInDatabase(uid, lat, longi, wifiN, wifiP, numZ)
-        print deviceId
+        aTime = datetime.datetime.fromtimestamp(float(device_data.initTime))
+        learn.doLearning(deviceId, 1, aTime)
         return deviceId

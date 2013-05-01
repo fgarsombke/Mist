@@ -28,19 +28,13 @@ class aFeedback:
         data = web.data()
         data = eval(data)
         sim = web.input()
-        print data['deviceID']
         if sim.simulator:  #then this is coming from the simulator
-            if 'feedback' in data:
-                for zone in data["zones"]:
-                    fbItems = zone["fbItems"]
-                    for fb in fbItems:
-                        storeFeedback(data['deviceID'], zone["zoneNumber"], fb["time"], fb["value"])
-            else:#first call ever from simulator
-                print "empty feedback"
-            print data['endTime']
+            for zone in data["zones"]:
+                fbItems = zone["fbItems"]
+                for fb in fbItems:
+                    storeFeedback(data['deviceID'], zone["zoneNumber"], fb["time"], fb["value"])
             endTime = datetime.datetime.fromtimestamp(data['endTime'])
-            print endTime
-            learn.doLearning(data['deviceID'], 1, endTime)
+            learn.doLearning(data['deviceID'], zone["zoneNumber"], endTime)
         else:#this is coming from the iPhone app
             deviceID = str(data['deviceID'])
             zoneNumber = str(data['zoneNumber'])

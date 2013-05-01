@@ -41,7 +41,6 @@ def main():
     zone = 1
     simulatedTime = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     simulatedTime = datetime.datetime.strptime(simulatedTime, "%Y-%m-%d %H:%M:%S")
-    print simulatedTime
     doLearning(deviceID, zone, simulatedTime)
 
 def doLearning(deviceID, zone, simulatedTime):
@@ -59,7 +58,6 @@ def doLearning(deviceID, zone, simulatedTime):
 
         #assimilate all feedback since the creation of that learning vector (or since downloading of the schedule directly attributed to that vector?)
         vector.feedback = getFeedbackForLearningVector(vector)
-        print "Feedback: %s" % str(vector.feedback)
 
         #update score for the learning vector
         score = scoreVector(vector)
@@ -72,7 +70,6 @@ def doLearning(deviceID, zone, simulatedTime):
     newVector.printLV()
 
     #predict the new ET prime for the created vector
-    #TODO: should this be added to the vector metadata?
     ETp = predictCorrectET(newVector)
     print "Computed ETprime: %s" % ETp
 
@@ -102,7 +99,6 @@ def getLatLongforDevice(deviceID):
 
 def getEToForecast(deviceID, createdTime):
     latLong = getLatLongforDevice(deviceID)
-    print createdTime
     begin = time.mktime(createdTime.timetuple())
     end = time.mktime((createdTime + datetime.timedelta(days=forecastLength)).timetuple())
     value = ForecastET.forecastETo(latLong[0], latLong[1], int(begin), int(end))
@@ -143,7 +139,7 @@ def getWeightForScheduleDuration(vector):
     else:
         return 2.0
 
-def computeDescent(vector1, vector2):
+def computeDescent(lv1, lv2):
     #~~~NEWTON'S METHOD~~~
     diffVector = np.subtract(lv1.vector, lv2.vector)
 
@@ -153,18 +149,18 @@ def computeDescent(vector1, vector2):
     #jacobian
     if scoreChange == 0:
        #this can definitely be improved!!!
-       newVector = lv1.vector + diffVector/2
+       newVector = lv1.vector #+ diffVector/2
     else:
         jacobianApprox = scoreChange/diffVector
         inverseJacobian = 1.0/(jacobianApprox)
         updateJacob = inverseJacobian*lv1.score
 
         #compute time weighting
-        timeConstant = getWeightForScheduleDuration(vector1)
+        timeConstant = getWeightForScheduleDuration(lv1)
 
         #next vector
         newVector = lv1.vector + (updateJacob)*timeConstant
-        return newVector
+    return newVector
 
 #case 0: 1st iteration of algorithm
 #case 1: 2nd iteration of algorithm
@@ -180,9 +176,9 @@ def createNewLearningVector(iteration, deviceID, zoneNumber, created):
     if iteration == 1:
         last = getLastXLearningVectors(deviceID, 1)
         if last[0].score > 0: #too little water, we are underpredicing ETp
-            newVector = [0.1, 1.2, 0.1]
+            newVector = [0.001, 1.004, 0.001]
         else: #too much water, we are overpredicting ETp
-            newVector = [-.05, .94, -.05]
+            newVector = [-.001, .996, -.001]
 
     #do a descent, no randomness
     if iteration == 2:
@@ -190,7 +186,6 @@ def createNewLearningVector(iteration, deviceID, zoneNumber, created):
         lv1 = last[0]
         lv2 = last[1]
         newVector = computeDescent(lv1, lv2)
-
     #do a descent, with randomness
     if iteration >= 3:
         last = getLastXLearningVectors(deviceID, 3)
@@ -231,7 +226,7 @@ def createNewLearningVector(iteration, deviceID, zoneNumber, created):
 
     #now store the vector in vectors table
     for i in range(len(new.vector)):
-        sqlString = "INSERT INTO vectors (vectorID, columnNumber, value) VALUES (%s, %s, %s)" % (new.vectorID, i, new.vector[i - 1])
+        sqlString = "INSERT INTO vectors (vectorID, columnNumber, value) VALUES (%s, %s, %s)" % (new.vectorID, i, new.vector[i])
         cursor.execute(sqlString)
     db.commit()
 
@@ -265,18 +260,22 @@ def getLastXLearningVectors(deviceID, number):
 
 def dateToValue(date):
     #TODO: turn a date into a value to go into the scoring function
-    return 2.0
+    return 0.20
 
 def scoreVector(vector):
     #scoring function
     summation = 0
     bSummation = 0
+    print "SCORING VECTOR!!!"
     for each in vector.feedback:
-       timeValue = dateToValue(each[1])
-       summation += math.pow(timeValue, 1/2)*abs(each[2]) 
-       bSummation += math.pow(timeValue, 1/2)
-    score = summation/bSummation
-
+        print each
+        timeValue = dateToValue(each[1])
+        summation += math.pow(timeValue, 1/2)*abs(each[2]) 
+        bSummation += math.pow(timeValue, 1/2)
+    if bSummation == 0:
+        score = 0
+    else:
+        score = summation/bSummation
     #store score in database
     conf = DBConfig.DBConfig()
     db = conf.connectToLocalConfigDatabase()
@@ -293,7 +292,7 @@ def getFeedbackForLearningVector(vector):
     sqlString = """SELECT * FROM queuedIrrigations WHERE vectorID = '%s' ORDER BY startTime ASC""" % vector.vectorID
     cursor.execute(sqlString)
     earliest = cursor.fetchone()
-    sqlString = """SELECT * FROM feedback WHERE deviceID = '%s' AND created > '%s'""" % (earliest[1], earliest[2])
+    sqlString = """SELECT * FROM feedback WHERE deviceID = '%s' AND created >= '%s'""" % (earliest[1], earliest[2])
     cursor.execute(sqlString)
     feedback = cursor.fetchall()
     cursor.close()

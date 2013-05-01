@@ -50,7 +50,7 @@ class WeatherData:
        d['SsStart'] = self.ssStart
        d['SsEnd'] = self.ssEnd
        d['Rainfall'] = self.rainfall
-       j = json.dumps(d, cls=MyEncoder)
+       j = json.dumps(d)
        return j
 
     def printWD(self):
@@ -96,7 +96,6 @@ def forecastAPI(latitude, longitude, thetime, interval):
    posix = time.mktime(thetime.timetuple())
    url = "http://api.forecast.io/forecast/%s/%s,%s,%s" % (apiKey, latitude, longitude, int(posix))
    req = urllib2.Request(url)
-   print url
    response = ""
    try:
        response = json.loads(urllib2.urlopen(req).read())
@@ -309,25 +308,24 @@ def grabFromCache(latitude, longitude, beginTime, endTime):
     conf = DBConfig.DBConfig()
     db = conf.connectToLocalConfigDatabase()
     cursor = db.cursor()
-    cursor.execute("SELECT json FROM weatherCache WHERE (latitude = %s) AND (longitude = %s) AND (beginTime = %s) AND (endTime = %s)" % (latitude, longitude, beginTime, endTime))
+    cursor.execute("SELECT json FROM weatherCache WHERE (latitude = '%s') AND (longitude = '%s') AND (beginTime = %s) AND (endTime = %s)" % (str(latitude), str(longitude), beginTime, endTime))
     jsonOut = cursor.fetchone()
-    print jsonOut
+    print "FROM CACHE: %s" % jsonOut
     if jsonOut:
-      jsonOut = json.loads(jsonOut[0])
+      jsonOut = json.loads(jsonOut[0], encoding="ascii")
     else:
       jsonOut = ""
     return jsonOut
 
 def cacheRequest(latitude, longitude, beginTime, endTime, weatherJSON):
     #return JSON or NONE
-    string = json.dumps(weatherJSON)
+    string = json.dumps(weatherJSON, encoding="ascii")
     conf = DBConfig.DBConfig()
     db = conf.connectToLocalConfigDatabase()
     cursor = db.cursor()
-    cursor.execute("INSERT INTO weatherCache (latitude, longitude, beginTime, endTime, json) VALUES (%s, %s, %s, %s, %s)" % (latitude, longitude, beginTime, endTime, string))
+    cursor.execute("INSERT INTO weatherCache (latitude, longitude, beginTime, endTime, json) VALUES ('%s', '%s', %s, %s, %s)" % (str(latitude), str(longitude), beginTime, endTime, string))
     db.commit()
     return json
-
 
 def main():
     #huh
@@ -341,26 +339,27 @@ class aWeather:
     #GET API FOR WEATHER
     #reroute to Forecast.io API
     #RETURN weather data object: expetected parameter: latitude, longitude, POSIX time begin and end
+    def getHelper(self, lat, longi, begin, end):
+        cached = grabFromCache(lat, longi, begin, end)
+
+        if cached:
+            weatherJSON = cached
+        else:
+            weatherData = getWeatherData(lat, longi, begin, end)
+            weatherJSON = weatherData.jsonize()
+            cacheRequest(lat, longi, begin, end, weatherJSON)
+
+        #return JSONized data
+        return weatherJSON
+
     def GET(self):
         weather_data = web.input()
-
         if weather_data:
             latitude = weather_data.latitude
             longitude = weather_data.longitude
             beginTime = weather_data.begin
             endTime = weather_data.end
-
-            cached = grabFromCache(latitude, longitude, beginTime, endTime)
-
-            if cached:
-                weatherJSON = cached
-            else:
-                weatherData = getWeatherData(latitude, longitude, beginTime, endTime)
-                weatherJSON = weatherData.jsonize()
-                cacheRequest(latitude, longitude, beginTime, endTime, weatherJSON)
-
-            #return JSONized data
-            return weatherJSON
+            return self.getHelper(latitude, longitude, beginTime, endTime)
         else:
             return 0
 
