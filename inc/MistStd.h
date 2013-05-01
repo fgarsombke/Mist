@@ -23,7 +23,6 @@
 
 // Boost Headers
 #include <boost/date_time/posix_time/posix_time.hpp>
-#include <boost/date_time.hpp>
 #include <boost/tuple/tuple.hpp>
 #include <boost/asio.hpp>
 #include <boost/property_tree/ptree.hpp>

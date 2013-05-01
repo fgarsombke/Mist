@@ -6,7 +6,7 @@ namespace Mist { namespace LawnSim {
 
 typedef bnu::compressed_matrix<double> SprinklerMask_t;
 
-enum class SprayPattern {
+enum class SprayPattern : int {
    None,
    UCircle,
    Square,

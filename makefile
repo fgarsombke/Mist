@@ -3,7 +3,7 @@ include ./make/stdprefix.mk
 OUT_DIR := ./lib
 
 LIB = mist_shared
-SOURCE_NAMES = Feedback.cpp HtmlSource.cpp MistDataSource.cpp MistSchedule.cpp MistStd.cpp PAL.cpp PushPullBuffer.cpp WeatherData.cpp
+SOURCE_NAMES = PAL.cpp Feedback.cpp HtmlSource.cpp MistDataSource.cpp MistSchedule.cpp MistStd.cpp PushPullBuffer.cpp WeatherData.cpp
 
 mistshared : dirs $(OBJECTS) $(LIB)
 

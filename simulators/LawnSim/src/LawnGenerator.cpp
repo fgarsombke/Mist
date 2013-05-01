@@ -32,16 +32,12 @@ unique_ptr<YardInfo> LawnGenerator::Generate(GeoLocale locale,
       throw std::invalid_argument("rows and cols must both be nonzero.");
    }
 
-   SprinklerList_t sprinklers = GenerateDefaultSprinklerList(rows, cols);
-
-   SprinklerMaskList_t sprinklerMasks(sprinklers.size());
-   for (size_t i = 0; i < sprinklers.size(); ++i) {
-      sprinklerMasks[i] = sprinklers[i].GenerateSprinklerMask(rows, cols);
-   }
+   SprinklerList_t sprinklers = GenDefaultSprinklerList(rows, cols);
 
    return unique_ptr<YardInfo>(
       new YardInfo(locale, GenerateCells(rows, cols, sprinklers, heightParams, FillHeightsPerlin)
-      , sprinklers, sprinklerMasks, RainMask_t(rows, cols, 1.0))
+      , sprinklers, GenDefaultSprinklerMaskList(rows, cols, sprinklers), 
+      GenDefaultRainMask(rows, cols))
    );
 }
 
@@ -119,19 +115,38 @@ uPtrYardInfo LawnGenerator::LoadYard(std::string configDir)
    if (rainMaskFileName.length() > 0) {
       rainMask = FillMatrixFromFile((configPath / fs::path(rainMaskFileName)).string(), rows, cols);
    } else {
-      rainMask = GenerateDefaultRainMask(rows, cols);
+      rainMask = GenDefaultRainMask(rows, cols);
    }
 
    SprinklerList_t sprinklers(0);
-   size_t sprinklerNum = 0;
+   SprinklerMaskList_t sprinklerMasks(0);
    for (const ptree::value_type &t : sprinklersTree) {
-      
+      ptree sprinklerTree = t.second;
 
-      ++sprinklerNum;
+      size_t row = sprinklerTree.get<size_t>("row");
+      size_t col = sprinklerTree.get<size_t>("col");
+      double wateringRate = sprinklerTree.get<double>("wateringRate");
+      SprayPattern pattern = (SprayPattern)sprinklerTree.get<int>("sprayPattern");
+      size_t range = sprinklerTree.get<size_t>("range");
+      std::string maskFileName(configTree.get("maskFile", ""));
+
+      // Generate the sprinkler without specifying the mask
+      SprinklerLocation s(Sprinkler(wateringRate, pattern, range), rows, cols);
+
+      if (maskFileName.length() > 0) {
+         sprinklerMasks.push_back(FillMatrixFromFile((configPath / fs::path(maskFileName)).string(), rows, cols));
+      } else {
+         sprinklerMasks.push_back(s.GenerateSprinklerMask(rows, cols));
+      }
+      
+      sprinklers.push_back(s); 
    }
 
-   SprinklerMaskList_t sprinklerMasks;
-
+   if (sprinklers.size() == 0) {
+      sprinklers = GenDefaultSprinklerList(rows, cols);
+      sprinklerMasks = GenDefaultSprinklerMaskList(rows, cols, sprinklers);
+   }
+   
    bnu::matrix<YardCellInfo> yardCells =
       GenerateCells(rows, cols, sprinklers, heightsPath, fillFunc);
 
@@ -140,8 +155,8 @@ uPtrYardInfo LawnGenerator::LoadYard(std::string configDir)
    );
 }
 
-
-SprinklerList_t LawnGenerator::GenerateDefaultSprinklerList(size_t rows, size_t cols) 
+// Places 8 sprinklers on the lawn with two at each corner
+SprinklerList_t LawnGenerator::GenDefaultSprinklerList(size_t rows, size_t cols) 
 {
    // Place 8 sprinklers at each corner
    SprinklerList_t sprinklers = SprinklerList_t(8);
@@ -153,9 +168,21 @@ SprinklerList_t LawnGenerator::GenerateDefaultSprinklerList(size_t rows, size_t 
    return sprinklers;
 }
 
-RainMask_t LawnGenerator::GenerateDefaultRainMask(size_t rows, size_t cols)
+// Generates a rain mask that is just a constant matrix with entries 1.0
+RainMask_t LawnGenerator::GenDefaultRainMask(size_t rows, size_t cols)
 {
    return bnu::matrix<double>(rows, cols, 1.0);
+}
+
+SprinklerMaskList_t LawnGenerator::GenDefaultSprinklerMaskList(size_t rows, size_t cols,
+                                                                    const SprinklerList_t &sprinklers)
+{
+   SprinklerMaskList_t sprinklerMasks(sprinklers.size());
+   for (size_t i = 0; i < sprinklers.size(); ++i) {
+      sprinklerMasks[i] = sprinklers[i].GenerateSprinklerMask(rows, cols);
+   }
+
+   return sprinklerMasks;
 }
 
 bnu::matrix<double> LawnGenerator::FillMatrixFromFile(std::string fileName, size_t rows, size_t cols) {
@@ -165,7 +192,7 @@ bnu::matrix<double> LawnGenerator::FillMatrixFromFile(std::string fileName, size
 
    std::string line;
    size_t rowNum = 0;
-   size_t colNum;
+   size_t colNum = 0;
    while(std::getline(heightsFile, line) && (rowNum<dataOut.size1())) {
       std::stringstream lineStream(line);
       std::string data;

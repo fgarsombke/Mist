@@ -29,8 +29,11 @@ private:
 
 
    static bnu::matrix<double>  FillMatrixFromFile(std::string fileName, size_t rows, size_t cols);
-   static SprinklerList_t GenerateDefaultSprinklerList(size_t rows, size_t cols);
-   static RainMask_t GenerateDefaultRainMask(size_t rows, size_t cols);
+   static SprinklerList_t GenDefaultSprinklerList(size_t rows, size_t cols);
+   static RainMask_t GenDefaultRainMask(size_t rows, size_t cols);
+
+   static SprinklerMaskList_t GenDefaultSprinklerMaskList(size_t rows, size_t cols,
+                                                               const SprinklerList_t &sprinklers);
 
    static bnu::matrix<double> FillHeightsDiagonally(std::string param, size_t rows, size_t cols);
    static bnu::matrix<double> FillHeightsPerlin(std::string param, size_t rows, size_t cols);
