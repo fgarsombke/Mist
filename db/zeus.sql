@@ -110,3 +110,12 @@ CREATE TABLE IF NOT EXISTS feedback (
                             created TIMESTAMP,
                             value INTEGER NOT NULL
                             );
+
+CREATE TABLE IF NOT EXISTS weatherCache (
+                            latitude FLOAT NOT NULL,
+                            longitude FLOAT NOT NULL,
+                            beginTime INTEGER NOT NULL,
+                            endTime INTEGER NOT NULL,
+                            json TEXT NOT NULL
+                            );
+                          

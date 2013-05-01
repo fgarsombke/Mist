@@ -43,13 +43,13 @@ class WeatherData:
        d['AvgPressure'] = self.avgPressure
        d['MinRH'] = self.minRH
        d['MaxRH'] = self.maxRH
-       d['minTemp'] = self.minTemp
-       d['maxTemp'] = self.maxTemp
-       d['srStart'] = self.srStart
-       d['srEnd'] = self.srEnd
-       d['ssStart'] = self.ssStart
-       d['ssEnd'] = self.ssEnd
-       d['rainfall'] = self.rainfall
+       d['MinTemp'] = self.minTemp
+       d['MaxTemp'] = self.maxTemp
+       d['SrStart'] = self.srStart
+       d['SrEnd'] = self.srEnd
+       d['SsStart'] = self.ssStart
+       d['SsEnd'] = self.ssEnd
+       d['Rainfall'] = self.rainfall
        j = json.dumps(d, cls=MyEncoder)
        return j
 
@@ -304,6 +304,30 @@ def createWeatherDataObjectFromDictionary(dictionary):
     wd = WeatherData(startTemp, endTemp, avgTemp, avgWind, avgPressure, minRH, maxRH, minTemp, maxTemp, srStart, srEnd, ssStart, ssEnd, rainfall)
     return wd
 
+def grabFromCache(latitude, longitude, beginTime, endTime):
+    #return JSON or NONE
+    conf = DBConfig.DBConfig()
+    db = conf.connectToLocalConfigDatabase()
+    cursor = db.cursor()
+    cursor.execute("SELECT json FROM weatherCache WHERE (latitude = %s) AND (longitude = %s) AND (beginTime = %s) AND (endTime = %s)" % (latitude, longitude, beginTime, endTime))
+    jsonOut = cursor.fetchone()
+    print jsonOut
+    if jsonOut:
+      jsonOut = json.loads(jsonOut[0])
+    else:
+      jsonOut = ""
+    return jsonOut
+
+def cacheRequest(latitude, longitude, beginTime, endTime, weatherJSON):
+    #return JSON or NONE
+    string = json.dumps(weatherJSON)
+    conf = DBConfig.DBConfig()
+    db = conf.connectToLocalConfigDatabase()
+    cursor = db.cursor()
+    cursor.execute("INSERT INTO weatherCache (latitude, longitude, beginTime, endTime, json) VALUES (%s, %s, %s, %s, %s)" % (latitude, longitude, beginTime, endTime, string))
+    db.commit()
+    return json
+
 
 def main():
     #huh
@@ -325,10 +349,15 @@ class aWeather:
             longitude = weather_data.longitude
             beginTime = weather_data.begin
             endTime = weather_data.end
-            weatherData = getWeatherData(latitude, longitude, beginTime, endTime)
 
-            #JSONize WeatherData object
-            weatherJSON = weatherData.jsonize()
+            cached = grabFromCache(latitude, longitude, beginTime, endTime)
+
+            if cached:
+                weatherJSON = cached
+            else:
+                weatherData = getWeatherData(latitude, longitude, beginTime, endTime)
+                weatherJSON = weatherData.jsonize()
+                cacheRequest(latitude, longitude, beginTime, endTime, weatherJSON)
 
             #return JSONized data
             return weatherJSON

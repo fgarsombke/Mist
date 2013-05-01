@@ -8,11 +8,11 @@ from db import DBConfig
 import json
 import collections
 
-def insertDeviceInDatabase(userId, latitude, longitude, stationID, wifiNetwork, wifiPassword, numZones):
+def insertDeviceInDatabase(userId, latitude, longitude, wifiNetwork, wifiPassword, numZones):
     conf = DBConfig.DBConfig()
     db = conf.connectToLocalConfigDatabase()
     cursor = db.cursor()
-    cursor.execute("INSERT INTO devices (userID, latitude, longitude, wifiNetwork, wifiPassword, numZones, climateStationID) VALUES (%s, %s, %s, %s, %s, %s, %s)", (userId, latitude, longitude, wifiNetwork, wifiPassword, numZones, stationID))
+    cursor.execute("INSERT INTO devices (userID, latitude, longitude, wifiNetwork, wifiPassword, numZones) VALUES (%s, %s, %s, %s, %s, %s)", (userId, latitude, longitude, wifiNetwork, wifiPassword, numZones))
     results = cursor.lastrowid
     db.commit()
     return results
@@ -84,12 +84,33 @@ class aDevice:
     #expeceted parameters: userid, latitude, longitude, wifi network, wifi password, numZones 
     #return DEVICE ID?  or actually maybe this is supplied by the device it self???
     def POST(self):
-        device_data = web.input()   
+        device_data = web.input()
         deviceId = 0
-        #verify parameters.  should it be JSON?
-        if device_data.userID and device_data.latitude and device_data.longitude and device_data.wifiNetwork and device_data.wifiPassword and device_data.numZones:
-            #find nearest climate station!
-            assignedStationID = findNearestClimateStation(device_data.latitude, device_data.longitude)
-            deviceId = insertDeviceInDatabase(device_data.userID, device_data.latitude, device_data.longitude, assignedStationID, device_data.wifiNetwork, device_data.wifiPassword, device_data.numZones) #SQL
-        #TODO: JSONize output?
+
+        if 'userID' in device_data:
+            uid = device_data.userID
+        else:
+            uid = 1
+        if 'latitude' in device_data:
+            lat = device_data.latitude
+        else:
+            lat = 0
+        if 'longitude' in device_data:
+            longi = device_data.longitude
+        else:
+            longi = 0
+        if 'wifiNetwork' in device_data:
+            wifiN = device_data.wifiNetwork
+        else:
+            wifiN = ""
+        if 'wifiPassword' in device_data:
+            wifiP = device_data.wifiPassword
+        else:
+            wifiP = ""
+        if 'numZones' in device_data:
+            numZ = device_data.numZones
+        else:
+            numZ = 8
+        deviceId = insertDeviceInDatabase(uid, lat, longi, wifiN, wifiP, numZ)
+        print deviceId
         return deviceId
