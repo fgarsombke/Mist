@@ -28,10 +28,10 @@ SimOptions::SimOptions(int argc, char * argv[]) {
          "Simulator speed to real-time ratio")
       ("St", po::value<string>(&startDateString)->required(), "Simulated start date")
       ("End", po::value<string>(&endDateString)->required(), "Simulated end date")
-      ("La", po::value<double>(&latitude)->required(), "Longitude to Simulate")
-      ("Lo", po::value<double>(&longitude)->required(), "Latitude to Simulate")
-      ("Rows", po::value<size_t>(&yard_rows_)->required(), "Number of rows in the yard")
-      ("Cols", po::value<size_t>(&yard_cols_)->required(), "Number of columns in the yard")
+      ("La", po::value<double>(&latitude)->default_value(0), "Longitude to Simulate")
+      ("Lo", po::value<double>(&longitude)->default_value(0), "Latitude to Simulate")
+      ("Rows", po::value<size_t>(&yard_rows_)->default_value(0), "Number of rows in the yard")
+      ("Cols", po::value<size_t>(&yard_cols_)->default_value(0), "Number of columns in the yard")
       ("D", po::value<string>(&config_dir_)->default_value(""), "Directory of lawn configuration files.")
       //("Rand", "Generate random configuration")
       //("Conf", po::value<string>(&config_file_path_), "Simulator configuration file path")
@@ -83,6 +83,12 @@ SimOptions::SimOptions(int argc, char * argv[]) {
         is >> end_time_;
         if(end_time_ != empty_ptime) break;
     }
+
+   if (config_dir_.length() == 0) {
+      if ((yard_rows_ == 0) || (yard_cols_ == 0)) {
+         throw std::invalid_argument("Rows and Cols must be supplied if not config Dir is supplied.\n");
+      }
+   }
 
    if (start_time_ == empty_ptime) {
       throw std::invalid_argument("Start time was in an invalid format.\n");

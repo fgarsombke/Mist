@@ -16,8 +16,9 @@ public:
 	{}
 
    virtual int SubmitFeedback(product_id_t id, 
-										const std::vector<FeedbackList_t> feedback, 
-										unsigned int timeout = -1) const 
+                              pt::ptime intervalEnd, 
+                              const std::vector<FeedbackList_t> feedback, 
+                              unsigned int timeout = -1) const override
 	{
 		SleepForMS(FeedbackWaitTime);
 		return 0;
@@ -25,7 +26,7 @@ public:
 
    virtual WeatherData GetWeatherData(GeoLocale locale, 
 												  pt::time_period period, 
-												  unsigned int timeout = -1) 
+												  unsigned int timeout = -1) override
 	{
 		SleepForMS(WeatherDataWaitTime);
 
@@ -33,11 +34,20 @@ public:
 	}
 
    virtual MistSchedule GetSchedule(product_id_t id, 
-												unsigned int timeout = -1) const 
+												unsigned int timeout = -1) const override
 	{
 		SleepForMS(ScheduleWaitTime);
 		return MistSchedule();
 	}
+
+    virtual product_id_t AddDevice(user_id_t userID, 
+                          GeoLocale locale,
+                          size_t numZones,
+                          unsigned int timeout) const override
+   {
+      SleepForMS(AddDeviceWaitTime);
+      return 1;
+   }
 
 private:
    // Reference class only
@@ -47,6 +57,7 @@ private:
 	static const int FeedbackWaitTime = 100;
 	static const int WeatherDataWaitTime = 100;
 	static const int ScheduleWaitTime = 100;
+   static const int AddDeviceWaitTime = 100;
 };
 
 

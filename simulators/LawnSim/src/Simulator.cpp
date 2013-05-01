@@ -70,7 +70,7 @@ void Simulator::Start()
 			std::thread([this, t_i](pt::ptime firstTickTime) {
             try {
                DoTickWork(firstTickTime);
-            } catch(std::exception e) {
+            } catch(...) {
                async_exceptions_[t_i] = std::current_exception();
             }
          }, 
@@ -83,6 +83,7 @@ void Simulator::Start()
 		pipeThreads[t_i].join();
 
       if (async_exceptions_[t_i] != nullptr) {
+         async_exceptions_[t_i];
          std::rethrow_exception(async_exceptions_[t_i]);
       }
 	}

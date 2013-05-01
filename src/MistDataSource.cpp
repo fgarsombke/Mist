@@ -2,6 +2,7 @@
 #include "MistDataSource.h"
 
 #include "DbgDataSource.h"
+#include "PAL.h"
 
 using std::string;
 using std::ostream;
@@ -13,7 +14,7 @@ namespace Mist {
 
    static const std::string scheduleStr("/api/schedule?deviceID=");
    static const std::string feedbackStr("/api/feedback?simulator=1");
-	static const std::string weatherStr("/api/weatherData?");
+	static const char* weatherFmtStr = "/api/weather?latitude=%g&longitude=%g&begin=%llu&end=%llu";
 
    static const char* addDeviceFmtStr = "/api/device?userID=%llu&latitude=%g&longitude=%g&numZones=%llu";
 
@@ -34,12 +35,13 @@ namespace Mist {
    {
       std::vector<std::string> headers;
       std::string fbStr = Feedback::PackFeedbackJson(feedback, id, intervalEnd);
+      std::stringstream garbage;
 
       std::cout << "FEEDBACK:\n" << fbStr << std::endl;
 
-      int result = data_source_.PostHtml(feedbackStr, "application/json", fbStr, std::stringstream(), headers, timeout);
+      int result = data_source_.PostHtml(feedbackStr, "application/json", fbStr, garbage, headers, timeout);
       if (result < 200 || result >= 300) {
-         throw std::logic_error(std::string("Error Posting Feedback: HTTP-") + std::to_string(result));
+         throw std::logic_error(std::string("Error Posting Feedback: HTTP ") + std::to_string(result) + "\n");
       } else {
          return 0;
       }
@@ -47,12 +49,23 @@ namespace Mist {
 
    WeatherData MistDataSource::GetWeatherData(GeoLocale locale, pt::time_period period,  unsigned int timeout) 
    {
+      char urlbuff[255];
       std::vector<std::string> headers;
       std::stringstream weather_out;
 
-      int result = data_source_.GetHtml(weatherStr, weather_out, headers, timeout);
+      sprintf(urlbuff, weatherFmtStr, 
+         locale.latitude(), 
+         locale.longitude(),
+         GetEpochTime(period.begin()), 
+         GetEpochTime(period.end())
+      );
+
+      std::string getWeatherStr(urlbuff);
+      std::cout << "GET WEATHER: " << getWeatherStr << std::endl;
+
+      int result = data_source_.GetHtml(getWeatherStr, weather_out, headers, timeout);
       if (result != 200) {
-         throw std::logic_error(std::string("Error Getting HTML: ") + std::to_string(result));
+         throw std::logic_error(std::string("Error Getting Weather Data: HTML ") + std::to_string(result) + "\n");
       } else {
          return WeatherData::CreateFromJson(weather_out);
       }
@@ -65,7 +78,7 @@ namespace Mist {
 
       int result = data_source_.GetHtml(scheduleStr + std::to_string(id), schedule_out, headers, timeout);
       if (result != 200) {
-         throw std::logic_error(std::string("Error Getting HTML: ") + std::to_string(result));
+         throw std::logic_error(std::string("Error Getting Schedule: HTML ") + std::to_string(result) + "\n");
       } else {
          return MistSchedule::CreateFromJson(schedule_out);
       }
@@ -77,6 +90,7 @@ namespace Mist {
                           size_t numZones,
                           unsigned int timeout) const 
    {
+
       char urlbuff[255];
       std::vector<std::string> headers;
 
@@ -89,7 +103,7 @@ namespace Mist {
       std::string addDeviceStr(urlbuff);
       std::stringstream deviceIDStr;
 
-      std::cout << "ADD DEVICE:\n" << addDeviceStr << std::endl;
+      std::cout << "ADD DEVICE:\n" << urlbuff << std::endl;
 
       int result = data_source_.PostHtml(addDeviceStr, 
                                           "application/x-www-form-urlencoded", 
@@ -98,13 +112,20 @@ namespace Mist {
                                           headers, 
                                           timeout);
       
+      std::string devStr = deviceIDStr.str();
+      
+      // HACK: It's the second number!
+      std::getline(deviceIDStr, devStr, '\r');
+      std::getline(deviceIDStr, devStr, '\r');
+      boost::algorithm::trim(devStr);
+
       if (result < 200 || result >= 300) {
-         throw std::logic_error(std::string("Error Posting Add Device: HTTP-") + std::to_string(result));
+         throw std::logic_error(std::string("ERROR: Couldn't POST Add Device: HTTP ") + std::to_string(result));
       } else {
          try {
-            return boost::lexical_cast<product_id_t>(deviceIDStr.str());
+            return boost::lexical_cast<product_id_t>(devStr);
          } catch (boost::bad_lexical_cast const& e) {
-             throw std::logic_error("Received bad deviceID from server.\n" + std::string(e.what()));
+             throw std::logic_error("ERROR: Received bad deviceID from server: " + devStr + ".\n" + std::string(e.what()));
          }
       } 
    }

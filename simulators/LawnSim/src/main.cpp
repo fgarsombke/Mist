@@ -80,6 +80,9 @@ int main(int argc, char * argv[])
    } catch (std::exception& e) {
       cout << "Fatal Exception: " << e.what() << endl;
       return 1;
+   } catch (...) {
+      cout << "Caught non-std::exception." << endl;
+      std::rethrow_exception(std::current_exception());
    }
 
    return 0;

@@ -10,6 +10,8 @@ namespace Mist {
                      (StartTemp)(EndTemp)\
                      (AvgPressure)\
                      (AvgWindSpeed)\
+                     (SrStart)(SrEnd)\
+                     (SsStart)(SsEnd)\
                      (ENUM_COUNT)
 
 // Effective precipitation in mm

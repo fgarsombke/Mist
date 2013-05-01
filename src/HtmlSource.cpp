@@ -140,11 +140,16 @@ int HTMLSource::PostHtml(const std::string & urlPath,
       }
 
       // TODO HACK: Ask Michael A WHY????
-      string line;
-      while (std::getline(request_stream, line) && line != "\r") {
-         dataOut << line;
+      string hackLine;
+      getline(request_stream, hackLine);
+
+      if (hackLine != "0\r") {
+         dataOut << hackLine;
       }
 
+      while (std::getline(request_stream, hackLine) && hackLine != "0\r") {
+         dataOut << hackLine;
+      }
       return status_code;
    }catch(std::exception &e){
       std::cout << e.what() << std::endl;

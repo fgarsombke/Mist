@@ -28,18 +28,22 @@
 #include <boost/property_tree/ptree.hpp>
 #include <boost/property_tree/json_parser.hpp>
 #include <boost/preprocessor.hpp>
+#include <boost/algorithm/string.hpp>
 
 namespace pt = boost::posix_time;
 namespace dt = boost::date_time;
 namespace bJP = boost::property_tree::json_parser;
 
 #define _DEBUG_DATA 0
-#define _DEBUG_NO_PIPES 0
+#define _DEBUG_NO_PIPES 1
 
 #ifdef _DEBUG
 #define DbgAssertLogic(p, m) if(p) { throw std::logic_error((m)); }
+
+#define DbgPrint(msg) std::cout << (msg) << std::endl;
 #else
 #define DbgAssertLogic(p,m) 
+#define DbgPrint(msg) 
 #endif
 
 namespace Mist {  

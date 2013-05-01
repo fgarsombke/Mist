@@ -8,7 +8,8 @@ namespace Mist {
    namespace FeedbackInternal {
       const char* DEVICE_ID_LABEL = "deviceID";
       const char* INTERVAL_END_LABEL = "endTime";
-      const char* FEEDBACK_LABEL = "feedback";
+      const char* FEEDBACK_LABEL = "zones";
+      const char* FEEDBACK_ITEM_LABEL = "fbItems";
       const char* ZONE_NUM_LABEL = "zoneNumber";
       const char* TIME_LABEL = "time";
       const char* VALUE_LABEL = "value";
@@ -46,12 +47,12 @@ namespace Mist {
             ptree feedbackChildListTree;
             for(const FeedbackEntry& f: zoneFeedback) {
                ptree feedbackEntryTree;
-               feedbackEntryTree.put(TIME_LABEL, f.Time);
+               feedbackEntryTree.put<time_t>(TIME_LABEL, GetEpochTime(f.Time));
                feedbackEntryTree.put(VALUE_LABEL, static_cast<int>(f.Value));
 
                feedbackChildListTree.push_back(std::make_pair("", feedbackEntryTree));
             }
-            currZoneTree.push_back(std::make_pair("", feedbackChildListTree));
+            currZoneTree.push_back(std::make_pair(FEEDBACK_ITEM_LABEL, feedbackChildListTree));
 
             // ptree does array as anonymous children
             fbTree.push_back(std::make_pair("", currZoneTree));

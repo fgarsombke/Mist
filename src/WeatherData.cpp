@@ -41,8 +41,14 @@ namespace Mist {
 
 		// The weather data tree is a single level
 		for (const pair<string, ptree> &dataChild : weatherTree) {
-			WeatherDataValue_t currValue = WeatherDataMap.at(dataChild.first);
-			data.SetValue(currValue, dataChild.second.get_value<WeatherDataNumeric_t>());
+         map<std::string, WeatherDataValue_t>::const_iterator it = WeatherDataMap.find(dataChild.first);
+         if(it != WeatherDataMap.end())
+         {
+            WeatherDataValue_t currValue = it->second;
+			   data.SetValue(currValue, dataChild.second.get_value<WeatherDataNumeric_t>());
+         } else {
+            DbgPrint("Unexpected weather data read from server: " + dataChild.first + "\n");
+         }
 		}
 
 		return data;
