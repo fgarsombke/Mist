@@ -40,7 +40,7 @@ int main(int argc, char * argv[])
 
       uPtrYardInfo yardInfo;
       
-      if (options->config_dir().length() != 0) {
+      if (options->config_dir().length() == 0) {
          yardInfo = LawnGenerator::Generate(options->geo_locale(), 
                                                options->yard_rows(), 
                                                options->yard_cols(), "");
@@ -57,13 +57,11 @@ int main(int argc, char * argv[])
       Mist::sPtrMistDataSource mistDataSource = Mist::MistDataSource::GetDefaultDataSource();
 #endif
 
-
-
       // Build controller configuration
       Mist::Controllers::ControllerConfig cConfig;
       cConfig.Locale = options->geo_locale();
       cConfig.UpdatePeriod = time_duration(hours(1));
-      cConfig.Id = abs(std::rand());
+      cConfig.numZones = yardInfo->zone_count();
       cConfig.ScheduleSource = mistDataSource;
 
       Mist::Controllers::uPtrController controller = Controller::GetControllerByName("MistReal", std::move(cConfig));

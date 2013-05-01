@@ -82,7 +82,8 @@ int HTMLSource::GetHtml(const std::string &urlPath,
 
 int HTMLSource::PostHtml(const std::string & urlPath, 
                const std::string &contentType,
-               const std::string &data, 
+               const std::string &dataIn, 
+               std::ostream &dataOut,
                std::vector<std::string> &responseHeaders,
                unsigned int timeout) const
 {
@@ -105,9 +106,9 @@ int HTMLSource::PostHtml(const std::string & urlPath,
       << "From: michael@mgraczyk.com\r\n"
       << "User-Agent: curl/7.29.0"
       << "Content-Type: " << contentType << "\r\n"
-      << "Content-Length: " << data.length()
+      << "Content-Length: " << dataIn.length()
 		<< "\r\n\r\n"
-      << data;
+      << dataIn;
       request_stream.flush();
 
       string line1;
@@ -116,8 +117,6 @@ int HTMLSource::PostHtml(const std::string & urlPath,
       if (!request_stream) {
          return -2;
       }
-
-      // TODO: Return response data
 
       stringstream response_stream(line1);
       string http_version;
@@ -135,6 +134,16 @@ int HTMLSource::PostHtml(const std::string & urlPath,
          return (int)status_code;
       }
 
+      string header;
+      while (getline(request_stream, header) && header != "\r") {
+         responseHeaders.push_back(header);
+      }
+
+      // TODO HACK: Ask Michael A WHY????
+      string line;
+      while (std::getline(request_stream, line) && line != "\r") {
+         dataOut << line;
+      }
 
       return status_code;
    }catch(std::exception &e){

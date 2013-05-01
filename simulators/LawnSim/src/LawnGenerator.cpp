@@ -74,6 +74,7 @@ bnu::matrix<YardCellInfo> LawnGenerator::GenerateCells(size_t rows,
    return cells;
 }
 
+// Load a yard from the config file located in configDir
 uPtrYardInfo LawnGenerator::LoadYard(std::string configDir) 
 {
    // We load the yard from various files in the directory
@@ -98,7 +99,7 @@ uPtrYardInfo LawnGenerator::LoadYard(std::string configDir)
    std::string heightsFileName(configTree.get("heightsFile", ""));
    std::string rainMaskFileName(configTree.get("rainMaskFile", ""));
 
-   ptree sprinklersTree = configTree.get_child("sprinklers");
+   auto sprinklersTree = configTree.get_child_optional("sprinklers");
 
    std::string heightsPath;
    FillHeightFunc_t fillFunc;
@@ -120,26 +121,29 @@ uPtrYardInfo LawnGenerator::LoadYard(std::string configDir)
 
    SprinklerList_t sprinklers(0);
    SprinklerMaskList_t sprinklerMasks(0);
-   for (const ptree::value_type &t : sprinklersTree) {
-      ptree sprinklerTree = t.second;
 
-      size_t row = sprinklerTree.get<size_t>("row");
-      size_t col = sprinklerTree.get<size_t>("col");
-      double wateringRate = sprinklerTree.get<double>("wateringRate");
-      SprayPattern pattern = (SprayPattern)sprinklerTree.get<int>("sprayPattern");
-      size_t range = sprinklerTree.get<size_t>("range");
-      std::string maskFileName(configTree.get("maskFile", ""));
+   if (sprinklersTree.is_initialized()) {
+      for (const ptree::value_type &t : sprinklersTree.get()) {
+         ptree sprinklerTree = t.second;
 
-      // Generate the sprinkler without specifying the mask
-      SprinklerLocation s(Sprinkler(wateringRate, pattern, range), rows, cols);
+         size_t row = sprinklerTree.get<size_t>("row");
+         size_t col = sprinklerTree.get<size_t>("col");
+         double wateringRate = sprinklerTree.get<double>("wateringRate");
+         SprayPattern pattern = (SprayPattern)sprinklerTree.get<int>("sprayPattern");
+         size_t range = sprinklerTree.get<size_t>("range");
+         std::string maskFileName(configTree.get("maskFile", ""));
 
-      if (maskFileName.length() > 0) {
-         sprinklerMasks.push_back(FillMatrixFromFile((configPath / fs::path(maskFileName)).string(), rows, cols));
-      } else {
-         sprinklerMasks.push_back(s.GenerateSprinklerMask(rows, cols));
-      }
+         // Generate the sprinkler without specifying the mask
+         SprinklerLocation s(Sprinkler(wateringRate, pattern, range), rows, cols);
+
+         if (maskFileName.length() > 0) {
+            sprinklerMasks.push_back(FillMatrixFromFile((configPath / fs::path(maskFileName)).string(), rows, cols));
+         } else {
+            sprinklerMasks.push_back(s.GenerateSprinklerMask(rows, cols));
+         }
       
-      sprinklers.push_back(s); 
+         sprinklers.push_back(s); 
+      }
    }
 
    if (sprinklers.size() == 0) {

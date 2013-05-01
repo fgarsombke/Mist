@@ -32,6 +32,9 @@ public:
    const CellPerZoneList_t &cells_per_zone() const
    { return cells_per_zone_; }
 
+   size_t zone_count() const
+   { return cells_per_zone_.size(); }
+
    const SprinklerMaskList_t &sprinkler_masks() const
    { return sprinkler_masks_; }
 

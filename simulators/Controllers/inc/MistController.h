@@ -10,10 +10,10 @@ namespace Mist { namespace Controllers {
 class MistController : public Controller {
 public:
    explicit MistController(ControllerConfig &&config)
-      :  id_(config.Id), 
-         update_period_(config.UpdatePeriod),
+      :  update_period_(config.UpdatePeriod),
          schedule_source_(std::move(config.ScheduleSource))
    {
+      id_ = schedule_source_->AddDevice(1, config.Locale, config.numZones);
       has_started_ = false;
    }
 
@@ -52,7 +52,6 @@ private:
    MistController &operator=(MistController other);
    MistController(const MistController &other);
 
-   const product_id_t id_;
    const pt::time_duration update_period_;
 
    sPtrScheduleSource schedule_source_;
@@ -61,9 +60,9 @@ private:
    pt::ptime last_update_time_;
 
    pt::ptime start_time_;
+
+   product_id_t id_;
    bool has_started_;
-
-
 };
 
 }}
