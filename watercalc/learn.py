@@ -111,7 +111,7 @@ def getEToForecast(deviceID, createdTime):
 def generateNewSchedule(deviceID, zone, ETp, numDays, timer, vectorID):
     #given an ET value and time period, generate a schedule.
     ETperDay = ETp/numDays
-    minutesPerMMofWater = 20 
+    minutesPerMMofWater = 60
     minutesPerDay = ETperDay*minutesPerMMofWater
     count = 0
     for i in range(numDays):
