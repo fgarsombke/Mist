@@ -87,29 +87,30 @@ class aDevice:
         device_data = web.input()
         deviceId = 0
 
-        if device_data.userID:
+        if 'userID' in device_data:
             uid = device_data.userID
         else:
             uid = 1
-        if device_data.latitude:
+        if 'latitude' in device_data:
             lat = device_data.latitude
         else:
             lat = 0
-        if device_data.longitude:
+        if 'longitude' in device_data:
             longi = device_data.longitude
         else:
             longi = 0
-        if device_data.wifiNetwork:
+        if 'wifiNetwork' in device_data:
             wifiN = device_data.wifiNetwork
         else:
             wifiN = ""
-        if device_data.wifiPassword:
+        if 'wifiPassword' in device_data:
             wifiP = device_data.wifiPassword
         else:
             wifiP = ""
-        if device_data.numZones:
+        if 'numZones' in device_data:
             numZ = device_data.numZones
         else:
             numZ = 8
         deviceId = insertDeviceInDatabase(uid, lat, longi, wifiN, wifiP, numZ)
+        print deviceId
         return deviceId
