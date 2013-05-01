@@ -14,9 +14,10 @@ namespace MistScheduleInteral{
 
 pt::ptime MistSchedule::LongTimeToPTime(MistScheduleInteral::json_time_parse_t seconds) 
 {
-   const pt::ptime epoch(boost::gregorian::date(1970, 1, 1));
+   //const pt::ptime epoch(boost::gregorian::date(1970, 1, 1));
+   //return epoch + pt::seconds((long)seconds);
 
-   return epoch + pt::seconds((long)seconds);
+   return pt::from_time_t(seconds);
 }
 
 MistSchedule MistSchedule::CreateFromPTree(boost::property_tree::ptree &scheduleTree)
@@ -24,7 +25,6 @@ MistSchedule MistSchedule::CreateFromPTree(boost::property_tree::ptree &schedule
    using boost::property_tree::ptree;
    using namespace MistScheduleInteral;
    
-   std::string idStr = scheduleTree.get<std::string>(ID_LABEL, EmptyUUIDString);
    std::vector<ZoneInfo> infos(8, ZoneInfo());
 
    for (ptree::value_type &v : scheduleTree.get_child(ZONE_LABEL)) {
@@ -43,7 +43,7 @@ MistSchedule MistSchedule::CreateFromPTree(boost::property_tree::ptree &schedule
       infos.at(zoneNum) = info;
    }
          
-   return MistSchedule(bUUID::string_generator()(idStr), infos);
+   return MistSchedule(infos);
 }
 
 

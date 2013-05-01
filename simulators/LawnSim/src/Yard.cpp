@@ -392,8 +392,8 @@ void Yard::DebugPrint() const
 {
 }
 
-template<class T>
-void Yard::DebugPrintMatrix(const bnu::matrix<T> &toPrint, std::string fileName)
+template<class M>
+void Yard::DebugPrintMatrix(const M &toPrint, std::string fileName)
 {
 }
 

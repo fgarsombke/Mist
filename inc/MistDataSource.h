@@ -20,10 +20,19 @@ public:
    static sPtrMistDataSource GetDefaultDataSource();
 	static sPtrMistDataSource GetNullSource();
 
-   virtual int SubmitFeedback(product_id_t id, const std::vector<FeedbackList_t> feedback, unsigned int timeout = -1) const override;
+   virtual int SubmitFeedback(product_id_t id, 
+                              pt::ptime intervalEnd, 
+                              const std::vector<FeedbackList_t> feedback, 
+                              unsigned int timeout = -1) const override;
+
    virtual WeatherData GetWeatherData(GeoLocale locale, pt::time_period period, unsigned int timeout = -1) override;
    virtual MistSchedule GetSchedule(product_id_t id, unsigned int timeout = -1) const override;
 
+   // Adds the controller to the database
+   virtual product_id_t AddDevice(user_id_t userID, 
+                          GeoLocale locale,
+                          size_t numZones,
+                          unsigned int timeout = -1) const override;
 protected:
    explicit MistDataSource(const std::string &host)
       : data_source_(host, "8080")

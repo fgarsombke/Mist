@@ -12,8 +12,10 @@ namespace Mist {
    static const std::string srcURL("www.quattrotap.com");
 
    static const std::string scheduleStr("/api/schedule?deviceID=");
-   static const std::string feedbackStr("/api/feedback?deviceID=");
+   static const std::string feedbackStr("/api/feedback?simulator=1");
 	static const std::string weatherStr("/api/weatherData?");
+
+   static const char* addDeviceFmtStr = "/api/device?userID=%llu&latitude=%g&longitude=%g&numZones=%llu";
 
    sPtrMistDataSource MistDataSource::GetDefaultDataSource()
    {
@@ -25,17 +27,19 @@ namespace Mist {
 		return sPtrMistDataSource(new DbgDataSource());
 	}
 
-   int MistDataSource::SubmitFeedback(product_id_t id, const std::vector<FeedbackList_t> feedback, unsigned int timeout) const
+   int MistDataSource::SubmitFeedback(product_id_t id, 
+                                      pt::ptime intervalEnd, 
+                                      std::vector<FeedbackList_t> feedback, 
+                                      unsigned int timeout) const
    {
       std::vector<std::string> headers;
-      std::string fbStr = Feedback::PackFeedbackJson(feedback, id);
+      std::string fbStr = Feedback::PackFeedbackJson(feedback, id, intervalEnd);
 
       std::cout << "FEEDBACK:\n" << fbStr << std::endl;
 
-      int result = data_source_.PostHtml(feedbackStr + std::to_string(id),
-         "application/json", fbStr, headers, timeout);
-      if (result != 200) {
-         throw std::logic_error(std::string("Error Posting HTML: ") + std::to_string(result));
+      int result = data_source_.PostHtml(feedbackStr, "application/json", fbStr, std::stringstream(), headers, timeout);
+      if (result < 200 || result >= 300) {
+         throw std::logic_error(std::string("Error Posting Feedback: HTTP-") + std::to_string(result));
       } else {
          return 0;
       }
@@ -65,6 +69,44 @@ namespace Mist {
       } else {
          return MistSchedule::CreateFromJson(schedule_out);
       }
+   }
+
+   // Adds the controller to the database
+   product_id_t MistDataSource::AddDevice(user_id_t userID, 
+                          GeoLocale locale,
+                          size_t numZones,
+                          unsigned int timeout) const 
+   {
+      char urlbuff[255];
+      std::vector<std::string> headers;
+
+      sprintf(urlbuff, addDeviceFmtStr, 
+         userID, 
+         locale.latitude(), 
+         locale.longitude(),
+         numZones);
+
+      std::string addDeviceStr(urlbuff);
+      std::stringstream deviceIDStr;
+
+      std::cout << "ADD DEVICE:\n" << addDeviceStr << std::endl;
+
+      int result = data_source_.PostHtml(addDeviceStr, 
+                                          "application/x-www-form-urlencoded", 
+                                          "",
+                                          deviceIDStr, 
+                                          headers, 
+                                          timeout);
+      
+      if (result < 200 || result >= 300) {
+         throw std::logic_error(std::string("Error Posting Add Device: HTTP-") + std::to_string(result));
+      } else {
+         try {
+            return boost::lexical_cast<product_id_t>(deviceIDStr.str());
+         } catch (boost::bad_lexical_cast const& e) {
+             throw std::logic_error("Received bad deviceID from server.\n" + std::string(e.what()));
+         }
+      } 
    }
 
 }

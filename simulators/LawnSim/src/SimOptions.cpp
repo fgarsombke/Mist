@@ -32,7 +32,7 @@ SimOptions::SimOptions(int argc, char * argv[]) {
       ("Lo", po::value<double>(&longitude)->required(), "Latitude to Simulate")
       ("Rows", po::value<size_t>(&yard_rows_)->required(), "Number of rows in the yard")
       ("Cols", po::value<size_t>(&yard_cols_)->required(), "Number of columns in the yard")
-      ("D", po::value<string>(&heights_param_)->default_value(""), "Directory of lawn configuration files.")
+      ("D", po::value<string>(&config_dir_)->default_value(""), "Directory of lawn configuration files.")
       //("Rand", "Generate random configuration")
       //("Conf", po::value<string>(&config_file_path_), "Simulator configuration file path")
    ;

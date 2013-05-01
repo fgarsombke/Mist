@@ -11,7 +11,7 @@ namespace MistScheduleInteral {
    extern const char* START_LABEL;
    extern const char* END_LABEL;
 
-	typedef double json_time_parse_t;
+	typedef time_t json_time_parse_t;
 }
 
 class ZoneInfo 
@@ -37,10 +37,6 @@ public:
    {
    }
 
-   explicit MistSchedule(uuid scheduleId)
-      : schedule_id_(scheduleId)
-   {
-   }
 
    //// Move constructor
    //MistSchedule(MistSchedule &&other) 
@@ -56,20 +52,14 @@ public:
    //   return *this;
    //}
 
-   const uuid id() const { return schedule_id_; }
-
    std::vector<ZoneInfo> &zone_data() { return zone_data_; }
-
-   bool operator==(const MistSchedule &other) {return schedule_id_ == other.schedule_id_;}
 
    static pt::ptime LongTimeToPTime(MistScheduleInteral::json_time_parse_t ms);
 private:
-   uuid schedule_id_;
-
    std::vector<ZoneInfo> zone_data_;
 
-   MistSchedule(uuid scheduleId, std::vector<ZoneInfo> &zoneInfos)
-      : schedule_id_(scheduleId), zone_data_(std::move(zoneInfos))
+   explicit MistSchedule(std::vector<ZoneInfo> &zoneInfos)
+      : zone_data_(std::move(zoneInfos))
    {
    }
 

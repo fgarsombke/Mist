@@ -82,7 +82,8 @@ int HTMLSource::GetHtml(const std::string &urlPath,
 
 int HTMLSource::PostHtml(const std::string & urlPath, 
                const std::string &contentType,
-               const std::string &data, 
+               const std::string &dataIn, 
+               std::ostream &dataOut,
                std::vector<std::string> &responseHeaders,
                unsigned int timeout) const
 {
@@ -105,9 +106,9 @@ int HTMLSource::PostHtml(const std::string & urlPath,
       << "From: michael@mgraczyk.com\r\n"
       << "User-Agent: curl/7.29.0"
       << "Content-Type: " << contentType << "\r\n"
-      << "Content-Length: " << data.length()
+      << "Content-Length: " << dataIn.length()
 		<< "\r\n\r\n"
-      << data;
+      << dataIn;
       request_stream.flush();
 
       string line1;
@@ -134,21 +135,16 @@ int HTMLSource::PostHtml(const std::string & urlPath,
       }
 
       string header;
-      //while (getline(request_stream, header) && header != "\r") {
-      //   headers.push_back(header);
-      //}
+      while (getline(request_stream, header) && header != "\r") {
+         responseHeaders.push_back(header);
+      }
 
-      //// TODO HACK: Ask Michael A WHY????
-      //string hackLine;
-      //getline(request_stream, hackLine);
+      // TODO HACK: Ask Michael A WHY????
+      string line;
+      while (std::getline(request_stream, line) && line != "\r") {
+         dataOut << line;
+      }
 
-      //if (hackLine.length() > 10) {
-      //   out << hackLine;
-      //}
-
-      //while (std::getline(request_stream, hackLine) && hackLine != "0\r") {
-      //   out << hackLine;
-      //}
       return status_code;
    }catch(std::exception &e){
       std::cout << e.what() << std::endl;

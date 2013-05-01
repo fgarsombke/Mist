@@ -24,7 +24,9 @@ typedef std::vector<FeedbackList_t> ZoneFeedback_t;
 class Feedback
 {
 public:
-   static const std::string PackFeedbackJson(const ZoneFeedback_t &feedbackByZone, product_id_t deviceID);
+   static const std::string PackFeedbackJson(const ZoneFeedback_t &feedbackByZone, 
+                                             product_id_t deviceID,
+                                             pt::ptime intervalEndTime);
 };
 
 }
