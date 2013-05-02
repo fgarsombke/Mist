@@ -102,7 +102,7 @@ class ImgDB:
         except:
             return False
               
-    def add_score(self, img_filename, user_score, overwrite=False):
+    def add_score(self, img_filename, user_score, ignore_id=False):
         """Adds a score to the db at the specified message id. Uses image file name.
             If overwrite=False, then the score is added to the db only if no current score for that user has id score_id
             If overwrite=True, then the score is added to the db regardless of the val of score_id.
@@ -117,11 +117,15 @@ class ImgDB:
         self.con.execute("INSERT or IGNORE INTO %s (username) VALUES (?)"%(UserTableName), [username])
         self.end_transaction()
             
+        select_usrID = "SELECT id FROM %s WHERE username=?"%(UserTableName);
+        select_imgID = "SELECT id FROM %s WHERE filename=?"%(ImgTableName);
+
+        
         # Next we update the score
-        if not overwrite:
+        if not ignore_id:
             # If we're not overwriting, then we need add update the score only when the score is new
             cur = self.con.cursor()
-            cur.execute("SELECT id FROM %s WHERE score_id=?"%(ScoresTableName), [score_id])
+            cur.execute("SELECT id FROM %s WHERE score_id=? AND user_id=(%s) AND img_id=(%s)"%(ScoresTableName, select_usrID, select_imgID), [score_id, username, img_filename])
             val = cur.fetchone()
                         
             if val is not None:
@@ -131,12 +135,10 @@ class ImgDB:
                 return False
 
         qargs = [];
-        action_q = "INSERT or REPLACE INTO %s (user_id, img_id, score_id, score) "%(ScoresTableName)
+        action_q = "INSERT INTO %s (user_id, img_id, score_id, score) "%(ScoresTableName)
         
-        select_usrID = "SELECT id FROM %s WHERE username=?"%(UserTableName);
+        
         qargs.append(username)
-        
-        select_imgID = "SELECT id FROM %s WHERE filename=?"%(ImgTableName);
         qargs.append(img_filename)
         
         value_q = "VALUES ((%s),(%s), ?, ?)"%(select_usrID, select_imgID)

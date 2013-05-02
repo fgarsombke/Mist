@@ -20,6 +20,10 @@ classdef ImgDB
             cur = fetch(cur);
             scores = cur.data;
         end
+        
+        function [] = commitChanges(obj)
+           commit(obj.conn) 
+        end
     end
     
 end
