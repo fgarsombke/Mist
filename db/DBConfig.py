@@ -20,3 +20,24 @@ class DBConfig:
         database = config.readline().rstrip()
         db = MySQLdb.connect(host=host, user=user, passwd=password, db=database)    
         return db
+
+    def executeLastRowID(self, query):
+        db = self.connectToLocalConfigDatabase()
+        cursor = db.cursor()
+        cursor.execute(query)
+        db.commit()
+        return cursor.lastrowid
+
+    def executeFetchOne(self, query):
+        db = self.connectToLocalConfigDatabase()
+        cursor = db.cursor()
+        cursor.execute(query)
+        db.commit()
+        return cursor.fetchone()
+
+    def executeFetchAll(self, query):
+        db = self.connectToLocalConfigDatabase()
+        cursor = db.cursor()
+        cursor.execute(query)
+        db.commit()
+        return cursor.fetchall()

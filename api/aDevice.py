@@ -12,45 +12,28 @@ import datetime
 
 def insertDeviceInDatabase(userId, latitude, longitude, wifiNetwork, wifiPassword, numZones):
     conf = DBConfig.DBConfig()
-    db = conf.connectToLocalConfigDatabase()
-    cursor = db.cursor()
-    cursor.execute("INSERT INTO devices (userID, latitude, longitude, wifiNetwork, wifiPassword, numZones) VALUES (%s, %s, %s, %s, %s, %s)", (userId, latitude, longitude, wifiNetwork, wifiPassword, numZones))
-    results = cursor.lastrowid
-    db.commit()
-    return results
+    result = conf.executeLastRowID("INSERT INTO devices (userID, latitude, longitude, wifiNetwork, wifiPassword, numZones) VALUES (%s, %s, %s, %s, %s, %s)" % (userId, latitude, longitude, wifiNetwork, wifiPassword, numZones))
+    return result
 
 def getAllDevices():
     conf = DBConfig.DBConfig()
-    db = conf.connectToLocalConfigDatabase()    
-    cursor = db.cursor()
-    cursor.execute("SELECT * FROM devices")
-    results = cursor.fetchall()
-    return results  
+    results = conf.executeFetchAll("SELECT * FROM devices")
+    return results
 
 def getDevicesForUser(userid):
     conf = DBConfig.DBConfig()
-    db = conf.connectToLocalConfigDatabase()    
-    cursor = db.cursor()
-    cursor.execute("SELECT * FROM devices WHERE devices.userID = (%s)", userid)
-    results = cursor.fetchall()
+    results = conf.executeFetchAll("SELECT * FROM devices WHERE devices.userID = (%s)" % userid)
     return results  
 
 def getDevice(deviceid):
     conf = DBConfig.DBConfig()
-    db = conf.connectToLocalConfigDatabase()    
-    cursor = db.cursor()
-    cursor.execute("SELECT * FROM devices WHERE devices.deviceID = (%s)", deviceid)
-    results = cursor.fetchall()
-    return results  
+    results = conf.executeFetchAll("SELECT * FROM devices WHERE devices.deviceID = (%s)" % deviceid)
+    return results
 
 def findNearestClimateStation(latitude, longitude):
     conf = DBConfig.DBConfig()
-    db = conf.connectToLocalConfigDatabase()
-    cursor = db.cursor()
-    cursor.execute("SELECT *, 3956 * 2 * ASIN(SQRT(POWER(SIN((%s - latitude) *  pi()/180 / 2), 2) + COS(%s * pi()/180) * COS(%s * pi()/180) * POWER(SIN((%s - longitude) * pi()/180 / 2), 2) )) as distance FROM climateStations ORDER BY distance limit 1", (latitude, latitude, latitude, longitude)) # THIS FINDS THE NEAREST WEATHER STATION
-    nearestStation = cursor.fetchone()
-    return nearestStation[0]
-
+    results = conf.fetchone("SELECT *, 3956 * 2 * ASIN(SQRT(POWER(SIN((%s - latitude) *  pi()/180 / 2), 2) + COS(%s * pi()/180) * COS(%s * pi()/180) * POWER(SIN((%s - longitude) * pi()/180 / 2), 2) )) as distance FROM climateStations ORDER BY distance limit 1" % (latitude, latitude, latitude, longitude)) # THIS FINDS THE NEAREST WEATHER STATION
+    return results[0]
 
 class aDevice:
     #GET API FOR DEVICE

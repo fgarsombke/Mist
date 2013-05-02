@@ -81,20 +81,12 @@ def doLearning(deviceID, zone, simulatedTime):
 
 def getNumIterations(deviceID, zone):
     conf = DBConfig.DBConfig()
-    db = conf.connectToLocalConfigDatabase()
-    cursor = db.cursor()
-    sqlString = "SELECT COUNT(*) FROM learning WHERE deviceID = %s AND zoneNumber = %s" % (deviceID, zone)
-    cursor.execute(sqlString)
-    result = cursor.fetchone()[0]
-    return result
+    result = conf.executeFetchOne("SELECT COUNT(*) FROM learning WHERE deviceID = %s AND zoneNumber = %s" % (deviceID, zone))
+    return result[0]
 
 def getLatLongforDevice(deviceID):
     conf = DBConfig.DBConfig()
-    db = conf.connectToLocalConfigDatabase()
-    cursor = db.cursor()
-    sqlString = "SELECT latitude, longitude FROM devices WHERE deviceID = %s" % deviceID
-    cursor.execute(sqlString)
-    latlong = cursor.fetchone()
+    latlong = conf.executeFetchOne("SELECT latitude, longitude FROM devices WHERE deviceID = %s" % deviceID)
     return latlong
 
 def getEToForecast(deviceID, createdTime):
@@ -116,11 +108,7 @@ def generateNewSchedule(deviceID, zone, ETp, numDays, timer, vectorID):
 
 def createIrrigationEvent(deviceID, zone, timer, duration, vectorID):
     conf = DBConfig.DBConfig()
-    db = conf.connectToLocalConfigDatabase()
-    cursor = db.cursor()
-    sqlString = "INSERT INTO queuedIrrigations (deviceID, zoneNumber, startTime, duration, vectorID) VALUES (%s, %s, '%s', %s, %s)" % (deviceID, zone, timer, duration, vectorID)
-    cursor.execute(sqlString)
-    db.commit()
+    conf.execute("INSERT INTO queuedIrrigations (deviceID, zoneNumber, startTime, duration, vectorID) VALUES (%s, %s, '%s', %s, %s)" % (deviceID, zone, timer, duration, vectorID))
 
 def predictCorrectET(vector):
     #need to decide on the length of the vector and which coefficients are part of the equation
@@ -215,20 +203,11 @@ def createNewLearningVector(iteration, deviceID, zoneNumber, created):
 
     #store in database
     conf = DBConfig.DBConfig()
-    db = conf.connectToLocalConfigDatabase()
-    cursor = db.cursor()
-    sqlString = "INSERT INTO learning (deviceID, zoneNumber, ETo) VALUES (%s, %s, %s)" % (new.deviceID, new.zoneNumber, new.ETo)
-    cursor.execute(sqlString)
-
-    #get the ID
-    new.vectorID = cursor.lastrowid
-    db.commit()
+    new.vectorID = conf.executeLastRowID("INSERT INTO learning (deviceID, zoneNumber, ETo) VALUES (%s, %s, %s)" % (new.deviceID, new.zoneNumber, new.ETo))
 
     #now store the vector in vectors table
     for i in range(len(new.vector)):
-        sqlString = "INSERT INTO vectors (vectorID, columnNumber, value) VALUES (%s, %s, %s)" % (new.vectorID, i, new.vector[i])
-        cursor.execute(sqlString)
-    db.commit()
+        conf.execute("INSERT INTO vectors (vectorID, columnNumber, value) VALUES (%s, %s, %s)" % (new.vectorID, i, new.vector[i]))
 
     #Return the vector
     return new
@@ -239,12 +218,7 @@ def chooseStdDev(vectorComponentLength, scoreDelta1, scoreDelta2):
 
 def getLastXLearningVectors(deviceID, number):
     conf = DBConfig.DBConfig()
-    db = conf.connectToLocalConfigDatabase()
-    cursor = db.cursor()
-    sqlString = "SELECT * FROM learning WHERE deviceID = %s ORDER BY vectorID DESC LIMIT %s" % (deviceID, number)
-    cursor.execute(sqlString)
-    last = cursor.fetchall()
-    cursor.close()
+    last = conf.executeFetchAll("SELECT * FROM learning WHERE deviceID = %s ORDER BY vectorID DESC LIMIT %s" % (deviceID, number))
 
     count = 0
     lastVectors = []
@@ -266,9 +240,7 @@ def scoreVector(vector):
     #scoring function
     summation = 0
     bSummation = 0
-    print "SCORING VECTOR!!!"
     for each in vector.feedback:
-        print each
         timeValue = dateToValue(each[1])
         summation += math.pow(timeValue, 1/2)*abs(each[2]) 
         bSummation += math.pow(timeValue, 1/2)
@@ -278,37 +250,19 @@ def scoreVector(vector):
         score = summation/bSummation
     #store score in database
     conf = DBConfig.DBConfig()
-    db = conf.connectToLocalConfigDatabase()
-    cursor = db.cursor()
-    cursor.execute("UPDATE learning SET score = (%s) WHERE vectorID = (%s)", (score, vector.vectorID))
-    cursor.close()
-    db.commit()
+    conf.execute("UPDATE learning SET score = (%s) WHERE vectorID = (%s)", (score, vector.vectorID))
     return score
 
 def getFeedbackForLearningVector(vector):
     conf = DBConfig.DBConfig()
-    db = conf.connectToLocalConfigDatabase()
-    cursor = db.cursor()
-    sqlString = """SELECT * FROM queuedIrrigations WHERE vectorID = '%s' ORDER BY startTime ASC""" % vector.vectorID
-    cursor.execute(sqlString)
-    earliest = cursor.fetchone()
-    sqlString = """SELECT * FROM feedback WHERE deviceID = '%s' AND created >= '%s'""" % (earliest[1], earliest[2])
-    cursor.execute(sqlString)
-    feedback = cursor.fetchall()
-    cursor.close()
+    earliest = conf.executeFetchOne("SELECT * FROM queuedIrrigations WHERE vectorID = '%s' ORDER BY startTime ASC" % vector.vectorID)
+    feedback = conf.executeFetchAll("SELECT * FROM feedback WHERE deviceID = '%s' AND created >= '%s'" % (earliest[1], earliest[2]))
     return feedback
 
 def getLearningVector(vectorID):
     conf = DBConfig.DBConfig()
-    db = conf.connectToLocalConfigDatabase()
-    cursor = db.cursor()
-    sqlString = "SELECT * FROM learning WHERE vectorID = '%s' " % vectorID
-    cursor.execute(sqlString)
-    v = cursor.fetchone()
-    sqlString = "SELECT * FROM vectors WHERE vectorID = '%s' ORDER BY columnNumber ASC" % vectorID
-    cursor.execute(sqlString)
-    vectors = cursor.fetchall()
-    cursor.close()
+    v = conf.executeFetchOne("SELECT * FROM learning WHERE vectorID = '%s' " % vectorID)
+    vectors = conf.executeFetchAll("SELECT * FROM vectors WHERE vectorID = '%s' ORDER BY columnNumber ASC" % vectorID)
 
     #create the Learning Vector object (no feedback or vectors yet)
     lv = LearningVector(v[0], v[1], v[2], v[3], v[4], v[5])
@@ -320,12 +274,7 @@ def getLearningVector(vectorID):
 
 def getMostRecentIrrigationEventForDevice(deviceID, zone, time):
     conf = DBConfig.DBConfig()
-    db = conf.connectToLocalConfigDatabase()
-    cursor = db.cursor()
-    sqlString = "SELECT * FROM queuedIrrigations WHERE deviceID = '%s' AND zoneNumber = '%s' AND startTime < '%s' ORDER BY startTime DESC" % (deviceID, zone, time)
-    cursor.execute(sqlString)
-    event = cursor.fetchone()
-    cursor.close()
+    event = conf.executeFetchOne("SELECT * FROM queuedIrrigations WHERE deviceID = '%s' AND zoneNumber = '%s' AND startTime < '%s' ORDER BY startTime DESC" % (deviceID, zone, time))
     return event
 
 if __name__ == '__main__':
