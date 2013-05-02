@@ -59,9 +59,10 @@ class ImgDB:
         self.con.execute(crImgTbl)
         
         # Create metadate table
-        self.con.execute('CREATE TABLE metadata (key TEXT, val TEXT)')
+        self.con.execute('CREATE TABLE metadata (key TEXT NOT NULL UNIQUE, val TEXT)')
         self.con.execute("INSERT INTO metadata (key, val) VALUES ('minscore', %s)"%(str(self.minscore)))
         self.con.execute("INSERT INTO metadata (key, val) VALUES ('maxscore', %s)"%(str(self.maxscore)))
+        self.con.execute("REPLACE INTO metadata (key, val) VALUES ('img_dir', '%s')"%(self.image_dir))
         
         # Create users table
         crUsrTbl = 'CREATE TABLE IF NOT EXISTS ' + UserTableName + '(' + UserTableCols + ')'

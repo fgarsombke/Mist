@@ -19,12 +19,41 @@ classdef ImgDB < handle
         function [avg, std] = getImageData(this)
             cur = exec(this.conn, 'SELECT img_id, AVG(score) FROM user_scores GROUP BY img_id');
             cur = fetch(cur);
-            avg = cur.data;
+            avg = cell2mat(cur.data);
             
             cur = exec(this.conn, 'SELECT (img_id, score) FROM user_scores');
             cur = fetch(cur);
             std = cur.data;
         end
+        
+        function [image_id] = getImageIDs(this)
+            cur = exec(this.conn, 'SELECT id FROM images');
+            cur = fetch(cur);
+            image_id = cell2mat(cur.data);
+        end
+        
+        function [image] = getImageByName(this, img_name)
+            cur = exec(this.conn, 'SELECT * FROM metadata WHERE key=''img_dir''');
+            cur = fetch(cur);
+            fileDir = cur.data(2);
+            
+            imname = strcat(fileDir, '/', img_name);
+            image = imread(cell2mat(imname));
+        end
+        
+        function [image] = getImageById(this, img_id)
+            cur = exec(this.conn, ['SELECT filename FROM images WHERE id=', num2str(img_id)]);
+            cur = fetch(cur);
+            fileName = cur.data;
+            
+            cur = exec(this.conn, 'SELECT * FROM metadata WHERE key=''img_dir''');
+            cur = fetch(cur);
+            fileDir = cur.data(2);
+            
+            imname = strcat(fileDir, '/', fileName);
+            image = imread(cell2mat(imname));
+        end
+        
         
         function [] = storeResultsById(this, img_id, score, params)
             cur = exec(this.conn, ['UPDATE or FAIL images SET algo_score=',num2str(score),' WHERE img_id=,' num2str(img_id)]);
@@ -45,7 +74,9 @@ classdef ImgDB < handle
         function [] = commitChanges(obj)
            commit(obj.conn) 
         end
+        
     end
+end    
+
     
-end
 

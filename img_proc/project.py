@@ -115,7 +115,7 @@ def process_scores(img_name, db):
                 voice._Voice__messages_post('delete', id, trash=1)
             except:
                 print('Error processing message. "%s" from %s'%(text, sender))
-                raise
+
             logging.debug(print_bar)
                 
     voice.logout()
