@@ -11,4 +11,6 @@ with open ('./lawn_ratings.csv', 'rb') as f:
             img_name = row[0]
             scores = row[1:]
             for i in range(len(scores)):
-                DB.add_score_by_name(img_name, names[i], scores[i], '0', True)
+                DB.add_score(img_name, names[i], scores[i], overwrite=True)
+        
+        DB.end_transaction()
