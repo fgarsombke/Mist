@@ -34,8 +34,8 @@ namespace pt = boost::posix_time;
 namespace dt = boost::date_time;
 namespace bJP = boost::property_tree::json_parser;
 
-#define _DEBUG_DATA 0
-#define _DEBUG_NO_PIPES 1
+#define _DEBUG_DATA 1
+#define _DEBUG_NO_PIPES 0
 
 #ifdef _DEBUG
 #define DbgAssertLogic(p, m) if(p) { throw std::logic_error((m)); }

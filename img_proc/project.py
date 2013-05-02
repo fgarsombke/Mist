@@ -76,7 +76,6 @@ def poll(img_name, score_range):
     voice.logout()
     conn.commit()
     conn.close()
-
     
 def main():
     parser = argparse.ArgumentParser(description='Gather image processing information.')
