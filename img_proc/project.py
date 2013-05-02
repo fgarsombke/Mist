@@ -35,7 +35,6 @@ def extractsms(htmlsms):
                 msgitem[cl] = (" ".join(span.findAll(text=True))).strip()	# put text in dict
             msgitems.append(msgitem)					# add msg dictionary to list
     return msgitems
-   
 
 def get_thanks_reply(img_name, score):
     return "Thank you!  You rated %s with a score of %s."%(img_name,score)

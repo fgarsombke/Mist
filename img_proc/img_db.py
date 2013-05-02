@@ -12,7 +12,7 @@ AlgoScoreColName = 'algo_score'
 ImgTableCols = 'id INTEGER PRIMARY KEY AUTOINCREMENT,' + \
                 'filename TEXT NOT NULL UNIQUE, ' + \
                 ''.join([AlgoColName + str(x) + ' REAL, ' for x in range(NumAlgoCols)]) + \
-                AlgoScoreColName + ' REAL '
+                'algo_score REAL '
 
 UserTableName = 'users'
  
@@ -58,6 +58,7 @@ class ImgDB:
         crImgTbl = 'CREATE TABLE IF NOT EXISTS ' + ImgTableName + '(' + ImgTableCols + ')'
         self.con.execute(crImgTbl)
         
+        # Create metadate table
         self.con.execute('CREATE TABLE metadata (key TEXT, val TEXT)')
         self.con.execute("INSERT INTO metadata (key, val) VALUES ('minscore', %s)"%(str(self.minscore)))
         self.con.execute("INSERT INTO metadata (key, val) VALUES ('maxscore', %s)"%(str(self.maxscore)))
