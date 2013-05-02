@@ -90,7 +90,7 @@ class ImgDB:
         self.con.commit()
         return numLoaded
         
-    def add_scores(scores):
+    def add_score(username, score, msg_id):
         """Adds a list of Scores to the db"""
         # Update the score if the message is new
         for s in scores:

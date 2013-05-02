@@ -1,4 +1,4 @@
-function [ img_scores ] = getImgScores(img_id, db_con varargin )
+function [ img_scores ] = getImgScores(img_id, db_con, varargin )
 %	GETIMGSCORES Gets all the scores for an particular img_id with the option to normalize.
 %
 %	img_scores = GETIMGSCORES( IMG_ID, NORMALIZE, DB_NAME, DB_USER, DB_PASS )   
@@ -16,7 +16,7 @@ function [ img_scores ] = getImgScores(img_id, db_con varargin )
 
 	% option checking
 	numargs = length(varargin);  
-	if( numargs ) &gt; 1
+	if( numargs > 1)
 		error('Requires at most 1 optional arguments');
 	end
 
@@ -29,7 +29,7 @@ function [ img_scores ] = getImgScores(img_id, db_con varargin )
 	UserTableName = 'users';
     ImgIDColName = 'img_id';
     ScoreColName = 'user_score';
-    ImgScoreQuery = ['SELECT ' ScoreColName ' FROM ' UserTableName ' WHERE ' ImgIDColName ' = ' num2str(img_id)]
+    ImgScoreQuery = ['SELECT ' ScoreColName ' FROM ' UserTableName ' WHERE ' ImgIDColName ' = ' num2str(img_id)];
 
     % connect to db
 	cur = exec(db_con, ImgScoreQuery);
@@ -38,6 +38,6 @@ function [ img_scores ] = getImgScores(img_id, db_con varargin )
 	% normalizing option
 	if normalize == true
 		img_scores = ( cur.data - mean(cur.data) ) / ( std(cur.data) ^ 2 );
-	else
+    else
 		img_scores = cur.data;
     end
