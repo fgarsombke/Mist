@@ -6,7 +6,7 @@ function [ algo_scores ] = getAlgoScore( db_con )
 
 	% constants
     ImgTableName = 'images';
-	AlgoScoreColName = 'algo_score';
+	AlgoScoreColName = 'score';
 
     AlgoScoreQuery = ['SELECT ' AlgoScoreColName ' FROM ' ImgTableName];
 

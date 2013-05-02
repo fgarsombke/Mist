@@ -21,7 +21,7 @@ function storeScores( db_con, img_id, varargin )
 	algo_n( 1:numargs ) = varargin;
 
 	ImgTableName = 'images';
-    ImgIDColName = 'img_id';
+    ImgIDColName = 'id';
     AlgoColName = 'algo_';
     AlgoScoreColName = 'algo_score';
 

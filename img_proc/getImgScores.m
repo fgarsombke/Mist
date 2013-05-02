@@ -27,8 +27,8 @@ function [ img_scores ] = getImgScores(img_id, db_con, varargin )
 
 	% constants
 	UserTableName = 'users';
-    ImgIDColName = 'img_id';
-    ScoreColName = 'user_score';
+    ImgIDColName = 'id';
+    ScoreColName = 'score';
     ImgScoreQuery = ['SELECT ' ScoreColName ' FROM ' UserTableName ' WHERE ' ImgIDColName ' = ' num2str(img_id)];
 
     % connect to db
