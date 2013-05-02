@@ -1,38 +1,35 @@
 import sqlite3 as sql
-import sys
 import os
+import getpass
 import logging
 import user_score
 
 ImgTableName = 'images'
-ImgIDColName = 'img_id'
-FileNameColName = 'filename'
 AlgoColName = 'algo_'
 NumAlgoCols = 1
 AlgoScoreColName = 'algo_score'
 
-ImgTableCols = ImgIDColName + ' INTEGER PRIMARY KEY AUTOINCREMENT,' + \
-                FileNameColName + ' TEXT NOT NULL UNIQUE, ' + \
+ImgTableCols = 'id INTEGER PRIMARY KEY AUTOINCREMENT,' + \
+                'filename TEXT NOT NULL UNIQUE, ' + \
                 ''.join([AlgoColName + str(x) + ' REAL, ' for x in range(NumAlgoCols)]) + \
                 AlgoScoreColName + ' REAL '
 
 UserTableName = 'users'
-UserIdColName = 'user_id'
 UsernameColName = 'username'
-LastScoreIDColName = 'score_id'
+LastScoreIDColName = 'last_score_id'
  
-UserTableCols = UserIdColName + ' INTEGER PRIMARY KEY AUTOINCREMENT, ' + \
+UserTableCols = 'id INTEGER PRIMARY KEY AUTOINCREMENT, ' + \
                 UsernameColName + ' Text NOT NULL UNIQUE, ' + \
                 LastScoreIDColName + ' TEXT'         
 
 ScoresTableName = 'user_scores'
-ScoreColName = 'score'
 
-ScoresTableCols = UserIdColName + ' INTEGER, ' + \
-                    ImgIDColName + ' INTEGER, ' + \
-                    ScoreColName + ' REAL, ' + \
-    'FOREIGN KEY(' + UserIdColName + ') REFERENCES ' + UserTableName + '(' + UserIdColName + ')' + \
-    'FOREIGN KEY(' + ImgIDColName + ') REFERENCES ' + ImgTableName + '(' + ImgIDColName + ')'
+ScoresTableCols =   'id INTEGER PRIMARY KEY AUTOINCREMENT,' + \
+                    'user_id INTEGER, ' + \
+                    'img_id INTEGER, ' + \
+                    'score REAL, ' + \
+    'FOREIGN KEY(user_id) REFERENCES ' + UserTableName + '(id)' + \
+    'FOREIGN KEY(img_id) REFERENCES ' + ImgTableName + '(id)'
 
 ImageExtensions = ['.jpg', '.png', '.bmp', '.jpeg', '.gif']
 
@@ -43,7 +40,7 @@ class ImgDB:
     def get_cursor(self):    
         return self.con.cursor()
     
-    def end_transaction():
+    def end_transaction(self):
         self.con.commit()
     
     def _create_db(self):
@@ -66,7 +63,7 @@ class ImgDB:
             name, ext = os.path.splitext(filename)
             cur = self.get_cursor()
            
-            cur.execute("INSERT OR IGNORE INTO %s (%s) VALUES (?)" % (ImgTableName, FileNameColName), [filename])
+            cur.execute("INSERT OR IGNORE INTO %s (filename) VALUES (?)" %(ImgTableName), [filename])
             
             logging.debug('Added image file %s to DB' %(filename))
         else:
@@ -85,25 +82,45 @@ class ImgDB:
     
     def _get_img_id(self, filename):
         """Gets the image id of the image with the specified filename"""
-        
-    def add_score_by_id(self, img_id, username, score_id=None, overwrite=False):
-        """Adds a score to the db at the specified score id. Uses image file name.
-            If overwrite=False, then the score is added to the db only if no current score for that user has id score_id
-            If overwrite=True, then the score is added to the db regardless of the value of score_id.
-        """    
-        if not username:
-            raise ValueError('username must be a nonempty string: %s suppled' % (username)) 
-        
-                                                            
-    def add_score_by_name(self, img_filename, username, score, score_id=None, overwrite=False):
+                                                                   
+    def add_score(self, img_filename, user_score, overwrite=False):
         """Adds a score to the db at the specified message id. Uses image file name.
             If overwrite=False, then the score is added to the db only if no current score for that user has id score_id
             If overwrite=True, then the score is added to the db regardless of the value of score_id.
         """       
-        cur = self.get_cursor()
-        cur.execute("SELECT %s FROM %s WHERE %s=?"%(ImgIDColName,ImgTableName, FileNameColName), [img_filename])
-        r = cur.fetchone()
-        return self.add_score_by_id(r, username, score, score_id)
+        username = user_score.username
+        score = user_score.score
+        score_id = user_score.score_id
+        
+        cur = self.get_cursor() 
+        
+        # First ensure the user is in the db
+        # This will give him a NULL last score if just added
+        cur.execute("INSERT or IGNORE INTO %s (%s) VALUES (?)"%(UserTableName, UsernameColName), [username])
+        
+        if overwrite:
+            ins_action = 'REPLACE'
+        else:
+            ins_action = 'ABORT'
+        
+        qargs = [];
+        action_q = "INSERT or %s INTO %s (user_id, img_id, score) "%(ins_action, ScoresTableName)
+        
+        select_usrID = "SELECT id FROM %s WHERE username=?"%(UserTableName);
+        qargs.append(username)
+        
+        select_imgID = "SELECT id FROM %s WHERE filename=?"%(ImgTableName);
+        qargs.append(img_filename)
+        
+        value_q = "VALUES ((%s),(%s), ?)"%(select_usrID, select_imgID)
+        qargs.append(score)
+        
+        query = action_q + value_q;
+        
+        print("query:")
+        print(query)
+        print('\n\n')
+        cur.execute(query, qargs)
                
     def __enter__(self):
         return self
@@ -119,7 +136,7 @@ class ImgDB:
         self.image_dir = image_dir
         self.con = None
            
-        dbPath = os.path.join(self.image_dir, 'data.db')
+        dbPath = os.path.join(self.image_dir, 'data_%s.db'%(getpass.getuser()))
         
         try:
             self.con = sql.connect(dbPath)
@@ -143,4 +160,4 @@ class ImgDB:
             n = self._load_images()
             print('%d Images loaded from %s.' % (n,self.image_dir))
              
-        
+        self.con.commit()
