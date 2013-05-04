@@ -17,11 +17,8 @@ def validatePassword(password):
 
 def getDeviceIDForUser(userid):
     conf = DBConfig.DBConfig()
-    db = conf.connectToLocalConfigDatabase()    
-    cursor = db.cursor()
-    cursor.execute("SELECT * FROM devices WHERE devices.userID = (%s)", userid)
-    results = cursor.fetchone()
-    return results[0]   
+    results = conf.executeFetchOne("SELECT * FROM devices WHERE devices.userID = (%s)", userid)
+    return results[0]
 
 class addUser:
     def GET(self):
