@@ -13,10 +13,7 @@ from watercalc import learn
 
 def storeFeedback(deviceID, zoneNumber, created, value):
     conf = DBConfig.DBConfig()
-    db = conf.connectToLocalConfigDatabase()
-    cursor = db.cursor()
-    cursor.execute("INSERT INTO feedback (deviceID, zoneNumber, created, value) VALUES (%s, %s, FROM_UNIXTIME(%s), %s)", (deviceID, zoneNumber, created, value))
-    db.commit()
+    conf.execute("INSERT INTO feedback (deviceID, zoneNumber, created, value) VALUES (%s, %s, FROM_UNIXTIME(%s), %s)", (deviceID, zoneNumber, created, value))
     return 0
 
 class aFeedback:

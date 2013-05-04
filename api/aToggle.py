@@ -11,20 +11,12 @@ from jsonencode import MyEncoder
 
 def getToggleStatus(deviceID):
     conf = DBConfig.DBConfig()
-    db = conf.connectToLocalConfigDatabase()
-    cursor = db.cursor()
-    cursor.execute("SELECT * FROM toggle WHERE deviceID = (%s)", deviceID)
-    results = cursor.fetchone()
-    db.commit()
+    results = cursor.executeFetchOne("SELECT * FROM toggle WHERE deviceID = (%s)", deviceID)
     return results
 
 def doToggle(deviceID):
     conf = DBConfig.DBConfig()
-    db = conf.connectToLocalConfigDatabase()
-    cursor = db.cursor()
-    cursor.execute("UPDATE toggle SET toggleStatus = !toggleStatus WHERE deviceID = (%s)", deviceID)
-    results = cursor.lastrowid
-    db.commit()
+    results = conf.executeLastRowID("UPDATE toggle SET toggleStatus = !toggleStatus WHERE deviceID = (%s)", deviceID)
     return results
 
 class aToggle:

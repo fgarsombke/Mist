@@ -16,45 +16,28 @@ def validatePassword(password):
 
 def insertUserInDatabase(username, salt, password):
     conf = DBConfig.DBConfig()
-    db = conf.connectToLocalConfigDatabase()
-    cursor = db.cursor()
-    cursor.execute("INSERT INTO users (email, password, salt) VALUES (%s, %s, %s)", (username, password, salt))
-    results = cursor.lastrowid
-    db.commit()
+    results = conf.executeLastRowID("INSERT INTO users (email, password, salt) VALUES (%s, %s, %s)" % (username, password, salt))
     return results
 
 def getUserWithEmail(userEmail):
     conf = DBConfig.DBConfig()
-    db = conf.connectToLocalConfigDatabase()
-    cursor = db.cursor()
-    cursor.execute("SELECT * FROM users WHERE users.email= (%s)", userEmail)
-    results = cursor.fetchone()
+    results = conf.executeFetchOne("SELECT * FROM users WHERE users.email= (%s)" % userEmail)
     return results
 
 def getAllUsers():
     conf = DBConfig.DBConfig()
-    db = conf.connectToLocalConfigDatabase()
-    cursor = db.cursor()
-    cursor.execute("SELECT * FROM users")
-    results = cursor.fetchall()
+    results = conf.executeFetchAll("SELECT * FROM users")
     return results
 
 def getUser(userid):
     conf = DBConfig.DBConfig()
-    db = conf.connectToLocalConfigDatabase()    
-    cursor = db.cursor()
-    cursor.execute("SELECT * FROM users WHERE users.userID = (%s)", userid)
-    results = cursor.fetchone()
+    results = conf.executeFetchOne("SELECT * FROM users WHERE users.userID = (%s)", userid)
     return results
-    
+
 def getDeviceIDForUser(userid):
     conf = DBConfig.DBConfig()
-    db = conf.connectToLocalConfigDatabase()    
-    cursor = db.cursor()
-    cursor.execute("SELECT * FROM devices WHERE devices.userID = (%s)", userid)
-    results = cursor.fetchone()
-    return results[0]   
-
+    results = conf.executeFetchOne("SELECT * FROM devices WHERE devices.userID = (%s)", userid)
+    return results[0]
 
 class aUser:
     #GET API FOR USER

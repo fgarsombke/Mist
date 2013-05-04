@@ -10,28 +10,18 @@ import json
 
 def insertStationInDatabase(climateStationID, description, city, county, zipCode, state, country, latitude, longitude, altitude):
     conf = DBConfig.DBConfig()
-    db = conf.connectToLocalConfigDatabase()
-    cursor = db.cursor()
-    cursor.execute("INSERT INTO climateStations (climateStationID, description, city, county, zipCode, state, country, latitude, longitude, altitude) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)", (climateStationID, description, city, county, zipCode, state, country, latitude, longitude, altitude))
-    results = cursor.lastrowid
-    db.commit()
+    results = conf.executeLastRowID("INSERT INTO climateStations (climateStationID, description, city, county, zipCode, state, country, latitude, longitude, altitude) VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)" % (climateStationID, description, city, county, zipCode, state, country, latitude, longitude, altitude))
     return results
 
 def getAllStations():
     conf = DBConfig.DBConfig()
-    db = conf.connectToLocalConfigDatabase()
-    cursor = db.cursor()
-    cursor.execute("SELECT * FROM climateStations")
-    results = cursor.fetchall()
+    results = conf.executeFetchAll("SELECT * FROM climateStations")
     return results
 
 def getStation(stationID):
     conf = DBConfig.DBConfig()
-    db = conf.connectToLocalConfigDatabase()
-    cursor = db.cursor()
-    cursor.execute("SELECT * FROM climateStations WHERE climateStations.climateStationID = (%s)", stationID)
-    results = cursor.fetchone()
-    return results  
+    results = conf.executeFetchOne("SELECT * FROM climateStations WHERE climateStations.climateStationID = (%s)" % stationID)
+    return results
 
 class aStation:
     #GET API FOR STATION
