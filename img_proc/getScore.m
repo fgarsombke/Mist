@@ -9,9 +9,9 @@ function [ score ] = getScore( db_con )
 
 	% constants
     UserTableName = 'users';
-    ScoreColName = 'user_score';
+    ScoreColName = 'score';
 
-    ScoreQuery = ['SELECT ' ScoreColName ' FROM ' UserTableName];
+    ScoreQuery = ['SELECT score FROM ' UserTableName];
 
     % connect to db
 	cur = exec(db_con, ScoreQuery);
