@@ -20,23 +20,15 @@ class IrrigationEvent:
         self.date = date
 
 def queueIrrigation(event):
-    conf = DBConfig.DBConfig()
-    db = conf.connectToLocalConfigDatabase()    
-    cursor = db.cursor()
     startTime = event.date + " " + event.startTime
-    print startTime
-    timestamp = datetime.now() 
-    cursor.execute("INSERT INTO queuedIrrigations (deviceID, zoneNumber, startTime, duration, created) VALUES (%s, %s, %s, %s, %s)", (event.deviceID, event.zoneNumber, startTime, event.duration, timestamp))
-    results = cursor.lastrowid
-    db.commit()
+    timestamp = datetime.now()
+    conf = DBConfig.DBConfig()
+    results = conf.executeLastRowID("INSERT INTO queuedIrrigations (deviceID, zoneNumber, startTime, duration, created) VALUES (%s, %s, %s, %s, %s)", (event.deviceID, event.zoneNumber, startTime, event.duration, timestamp))
     return results
 
 def getScheduleForDevice(deviceID):
     conf = DBConfig.DBConfig()
-    db = conf.connectToLocalConfigDatabase()
-    cursor = db.cursor()
-    cursor.execute("SELECT * FROM queuedIrrigations WHERE (queuedIrrigations.deviceID = (%s)) AND vectorID=(SELECT max(vectorID) FROM queuedIrrigations) ORDER BY zoneNumber ASC", (deviceID))
-    results = cursor.fetchall()
+    results = conf.executeFetchAll("SELECT * FROM queuedIrrigations WHERE (queuedIrrigations.deviceID = (%s)) AND vectorID=(SELECT max(vectorID) FROM queuedIrrigations) ORDER BY zoneNumber ASC", (deviceID))
     return results
 
 class aSchedule:

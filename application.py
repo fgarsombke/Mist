@@ -51,7 +51,6 @@ if __name__ == '__main__':
         '/schedule/add', 'addSchedule', 
         '/toggle', 'toggle',
         '/weather', 'weather',
-        '/zone', 'zone',
 
         #API URLs
         '/api/user', 'aUser', 

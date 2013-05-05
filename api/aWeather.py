@@ -85,10 +85,7 @@ class WeatherData:
 
 def findNearestClimateStation(latitude, longitude):
     conf = DBConfig.DBConfig()
-    db = conf.connectToLocalConfigDatabase()
-    cursor = db.cursor()
-    cursor.execute("SELECT *, 3956 * 2 * ASIN(SQRT(POWER(SIN((%s - latitude) *  pi()/180 / 2), 2) + COS(%s * pi()/180) * COS(%s * pi()/180) * POWER(SIN((%s - longitude) * pi()/180 / 2), 2) )) as distance FROM climateStations ORDER BY distance limit 1", (latitude, latitude, latitude, longitude)) # THIS FINDS THE NEAREST WEATHER STATION
-    nearestStation = cursor.fetchone()
+    nearestStation = conf.executeFetchOne("SELECT *, 3956 * 2 * ASIN(SQRT(POWER(SIN((%s - latitude) *  pi()/180 / 2), 2) + COS(%s * pi()/180) * COS(%s * pi()/180) * POWER(SIN((%s - longitude) * pi()/180 / 2), 2) )) as distance FROM climateStations ORDER BY distance limit 1", (latitude, latitude, latitude, longitude)) # THIS FINDS THE NEAREST WEATHER STATION
     return nearestStation[0]
 
 def forecastAPI(latitude, longitude, thetime, interval):
@@ -304,11 +301,8 @@ def createWeatherDataObjectFromDictionary(dictionary):
     return wd
 
 def grabFromCache(latitude, longitude, beginTime, endTime):
-    #return JSON or NONE
     conf = DBConfig.DBConfig()
-    db = conf.connectToLocalConfigDatabase()
-    cursor = db.cursor()
-    cursor.execute("SELECT json FROM weatherCache WHERE (latitude = '%s') AND (longitude = '%s') AND (beginTime = %s) AND (endTime = %s)" % (str(latitude), str(longitude), beginTime, endTime))
+    jsonOut = conf.executeFetchOne("SELECT json FROM weatherCache WHERE (latitude = '%s') AND (longitude = '%s') AND (beginTime = %s) AND (endTime = %s)" % (str(latitude), str(longitude), beginTime, endTime))
     jsonOut = cursor.fetchone()
     print "FROM CACHE: %s" % jsonOut
     if jsonOut:
@@ -321,10 +315,7 @@ def cacheRequest(latitude, longitude, beginTime, endTime, weatherJSON):
     #return JSON or NONE
     string = json.dumps(weatherJSON, encoding="ascii")
     conf = DBConfig.DBConfig()
-    db = conf.connectToLocalConfigDatabase()
-    cursor = db.cursor()
-    cursor.execute("INSERT INTO weatherCache (latitude, longitude, beginTime, endTime, json) VALUES ('%s', '%s', %s, %s, %s)" % (str(latitude), str(longitude), beginTime, endTime, string))
-    db.commit()
+    conf.execute("INSERT INTO weatherCache (latitude, longitude, beginTime, endTime, json) VALUES ('%s', '%s', %s, %s, %s)" % (str(latitude), str(longitude), beginTime, endTime, string))
     return json
 
 def main():

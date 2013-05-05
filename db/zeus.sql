@@ -22,37 +22,7 @@ CREATE TABLE IF NOT EXISTS zones (
 					deviceID INTEGER NOT NULL,
 					zoneNumber INTEGER NOT NULL,
 					description VARCHAR(50),
-					plantSpecies VARCHAR(50),
-					microClimateConstant FLOAT,
-					speciesConstant FLOAT,
-					densityConstant FLOAT
 					);
-
-CREATE TABLE IF NOT EXISTS climateStations (
-						climateStationID VARCHAR(10) NOT NULL PRIMARY KEY,
-						description VARCHAR(100),
-						city VARCHAR(30),
-						county VARCHAR(30),
-						zipCode INTEGER,
-						state VARCHAR(20),
-						country VARCHAR(30),
-						latitude FLOAT,
-						longitude FLOAT,
-						altitude FLOAT,
-						active BOOLEAN	
-						);
-
-CREATE TABLE IF NOT EXISTS hourlyClimateData (
-						climateRecordID INTEGER NOT NULL AUTO_INCREMENT PRIMARY KEY, 
-						climateStationID VARCHAR(10), 
-						airTemp FLOAT, 
-						humidity TINYINT, 
-						pressure SMALLINT, 
-						dewpointTemp FLOAT, 
-						windspeed FLOAT, 
-						cycle TINYINT(2), 
-						date DATETIME
-						);
 
 CREATE TABLE IF NOT EXISTS dailyETo (
 					climateStationID VARCHAR(10) NOT NULL,
@@ -63,15 +33,6 @@ CREATE TABLE IF NOT EXISTS dailyETo (
 
 CREATE TABLE IF NOT EXISTS queuedIrrigations (
 						    vectorID INTEGER NOT NULL,
-                            deviceID INTEGER NOT NULL,
-						    zoneNumber INTEGER NOT NULL,
-						    startTime DATETIME NOT NULL,
-						    duration INTEGER NOT NULL,
-						    created DATETIME NOT NULL
-						);
-
-CREATE TABLE IF NOT EXISTS executedIrrigations (
-                            vectorID INTEGER NOT NULL,
                             deviceID INTEGER NOT NULL,
 						    zoneNumber INTEGER NOT NULL,
 						    startTime DATETIME NOT NULL,

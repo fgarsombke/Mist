@@ -1,1 +1,3 @@
-This project contains many software components of Mist, a learning irrigation controller.
+Mist: The Learning Irrigation Controller
+
+Mist learns how to water your yard, programs itself, and is controllable from your mobile phone.  Every few days the Mist app will ask you how your yard is doing, simply give a quick thumbs up or thumbs down and Mist will figure out how to improve the irrigation schedule.  No terrible analogue knobs, complex interfaces, or going to your garage.  Mist can save the average household up to 20% on their landscape watering usage.
