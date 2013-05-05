@@ -1,0 +1,11 @@
+A = sort(randi(1000, 1, 500));
+B = randi(1000, 1, 500);
+idx = randi(500);
+if( idx == bsearch(A, A(idx), @comp ) )
+    disp('success');
+    sprintf('key = %d\tidx = %d', 
+else 
+    disp('fail');
+end
+
+
