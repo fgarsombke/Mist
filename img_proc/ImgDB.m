@@ -16,12 +16,20 @@ classdef ImgDB < handle
             scores = cell2mat(cur.data);
         end
         
-        function [avg, std] = getImageData(this)
+        function [ids, avgs] = getAverageScores(this)
+            cur = exec(this.conn, 'SELECT img_id, AVG(score) FROM user_scores GROUP BY img_id');
+            cur = fetch(cur);
+            values = cell2mat(cur.data);
+            ids = values(:,1);
+            avgs = values(:,2);
+        end
+        
+        function [ids, avg, std] = getImageData(this)
             cur = exec(this.conn, 'SELECT img_id, AVG(score) FROM user_scores GROUP BY img_id');
             cur = fetch(cur);
             avg = cell2mat(cur.data);
             
-            cur = exec(this.conn, 'SELECT (img_id, score) FROM user_scores');
+            cur = exec(this.conn, 'SELECT img_id, score FROM user_scores');
             cur = fetch(cur);
             std = cur.data;
         end
