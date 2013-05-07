@@ -1,6 +1,6 @@
-function [ metric ] = color_analyzer( image, rg_ratio, rb_ratio, bg_ratio)
+function [ metric, thresh] = color_analyzer( image, rg_ratio, rb_ratio, bg_ratio)
 
-[M, N, K] = size(image);
+[M, N] = size(image);
 red = image(:, :, 1);
 green = image(:, :, 2);
 blue = image(:, :, 3);
@@ -13,10 +13,10 @@ thresh = reshape(thresh, M, N);
 
 accept = nnz(thresh)/numel(thresh);
 
-metric = round(accept*200 - 100);
+metric = round(accept*150 - 80);
 
 average_green = mean(reshape(green, 1, numel(green)));
-if(average_green < 40)
+if(average_green < 30)
     metric = -100  ;                %image is too dark to analyze
 end
 

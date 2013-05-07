@@ -50,14 +50,14 @@ classdef ImgDB < handle
         end
         
         function [image] = getImageById(this, img_id)
-            cur = exec(this.conn, ['SELECT filename FROM images WHERE id=', num2str(img_id)]);
+            cur = exec(this.conn, sprintf('SELECT filename FROM images WHERE id=%d',img_id));
             cur = fetch(cur);
             fileName = cur.data;
             
             cur = exec(this.conn, 'SELECT * FROM metadata WHERE key=''img_dir''');
             cur = fetch(cur);
             fileDir = cur.data(2);
-            
+
             imname = strcat(fileDir, '/', fileName);
             image = imread(cell2mat(imname));
         end
